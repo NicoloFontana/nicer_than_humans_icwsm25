@@ -33,12 +33,12 @@ class GameHistory:
             warnings.warn("The actions played must be a list. Encapsulating the input in a list")
             actions = [actions]
         if not isinstance(players_names, list) or not isinstance(actions, list):
-            raise ValueError("The players' names and the actions played must be lists")
+            raise TypeError("The players' names and the actions played must be lists")
         if len(players_names) < len(actions):
-            raise ValueError("The number of players' names must be greater or equal to the number of actions played")
+            raise IndexError("The number of players' names must be greater or equal to the number of actions played")
         if len(players_names) > len(actions):
             # Append None to the actions list for the players that did not play
-            warnings.warn("The number of players' names is greater than the number of actions played")
+            warnings.warn("The number of players' names is greater than the number of actions played. Appending None to the actions list for the players that did not play.")
             for i in range(len(players_names) - len(actions)):
                 actions.append(None)
         for idx, player_name in enumerate(players_names):

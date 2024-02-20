@@ -44,7 +44,7 @@ class GTGame:
         if self.players is None:
             self.players = {}
         if not isinstance(new_player, Player):
-            raise ValueError("The player must be an instance of the class Player")
+            raise TypeError("The player must be an instance of the class Player")
         if new_player.get_name() in self.players:
             warnings.warn(f"The player {new_player.get_name()} is already in the game")
             return

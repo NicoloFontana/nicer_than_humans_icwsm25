@@ -39,7 +39,7 @@ def from_nat_lang(action):
         return 1
     if action == "Defect" or action == '"Defect"':
         return 0
-    warnings.warn(f"Invalid action: {action}")
+    warnings.warn(f"Invalid action: {action}. Returning 'Defect' as 0.")
     return 0
 
 

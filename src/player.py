@@ -31,7 +31,7 @@ class Player:
         :param payoff: number to be added to the player's total_payoff
         """
         if not isinstance(payoff, numbers.Number):
-            raise ValueError(f"The payoff must be a number")
+            raise TypeError(f"The payoff must be a number")
         self.total_payoff += payoff
 
     def get_total_payoff(self) -> numbers.Number:
@@ -47,16 +47,16 @@ class Player:
         :param memory: memory of the faced opponents and the relative actions taken
         """
         if not isinstance(memory, PlayerMemory):
-            raise ValueError(f"The memory must be a PlayerMemory object")
+            raise TypeError(f"The memory must be a PlayerMemory object")
         self.memory.append(memory)
 
     def update_memory(self, new_memory: PlayerMemory):
         """
         Update the memory of the player by concatenating the actions played in the last iterations by every opponent
-        :param actions: the actions played by each element of every pairing in the last iterations
+        :param new_memory: the new memory to be added to the player's memory
         """
         if not isinstance(new_memory, PlayerMemory):
-            raise ValueError(f"The memory to be added must be a PlayerMemory object")
+            raise TypeError(f"The memory to be added must be a PlayerMemory object")
         self.memory.append(new_memory)
 
     def get_memory(self) -> PlayerMemory:
@@ -72,7 +72,7 @@ class Player:
         :param strategy: A function to compute the action to be taken by the player
         """
         if not isinstance(strategy, Strategy):
-            raise ValueError(f"The strategy must be a Strategy object")
+            raise TypeError(f"The strategy must be a Strategy object")
         self.strategy = strategy
         self.strategy_args = strategy_args
 
