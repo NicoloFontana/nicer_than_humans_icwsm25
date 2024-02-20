@@ -1,5 +1,7 @@
-from src.player import Player
+import warnings
+
 from src.games.game_history import GameHistory
+from src.player import Player
 
 
 class GTGame:
@@ -26,7 +28,7 @@ class GTGame:
         self.payoff_function = payoff_function
         # Store for each player their history of actions
         self.history = GameHistory()
-        self.current_round = 0
+        self.current_round = 1
         self.is_ended = False
 
     def play_round(self):
@@ -39,11 +41,38 @@ class GTGame:
         return self.history
 
     def add_player(self, new_player: Player):
+        if self.players is None:
+            self.players = {}
+        if not isinstance(new_player, Player):
+            raise ValueError("The player must be an instance of the class Player")
+        if new_player.get_name() in self.players:
+            warnings.warn(f"The player {new_player.get_name()} is already in the game")
+            return
         self.players[new_player.get_name()] = new_player
         self.history.add_player(new_player.get_name())
+
+    def get_players(self):
+        if self.players is None:
+            return []
+        return list(self.players.keys())
+
+    def get_iterations(self):
+        return self.iterations
 
     def get_payoff_function(self):
         return self.payoff_function
 
     def get_action_space(self):
         return self.action_space
+
+    def get_current_round(self):
+        return self.current_round
+
+    def get_actions_by_player(self, player_name: str):
+        return self.history.get_actions_by_player(player_name)
+
+    def get_actions_by_iteration(self, iteration: int):
+        return self.history.get_actions_by_iteration(iteration)
+
+    def get_total_payoff_by_player(self, player_name: str):
+        return self.players[player_name].get_total_payoff()

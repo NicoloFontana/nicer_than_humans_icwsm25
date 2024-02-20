@@ -68,3 +68,11 @@ class TestGameHistory(unittest.TestCase):
         self.assertNotEqual(game_history1, game_history2)
         game_history2.add_last_iteration(['a', 'b'], [1, 2])
         self.assertEqual(game_history1, game_history2)
+
+    def test_len(self):
+        game_history = GameHistory()
+        self.assertEqual(len(game_history), 0)
+        game_history.add_last_iteration(['a', 'b'], [1, 2])
+        self.assertEqual(len(game_history), 1)
+        game_history.add_last_iteration(['a', 'b'], [1, 2])
+        self.assertEqual(len(game_history), 2)
