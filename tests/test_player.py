@@ -9,15 +9,15 @@ class TestPlayer(unittest.TestCase):
     def test_init(self):
         player = Player("a")
         self.assertEqual(player.get_name(), "a")
-        self.assertEqual(player.get_score(), 0)
+        self.assertEqual(player.get_total_payoff(), 0)
 
     def test_update_score(self):
         player = Player("a")
-        player.update_score(10)
-        self.assertEqual(player.get_score(), 10)
-        player.update_score(-5)
-        self.assertEqual(player.get_score(), 5)
-        self.assertRaises(ValueError, player.update_score, "I'm a runtime error")
+        player.update_total_payoff(10)
+        self.assertEqual(player.get_total_payoff(), 10)
+        player.update_total_payoff(-5)
+        self.assertEqual(player.get_total_payoff(), 5)
+        self.assertRaises(ValueError, player.update_total_payoff, "I'm a runtime error")
 
     def test_set_memory(self):
         player = Player("a")
@@ -43,9 +43,9 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(player1, player2)
         player3 = Player("b")
         self.assertNotEqual(player1, player3)
-        player2.update_score(10)
+        player2.update_total_payoff(10)
         self.assertNotEqual(player1, player2)
-        player1.update_score(10)
+        player1.update_total_payoff(10)
         self.assertEqual(player1, player2)
         player2.set_memory(PlayerMemory(('a', 'b'), [(1, 2), (2, 3)]))
         self.assertNotEqual(player1, player2)
