@@ -1,5 +1,5 @@
 from src.player import Player
-from src.game_history import GameHistory
+from src.games.game_history import GameHistory
 
 
 class GTGame:

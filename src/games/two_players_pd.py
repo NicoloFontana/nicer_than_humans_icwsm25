@@ -1,6 +1,6 @@
 import warnings
 
-from src.gt_game import GTGame
+from src.games.gt_game import GTGame
 from src.player import Player
 from src.player_memory import PlayerMemory
 

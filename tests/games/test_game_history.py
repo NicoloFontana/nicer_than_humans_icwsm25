@@ -1,7 +1,7 @@
 import unittest
 import warnings
 
-from src.game_history import GameHistory
+from src.games.game_history import GameHistory
 
 
 class TestGameHistory(unittest.TestCase):
