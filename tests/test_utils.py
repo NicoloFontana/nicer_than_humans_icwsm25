@@ -63,3 +63,5 @@ class TestUtils(unittest.TestCase):
         self.assertEqual("Cooperate", find_first_substring(string, substrings))
         string = ",Cooperate"
         self.assertEqual("Cooperate", find_first_substring(string, substrings))
+        string = "cooperate"
+        self.assertEqual("Cooperate", find_first_substring(string, substrings))

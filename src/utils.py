@@ -47,7 +47,8 @@ def find_first_int(string):
 
 
 def find_first_substring(string, substrings):
+    insensitive_string = string.casefold()
     for sub in substrings:
-        if string.find(sub) != -1:
+        if insensitive_string.find(sub.casefold()) != -1:
             return sub
     return ""
