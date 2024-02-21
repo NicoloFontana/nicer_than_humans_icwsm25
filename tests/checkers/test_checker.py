@@ -66,6 +66,23 @@ class TestChecker(unittest.TestCase):
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(2, checker.checks[question])
+        idx += 1
+        correct_answer = "Cooperate"
+        llm_answer = "Cooperate"
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual("Cooperate", checker.answers[question][idx]["correct_answer"])
+        self.assertEqual("Cooperate", checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(2, checker.scores[question])
+        self.assertEqual(3, checker.checks[question])
+        idx += 1
+        llm_answer = "cooperate"
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual("Cooperate", checker.answers[question][idx]["correct_answer"])
+        self.assertEqual("cooperate", checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(3, checker.scores[question])
+        self.assertEqual(4, checker.checks[question])
         # Set
         question = self.questions[1]
         idx = 0
@@ -101,6 +118,23 @@ class TestChecker(unittest.TestCase):
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(2, checker.scores[question])
         self.assertEqual(4, checker.checks[question])
+        idx += 1
+        correct_answer = {"Cooperate", "Defect"}
+        llm_answer = {"Cooperate", "Defect"}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({"Cooperate", "Defect"}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({"Cooperate", "Defect"}, checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(3, checker.scores[question])
+        self.assertEqual(5, checker.checks[question])
+        idx += 1
+        llm_answer = {"defect", "cooperate"}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({"Cooperate", "Defect"}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({"defect", "cooperate"}, checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(4, checker.scores[question])
+        self.assertEqual(6, checker.checks[question])
         # List
         question = self.questions[2]
         idx = 0
@@ -128,3 +162,28 @@ class TestChecker(unittest.TestCase):
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(3, checker.checks[question])
+        idx += 1
+        right_answer = ["Cooperate", "Defect"]
+        llm_answer = ["Cooperate", "Defect"]
+        checker.check_answer(llm_answer, right_answer, question)
+        self.assertEqual(["Cooperate", "Defect"], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual(["Cooperate", "Defect"], checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(2, checker.scores[question])
+        self.assertEqual(4, checker.checks[question])
+        idx += 1
+        llm_answer = ["cooperate", "defect"]
+        checker.check_answer(llm_answer, right_answer, question)
+        self.assertEqual(["Cooperate", "Defect"], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual(["cooperate", "defect"], checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(True, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(3, checker.scores[question])
+        self.assertEqual(5, checker.checks[question])
+        idx += 1
+        llm_answer = ["defect", "cooperate"]
+        checker.check_answer(llm_answer, right_answer, question)
+        self.assertEqual(["Cooperate", "Defect"], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual(["defect", "cooperate"], checker.answers[question][idx]["llm_answer"])
+        self.assertEqual(False, checker.answers[question][idx]["is_correct"])
+        self.assertEqual(3, checker.scores[question])
+        self.assertEqual(6, checker.checks[question])

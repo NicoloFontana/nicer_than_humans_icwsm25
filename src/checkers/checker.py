@@ -90,21 +90,40 @@ class Checker:
         is_set = isinstance(correct_answer, set)
         is_list = isinstance(correct_answer, list)
         correct = False
-        if is_set:
+        if is_set or is_list:
             if len(llm_answer) == len(correct_answer):
                 correct = True
                 if is_list:
                     for i in range(len(llm_answer)):
-                        if llm_answer[i] != correct_answer[i]:
-                            correct = False
-                            break
+                        if isinstance(llm_answer[i], str) and isinstance(correct_answer[i], str):
+                            if llm_answer[i].casefold() != correct_answer[i].casefold():
+                                correct = False
+                                break
+                        else:
+                            if llm_answer[i] != correct_answer[i]:
+                                correct = False
+                                break
                 else:
+                    insensitive_set = set()
+                    for correct_ans in correct_answer:
+                        if isinstance(correct_ans, str):
+                            insensitive_set.add(correct_ans.casefold())
+                        else:
+                            insensitive_set.add(correct_ans)
                     for llm_ans in llm_answer:
-                        if llm_ans not in correct_answer:
-                            correct = False
-                            break
+                        if isinstance(llm_ans, str):
+                            if llm_ans.casefold() not in insensitive_set:
+                                correct = False
+                                break
+                        else:
+                            if llm_ans not in insensitive_set:
+                                correct = False
+                                break
         else:
-            correct = llm_answer == correct_answer
+            if isinstance(llm_answer, str) and isinstance(correct_answer, str):
+                correct = llm_answer.casefold() == correct_answer.casefold()
+            else:
+                correct = llm_answer == correct_answer
         self.answers[question].append(
             {"correct_answer": correct_answer, "llm_answer": llm_answer, "is_correct": correct})
         if correct:
