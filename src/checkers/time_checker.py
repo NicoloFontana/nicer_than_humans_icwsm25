@@ -4,7 +4,7 @@ from src.strategies.strategy_utils import generate_game_rules_prompt, generate_h
 from src.utils import find_first_int, find_first_substring
 
 
-class TemporalChecker(Checker):
+class TimeChecker(Checker):
     def __init__(self, timestamp):
         questions = [
             "Which is the current round of the game?",
