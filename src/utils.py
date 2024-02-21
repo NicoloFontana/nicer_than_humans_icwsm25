@@ -1,4 +1,5 @@
 import json
+import re
 import warnings
 
 HF_API_TOKEN = "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"
@@ -36,3 +37,17 @@ def find_json_object(string):
     else:
         warnings.warn(f"No JSON object found in the input string:\n {string}. Returning None.")
         return None
+
+
+def find_first_int(string):
+    re_findall = re.findall(r'\d+', string)
+    if len(re_findall) > 0:
+        return re_findall[0]
+    return ""
+
+
+def find_first_substring(string, substrings):
+    for sub in substrings:
+        if string.find(sub) != -1:
+            return sub
+    return ""
