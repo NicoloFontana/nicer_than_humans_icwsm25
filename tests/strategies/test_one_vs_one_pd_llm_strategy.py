@@ -25,9 +25,9 @@ class TestOneVsOnePDLlmStrategy(unittest.TestCase):
             self.assertRaises(Warning, OneVsOnePDLlmStrategy, game, "Alice", 1)
             warnings.simplefilter("ignore")
             game = TwoPlayersPD(Player("1"), Player("Bob"))
-            self.assertEqual(OneVsOnePDLlmStrategy(game, 1, "Bob").player_name, "1")
+            self.assertEqual("1", OneVsOnePDLlmStrategy(game, 1, "Bob").player_name)
             game = TwoPlayersPD(Player("Alice"), Player("1"))
-            self.assertEqual(OneVsOnePDLlmStrategy(game, "Alice", 1).opponent_name, "1")
+            self.assertEqual("1", OneVsOnePDLlmStrategy(game, "Alice", 1).opponent_name)
             game = TwoPlayersPD(Player("Alice"), Player("Bob"))
         self.assertRaises(ValueError, OneVsOnePDLlmStrategy, game, "Charlie", "Bob")
         self.assertRaises(ValueError, OneVsOnePDLlmStrategy, game, "Alice", "Charlie")
@@ -41,22 +41,22 @@ class TestOneVsOnePDLlmStrategy(unittest.TestCase):
             warnings.simplefilter("error")
             self.assertRaises(Warning, strategy.play)
             warnings.simplefilter("ignore")
-            self.assertEqual(strategy.play(), 0)
+            self.assertEqual(0, strategy.play())
         self.client.text_generation.return_value = '{I\'m not a valid JSON'
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(Warning, strategy.play)
             warnings.simplefilter("ignore")
-            self.assertEqual(strategy.play(), 0)
+            self.assertEqual(0, strategy.play())
         self.client.text_generation.return_value = '{"choice": "Cooperate"}'
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(Warning, strategy.play)
             warnings.simplefilter("ignore")
-            self.assertEqual(strategy.play(), 0)
+            self.assertEqual(0, strategy.play())
         self.client.text_generation.return_value = '{"action": "Cooperate"}'
-        self.assertEqual(strategy.play(), 1)
+        self.assertEqual(1, strategy.play())
         self.client.text_generation.return_value = '{"action": "Defect"}'
-        self.assertEqual(strategy.play(), 0)
+        self.assertEqual(0, strategy.play())
         self.client.text_generation.return_value = '{"action": "I\'m not a valid action"}'
-        self.assertEqual(strategy.play(), 0)
+        self.assertEqual(0, strategy.play())

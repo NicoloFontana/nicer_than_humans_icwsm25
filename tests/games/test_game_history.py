@@ -12,7 +12,7 @@ class TestGameHistory(unittest.TestCase):
 
     def test_add_last_iteration(self):
         game_history = GameHistory()
-        self.assertRaises(ValueError, game_history.add_last_iteration, ['a', 'b'], [1, 2, 3])
+        self.assertRaises(IndexError, game_history.add_last_iteration, ['a', 'b'], [1, 2, 3])
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(Warning, game_history.add_last_iteration, 'a', [])
@@ -30,10 +30,10 @@ class TestGameHistory(unittest.TestCase):
             warnings.simplefilter("error")
             self.assertRaises(Warning, game_history.get_actions_by_player, 'a')
             warnings.simplefilter("ignore")
-            self.assertEqual(game_history.get_actions_by_player('a'), [])
+            self.assertEqual([], game_history.get_actions_by_player('a'))
         game_history.add_last_iteration(['a', 'b'], [1, 2])
-        self.assertEqual(game_history.get_actions_by_player('a'), [1])
-        self.assertEqual(game_history.get_actions_by_player('b'), [2])
+        self.assertEqual([1], game_history.get_actions_by_player('a'))
+        self.assertEqual([2], game_history.get_actions_by_player('b'))
 
     def test_get_actions_by_iteration(self):
         game_history = GameHistory()
@@ -41,18 +41,18 @@ class TestGameHistory(unittest.TestCase):
             warnings.simplefilter("error")
             self.assertRaises(Warning, game_history.get_actions_by_iteration, 0)
             warnings.simplefilter("ignore")
-            self.assertEqual(game_history.get_actions_by_iteration(0), {})
+            self.assertEqual({}, game_history.get_actions_by_iteration(0))
         game_history.add_last_iteration(['a', 'b'], [1, 2])
-        self.assertEqual(game_history.get_actions_by_iteration(0), {'a': 1, 'b': 2})
+        self.assertEqual({'a': 1, 'b': 2}, game_history.get_actions_by_iteration(0))
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(Warning, game_history.get_actions_by_iteration, 0.2)
             self.assertRaises(Warning, game_history.get_actions_by_iteration, 0.5)
             self.assertRaises(Warning, game_history.get_actions_by_iteration, 0.7)
             warnings.simplefilter("ignore")
-            self.assertEqual(game_history.get_actions_by_iteration(0.2), {'a': 1, 'b': 2})
-            self.assertEqual(game_history.get_actions_by_iteration(0.5), {'a': 1, 'b': 2})
-            self.assertEqual(game_history.get_actions_by_iteration(0.7), {'a': 1, 'b': 2})
+            self.assertEqual({'a': 1, 'b': 2}, game_history.get_actions_by_iteration(0.2))
+            self.assertEqual({'a': 1, 'b': 2}, game_history.get_actions_by_iteration(0.5))
+            self.assertEqual({'a': 1, 'b': 2}, game_history.get_actions_by_iteration(0.7))
 
     def test_bool(self):
         game_history = GameHistory()
@@ -71,8 +71,8 @@ class TestGameHistory(unittest.TestCase):
 
     def test_len(self):
         game_history = GameHistory()
-        self.assertEqual(len(game_history), 0)
+        self.assertEqual(0, len(game_history))
         game_history.add_last_iteration(['a', 'b'], [1, 2])
-        self.assertEqual(len(game_history), 1)
+        self.assertEqual(1, len(game_history))
         game_history.add_last_iteration(['a', 'b'], [1, 2])
-        self.assertEqual(len(game_history), 2)
+        self.assertEqual(2, len(game_history))

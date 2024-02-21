@@ -50,7 +50,7 @@ class TwoPlayersPD(GTGame):
             else:
                 warnings.warn("There are already 2 players")
         else:
-            raise ValueError("The player must be an instance of the class Player")
+            raise TypeError("The player must be an instance of the class Player")
 
     def get_opponent_name(self, player_name):
         for name in self.players.keys():

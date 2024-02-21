@@ -21,61 +21,61 @@ class TestTwoPlayersPD(unittest.TestCase):
 
     def test_init(self):
         game = TwoPlayersPD()
-        self.assertEqual(game.get_iterations(), 10)
-        self.assertEqual(game.get_action_space(), {1, 0})
-        self.assertEqual(game.get_payoff_function(), two_players_pd_payoff)
-        self.assertEqual(game.get_players(), [])
+        self.assertEqual(10, game.get_iterations())
+        self.assertEqual({1, 0}, game.get_action_space())
+        self.assertEqual(two_players_pd_payoff, game.get_payoff_function())
+        self.assertEqual([], game.get_players())
         game = TwoPlayersPD(self.player1)
-        self.assertEqual(game.get_players(), ["AlwaysCooperate"])
+        self.assertEqual(["AlwaysCooperate"], game.get_players())
         game = TwoPlayersPD(self.player1, self.player2)
-        self.assertEqual(game.get_players(), ["AlwaysCooperate", "AlwaysDefect"])
+        self.assertEqual(["AlwaysCooperate", "AlwaysDefect"], game.get_players())
 
     def test_add_player(self):
         game = TwoPlayersPD()
         game.add_player(self.player1)
-        self.assertEqual(game.get_players(), ["AlwaysCooperate"])
-        self.assertRaises(ValueError, game.add_player, "I'm not a player")
+        self.assertEqual(["AlwaysCooperate"], game.get_players())
+        self.assertRaises(TypeError, game.add_player, "I'm not a player")
         game.add_player(self.player2)
-        self.assertEqual(game.get_players(), ["AlwaysCooperate", "AlwaysDefect"])
+        self.assertEqual(["AlwaysCooperate", "AlwaysDefect"], game.get_players())
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(UserWarning, game.add_player, self.player1)
             warnings.simplefilter("ignore")
-            self.assertEqual(game.get_players(), ["AlwaysCooperate", "AlwaysDefect"])
+            self.assertEqual(["AlwaysCooperate", "AlwaysDefect"], game.get_players())
 
     # Tests for two_players_pd_utils.py
 
     def test_two_players_pd_payoff(self):
-        self.assertEqual(two_players_pd_payoff(1, 1), 3)
-        self.assertEqual(two_players_pd_payoff(1, 0), 0)
-        self.assertEqual(two_players_pd_payoff(0, 1), 5)
-        self.assertEqual(two_players_pd_payoff(0, 0), 1)
+        self.assertEqual(3, two_players_pd_payoff(1, 1))
+        self.assertEqual(0, two_players_pd_payoff(1, 0))
+        self.assertEqual(5, two_players_pd_payoff(0, 1))
+        self.assertEqual(1, two_players_pd_payoff(0, 0))
         self.assertRaises(ValueError, two_players_pd_payoff, 0, 2)
 
     def test_from_nat_lang(self):
-        self.assertEqual(from_nat_lang("Cooperate"), 1)
-        self.assertEqual(from_nat_lang('"Cooperate"'), 1)
-        self.assertEqual(from_nat_lang("Defect"), 0)
-        self.assertEqual(from_nat_lang('"Defect"'), 0)
+        self.assertEqual(1, from_nat_lang("Cooperate"))
+        self.assertEqual(1, from_nat_lang('"Cooperate"'))
+        self.assertEqual(0, from_nat_lang("Defect"))
+        self.assertEqual(0, from_nat_lang('"Defect"'))
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             self.assertRaises(UserWarning, from_nat_lang, "I'm an error")
             warnings.simplefilter("ignore")
-            self.assertEqual(from_nat_lang("I'm an error"), 0)
+            self.assertEqual(0, from_nat_lang("I'm an error"))
 
     def test_to_nat_lang(self):
-        self.assertEqual(to_nat_lang(1), "Cooperate")
-        self.assertEqual(to_nat_lang(0), "Defect")
-        self.assertEqual(to_nat_lang({1, 0}), '{"Cooperate", "Defect"}')
-        self.assertEqual(to_nat_lang({0, 1}), '{"Cooperate", "Defect"}')
+        self.assertEqual("Cooperate", to_nat_lang(1))
+        self.assertEqual("Defect", to_nat_lang(0))
+        self.assertEqual('{"Cooperate", "Defect"}', to_nat_lang({1, 0}))
+        self.assertEqual('{"Cooperate", "Defect"}', to_nat_lang({0, 1}))
         self.assertRaises(ValueError, to_nat_lang, 2)
         self.assertRaises(ValueError, to_nat_lang, {})
         self.assertRaises(ValueError, to_nat_lang, {1, 0, 2})
         self.assertRaises(ValueError, to_nat_lang, {1, 2})
         self.assertRaises(ValueError, to_nat_lang, {0, 2})
-        self.assertEqual(to_nat_lang(1, string_of_string=True), '"Cooperate"')
-        self.assertEqual(to_nat_lang(0, string_of_string=True), '"Defect"')
-        self.assertEqual(to_nat_lang({1, 0}, string_of_string=True), '"{"Cooperate", "Defect"}"')
-        self.assertEqual(to_nat_lang({0, 1}, string_of_string=True), '"{"Cooperate", "Defect"}"')
+        self.assertEqual('"Cooperate"', to_nat_lang(1, string_of_string=True))
+        self.assertEqual('"Defect"', to_nat_lang(0, string_of_string=True))
+        self.assertEqual('"{"Cooperate", "Defect"}"', to_nat_lang({1, 0}, string_of_string=True))
+        self.assertEqual('"{"Cooperate", "Defect"}"', to_nat_lang({0, 1}, string_of_string=True))
 
     # TODO? Test play_round?
