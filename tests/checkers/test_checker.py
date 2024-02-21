@@ -11,8 +11,8 @@ class TestChecker(unittest.TestCase):
         self.client = Mock()
         self.questions = [
             "single answer",
-            "unordered list answer",
-            "ordered list answer",
+            "set answer",
+            "list answer",
         ]
 
     def test_get_answer_from_llm(self):
@@ -66,65 +66,65 @@ class TestChecker(unittest.TestCase):
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(2, checker.checks[question])
-        # Ordered list
+        # Set
         question = self.questions[1]
         idx = 0
-        correct_answer = (1, 2)
-        llm_answer = (1, 2)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((1, 2), checker.answers[question][idx]["llm_answer"])
+        correct_answer = {1, 2}
+        llm_answer = {1, 2}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({1, 2}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({1, 2}, checker.answers[question][idx]["llm_answer"])
         self.assertEqual(True, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(1, checker.checks[question])
         idx += 1
-        llm_answer = (2, 1)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((2, 1), checker.answers[question][idx]["llm_answer"])
+        llm_answer = {2, 1}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({1, 2}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({2, 1}, checker.answers[question][idx]["llm_answer"])
         self.assertEqual(True, checker.answers[question][idx]["is_correct"])
         self.assertEqual(2, checker.scores[question])
         self.assertEqual(2, checker.checks[question])
         idx += 1
-        llm_answer = (1, 3)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((1, 3), checker.answers[question][idx]["llm_answer"])
+        llm_answer = {1, 3}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({1, 2}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({1, 3}, checker.answers[question][idx]["llm_answer"])
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(2, checker.scores[question])
         self.assertEqual(3, checker.checks[question])
         idx += 1
-        llm_answer = ("1", "2")
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual(("1", "2"), checker.answers[question][idx]["llm_answer"])
+        llm_answer = {"1", "2"}
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual({1, 2}, checker.answers[question][idx]["correct_answer"])
+        self.assertEqual({"1", "2"}, checker.answers[question][idx]["llm_answer"])
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(2, checker.scores[question])
         self.assertEqual(4, checker.checks[question])
-        # Unordered list
+        # List
         question = self.questions[2]
         idx = 0
-        correct_answer = (1, 2)
-        llm_answer = (1, 2)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True, is_ordered=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((1, 2), checker.answers[question][idx]["llm_answer"])
+        correct_answer = [1, 2]
+        llm_answer = [1, 2]
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual([1, 2], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual([1, 2], checker.answers[question][idx]["llm_answer"])
         self.assertEqual(True, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(1, checker.checks[question])
         idx += 1
-        llm_answer = (2, 1)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True, is_ordered=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((2, 1), checker.answers[question][idx]["llm_answer"])
+        llm_answer = [2, 1]
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual([1, 2], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual([2, 1], checker.answers[question][idx]["llm_answer"])
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(2, checker.checks[question])
         idx += 1
-        llm_answer = (1, 3)
-        checker.check_answer(llm_answer, correct_answer, question, is_list=True, is_ordered=True)
-        self.assertEqual((1, 2), checker.answers[question][idx]["correct_answer"])
-        self.assertEqual((1, 3), checker.answers[question][idx]["llm_answer"])
+        llm_answer = [1, 3]
+        checker.check_answer(llm_answer, correct_answer, question)
+        self.assertEqual([1, 2], checker.answers[question][idx]["correct_answer"])
+        self.assertEqual([1, 3], checker.answers[question][idx]["llm_answer"])
         self.assertEqual(False, checker.answers[question][idx]["is_correct"])
         self.assertEqual(1, checker.scores[question])
         self.assertEqual(3, checker.checks[question])

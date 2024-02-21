@@ -75,13 +75,25 @@ class Checker:
             answer = str(answer)
         return answer
 
-    def check_answer(self, llm_answer, correct_answer, question, is_list=False, is_ordered=False):
-        is_ordered = is_ordered and is_list
+    def check_answer(self, llm_answer, correct_answer, question):
+        """
+        Check if the LLM answer is correct and update the scores and checks accordingly.\n
+        The correct answer can be a string, a set of strings or a list of strings.\n
+        If the correct answer is a string, the LLM answer is correct if it is equal to it.\n
+        If the correct answer is a set of strings, the LLM answer is correct if all its element are in the set and there are no extra ones.\n
+        If the correct answer is a list of strings, the LLM answer is correct if all its elements are present in the same order as in the list.\n
+        :param llm_answer: answer from the LLM to be checked.
+        :param correct_answer: correct answer.
+        :param question: question to which the correct answer is related to.
+        :return: if the LLM answer is correct.
+        """
+        is_set = isinstance(correct_answer, set)
+        is_list = isinstance(correct_answer, list)
         correct = False
-        if is_list:
+        if is_set:
             if len(llm_answer) == len(correct_answer):
                 correct = True
-                if is_ordered:
+                if is_list:
                     for i in range(len(llm_answer)):
                         if llm_answer[i] != correct_answer[i]:
                             correct = False
@@ -98,6 +110,7 @@ class Checker:
         if correct:
             self.scores[question] += 1
         self.checks[question] += 1
+        return correct
 
     def get_scores(self):
         return self.scores
