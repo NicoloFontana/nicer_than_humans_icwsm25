@@ -71,7 +71,7 @@ class Checker:
         else:
             warnings.warn(f"Could not find a valid JSON object in the generated text: {generated_text}")
             answer = ""
-        if need_str and not isinstance(answer, str):
+        if need_str:
             answer = str(answer)
         return answer
 
@@ -125,7 +125,7 @@ class Checker:
             else:
                 correct = llm_answer == correct_answer
         self.answers[question].append(
-            {"correct_answer": correct_answer, "llm_answer": llm_answer, "is_correct": correct})
+            {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
         if correct:
             self.scores[question] += 1
         self.checks[question] += 1
