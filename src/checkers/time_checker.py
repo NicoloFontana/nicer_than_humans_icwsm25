@@ -13,8 +13,15 @@ class TimeChecker(Checker):
             "How many points did you collect in round {}?",
             "How many points did your opponent collect in round {}?",
         ]
+        questions_labels = [
+            "current_round",
+            "own_action",
+            "opponent_action",
+            "own_points",
+            "opponent_points",
+        ]
         self.verbose = None
-        super().__init__("temporal_checker", questions, timestamp)
+        super().__init__("time_checker", questions, questions_labels, timestamp)
 
     def check_current_round(self, current_round):
         # Question 0: "Which is the current round of the game?"
@@ -77,11 +84,13 @@ class TimeChecker(Checker):
         # Question 1: "Which action did you play in round {}?"
         print(f"Question 1: {self.questions[1]}") if self.verbose else None
         for i in range(1, current_round):
-            self.check_action_played(True, i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space())
+            self.check_action_played(True, i, game.get_actions_by_iteration(i - 1)[player_name],
+                                     game.get_action_space())
         # Question 2: "Which action did your opponent play in round {}?"
         print(f"Question 2: {self.questions[2]}") if self.verbose else None
         for i in range(1, current_round):
-            self.check_action_played(False, i, game.get_actions_by_iteration(i - 1)[opponent_name], game.get_action_space())
+            self.check_action_played(False, i, game.get_actions_by_iteration(i - 1)[opponent_name],
+                                     game.get_action_space())
         # Question 3: "How many points did you collect in round {}?"
         print(f"Question 3: {self.questions[3]}") if self.verbose else None
         for i in range(1, current_round):
@@ -94,8 +103,3 @@ class TimeChecker(Checker):
             self.check_points_collected(False, i,
                                         game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[opponent_name],
                                                                    game.get_actions_by_iteration(i - 1)[player_name]))
-
-        if self.verbose:
-            print("\n\n")
-            for key in self.get_accuracy():
-                print(f"{key}: {self.get_accuracy()[key]}")

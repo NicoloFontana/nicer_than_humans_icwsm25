@@ -11,8 +11,14 @@ class AggregationChecker(Checker):
             "What is your current total payoff?",
             "What is your opponent's current total payoff?",
         ]
+        questions_labels = [
+            "#actions",
+            "#opponent_actions",
+            "total_payoff",
+            "opponent_total_payoff",
+        ]
         self.verbose = None
-        super().__init__("aggregation_checker", questions, timestamp)
+        super().__init__("aggregation_checker", questions, questions_labels, timestamp)
 
     def check_action_chosen(self, is_main_player, action, n_times):
         # Question 0: "How many times did you choose {}?"
@@ -67,8 +73,3 @@ class AggregationChecker(Checker):
         # Question 3: "What is your opponent's current total payoff?"
         print(f"Question 3: {self.questions[3]}") if self.verbose else None
         self.check_total_payoff(False, opponent_payoff)
-
-        if self.verbose:
-            print("\n\n")
-            for key in self.get_accuracy():
-                print(f"{key}: {self.get_accuracy()[key]}")

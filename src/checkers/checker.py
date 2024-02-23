@@ -9,26 +9,38 @@ from src.utils import CHECKS_OUT_BASE_PATH, MAX_NEW_TOKENS, TEMPERATURE, MODEL, 
 
 class Checker:
 
-    def __init__(self, checker_name, questions, timestamp):
-        self.checker_name = checker_name
+    def __init__(self, checker_name, questions, questions_labels, timestamp):
+        self.name = checker_name
         dir_path = CHECKS_OUT_BASE_PATH + f"{checker_name}\\"
         os.makedirs(dir_path, exist_ok=True)
-        self.out_file_name = dir_path + f"{timestamp}.txt"
-        self.questions = questions
-        self.generated_texts = {}
-        for question in self.questions:
-            self.generated_texts[question] = []
-        self.answers = {}
-        for question in self.questions:
-            self.answers[question] = []
-        self.scores = {}
-        for question in self.questions:
-            self.scores[question] = 0
-        self.checks = {}
-        for question in self.questions:
-            self.checks[question] = 0
+        self.out_file_name = dir_path + f"{timestamp}.json"
 
-        self.results = {}
+        self.checker_str = "checker"
+        self.label_str = "label"
+        self.sample_mean_str = "sample_mean"
+        self.sample_variance_str = "sample_variance"
+        self.n_samples_str = "n_samples"
+        self.positives_str = "positives"
+        self.generated_texts_str = "generated_texts"
+        self.answers_str = "answers"
+
+        self.questions = questions
+        self.questions_results = {}
+        for question in questions:
+            self.questions_results[question] = {
+                self.checker_str: checker_name,
+                self.label_str: questions_labels[questions.index(question)],
+                self.sample_mean_str: 0,
+                self.sample_variance_str: 0,
+                self.n_samples_str: 0,
+                self.positives_str: 0,
+                self.generated_texts_str: [],
+                self.answers_str: [],
+            }
+        self.sample_mean = 0
+        self.sample_variance = 0
+        self.n_samples = 0
+        self.positives = 0
         self.start_prompt = "<s>[INST] "
         self.system_prompt = None
         self.end_prompt = "[/INST]"
@@ -38,10 +50,7 @@ class Checker:
         self.temperature = TEMPERATURE
 
     def get_name(self):
-        return self.checker_name
-
-    def get_out_file_name(self):
-        return self.out_file_name
+        return self.name
 
     def get_answer_from_llm(self, prompt, question, need_str=True):
         """
@@ -60,7 +69,7 @@ class Checker:
         except Exception as e:
             warnings.warn(f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
             generated_text = ""
-        self.generated_texts[question].append(generated_text)
+        self.questions_results[question][self.generated_texts_str].append(generated_text)
         json_object = find_json_object(generated_text)
         if json_object is not None:
             try:
@@ -124,27 +133,41 @@ class Checker:
                 correct = llm_answer.casefold() == correct_answer.casefold()
             else:
                 correct = llm_answer == correct_answer
-        self.answers[question].append(
+        self.questions_results[question][self.answers_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
         if correct:
-            self.scores[question] += 1
-        self.checks[question] += 1
+            self.questions_results[question][self.positives_str] += 1
+            self.positives += 1
+        self.questions_results[question][self.n_samples_str] += 1
+        self.n_samples += 1
+
         return correct
 
-    def get_scores(self):
-        return self.scores
+    def compute_sample_mean_and_variance_per_question(self, question):
+        # Compute the sample mean for the question
+        quest_positives = self.questions_results[question][self.positives_str]
+        quest_n_samples = self.questions_results[question][self.n_samples_str]
+        if quest_n_samples == 0:
+            quest_sample_mean = 0
+        else:
+            quest_sample_mean = quest_positives / quest_n_samples
+        self.questions_results[question][self.sample_mean_str] = quest_sample_mean
+        # Compute the sample variance for the question
+        quest_positive_diffs = (1 - quest_sample_mean) ** 2 * quest_positives
+        quest_negative_diffs = (-quest_sample_mean) ** 2 * (quest_n_samples - quest_positives)
+        quest_sample_variance = (quest_positive_diffs + quest_negative_diffs) / (quest_n_samples - 1)
+        self.questions_results[question][self.sample_variance_str] = quest_sample_variance
 
-    def get_checks(self):
-        return self.checks
-
-    def get_accuracy(self):
-        accuracy = {}
-        for question in self.questions:
-            if self.checks[question] != 0:
-                accuracy[question] = self.scores[question] / self.checks[question]
-            else:
-                accuracy[question] = 0
-        return accuracy
+    def compute_sample_mean_and_variance_of_checker(self):
+        # Compute sample mean for the checker
+        if self.n_samples == 0:
+            self.sample_mean = 0
+        else:
+            self.sample_mean = self.positives / self.n_samples
+        # Compute the sample variance for the checker
+        positive_diffs = (1 - self.sample_mean) ** 2 * self.positives
+        negative_diffs = (-self.sample_mean) ** 2 * (self.n_samples - self.positives)
+        self.sample_variance = (positive_diffs + negative_diffs) / (self.n_samples - 1)
 
     def set_inference_client(self, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
         self.inference_client = inference_client
@@ -155,11 +178,38 @@ class Checker:
         raise NotImplementedError
 
     def save_results(self):
-        for question in self.questions:
-            self.results[question] = {"generated_texts": self.generated_texts, "answers": self.answers[question],
-                                      "score": self.scores[question], "checks": self.checks[question],
-                                      "accuracy": self.scores[question] / self.checks[question] if self.checks[
-                                                                                                       question] != 0 else 0}
-        json_results = json.dumps(self.results, indent=4)
-        out_file = open(self.out_file_name, "w")
-        out_file.write(json_results)
+        results = {}
+        self.compute_sample_mean_and_variance_of_checker()
+        results[self.name] = {
+            self.checker_str: self.name,
+            self.label_str: self.name,
+            self.sample_mean_str: self.sample_mean,
+            self.sample_variance_str: self.sample_variance,
+            self.n_samples_str: self.n_samples,
+            self.positives_str: self.positives,
+        }
+        for question in self.questions_results:
+            self.compute_sample_mean_and_variance_per_question(question)
+            results[question] = {
+                self.checker_str: self.name,
+                self.label_str: self.questions_results[question][self.label_str],
+                self.sample_mean_str: self.questions_results[question][self.sample_mean_str],
+                self.sample_variance_str: self.questions_results[question][self.sample_variance_str],
+                self.n_samples_str: self.questions_results[question][self.n_samples_str],
+                self.positives_str: self.questions_results[question][self.positives_str],
+            }
+        json_results = json.dumps(results, indent=4)
+        with open(self.out_file_name, "w") as out_file:
+            out_file.write(json_results)
+
+    def save_complete_answers(self):
+        complete_answers = {}
+        for question in self.questions_results:
+            complete_answers[question] = {
+                self.label_str: self.questions_results[question][self.label_str],
+                self.generated_texts_str: self.questions_results[question][self.generated_texts_str],
+                self.answers_str: self.questions_results[question][self.answers_str],
+            }
+        json_complete_answers = json.dumps(complete_answers, indent=4)
+        with open(self.out_file_name.replace(".json", "_complete_answers.json"), "w") as out_file:
+            out_file.write(json_complete_answers)

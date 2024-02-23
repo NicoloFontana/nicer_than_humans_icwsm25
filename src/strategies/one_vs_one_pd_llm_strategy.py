@@ -55,13 +55,14 @@ class OneVsOnePDLlmStrategy(Strategy):
         prompt = generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history)
         try:
             generated_text = self.client.text_generation(prompt, max_new_tokens=self.max_new_tokens,
-                                                    temperature=self.temperature)
+                                                         temperature=self.temperature)
         except Exception as e:
             warnings.warn(f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
             generated_text = ""
         answer = find_json_object(generated_text)
         if answer is None:
-            warnings.warn(f"No JSON parsable object found in generated text: {generated_text}. Returning 'Defect' action as 0.")
+            warnings.warn(
+                f"No JSON parsable object found in generated text: {generated_text}. Returning 'Defect' action as 0.")
             action = 0
         else:
             try:
@@ -75,5 +76,6 @@ class OneVsOnePDLlmStrategy(Strategy):
                     checker.set_inference_client(self.client)
                     checker.ask_questions(self.game, self.player_name, verbose=verbose)
                 except Exception as e:
-                    warnings.warn(f"Error {str(e)}. Checker {checker} of type {type(checker)} failed to ask questions to the inference client.")
+                    warnings.warn(
+                        f"Error {str(e)}. Checker {checker.get_name()} of type {type(checker)} failed to ask questions to the inference client.")
         return action

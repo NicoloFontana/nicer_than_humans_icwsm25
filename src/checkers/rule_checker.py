@@ -15,8 +15,17 @@ class RuleChecker(Checker):
             "Does exists a combination of actions that gives you a payoff of {} in a single round?",
             "Which is a combination of actions that gives you a payoff of {} in a single round?",
         ]
+        questions_labels = [
+            "max_payoff",
+            "min_payoff",
+            "allowed_actions",
+            "round_payoff",
+            "opponent_round_payoff",
+            "exists_combo",
+            "combo_for_payoff",
+        ]
         self.verbose = None
-        super().__init__("rule_checker", questions, timestamp)
+        super().__init__("rule_checker", questions, questions_labels, timestamp)
 
     def check_payoff_bounds(self, is_max, action_space, payoff_function):
         # Question 0: "What is the highest payoff you can get in a single round?"
@@ -144,8 +153,3 @@ class RuleChecker(Checker):
             # Question 6: "Which is a combination of actions that gives you a payoff of {}?"
             print(f"Question 6: {self.questions[6].format(payoff)}") if self.verbose else None
             self.check_combo_for_payoff(action_space, payoff_function, payoff)
-
-        if self.verbose:
-            print("\n\n")
-            for key in self.get_accuracy():
-                print(f"{key}: {self.get_accuracy()[key]}")
