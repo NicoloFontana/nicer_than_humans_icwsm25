@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import Mock
 
@@ -34,6 +35,9 @@ class TestRuleChecker(unittest.TestCase):
         self.assertEqual(2, checker.questions_results[checker.questions[2]][checker.positives_str])
         self.assertEqual(3, checker.questions_results[checker.questions[2]][checker.n_samples_str])
 
+        # Remove empty directory
+        os.rmdir(checker.dir_path)
+
     # check_payoff_of_combo is not tested because it works the same way as TimeChecker.check_current_round
 
     def test_check_exist_combo_for_payoff(self):
@@ -57,6 +61,9 @@ class TestRuleChecker(unittest.TestCase):
         self.assertEqual(3, checker.questions_results[checker.questions[5]][checker.positives_str])
         self.assertEqual(4, checker.questions_results[checker.questions[5]][checker.n_samples_str])
 
+        # Remove empty directory
+        os.rmdir(checker.dir_path)
+
     def test_check_combo_for_payoff(self):
         checker = RuleChecker(0)
         checker.inference_client = self.client
@@ -69,3 +76,6 @@ class TestRuleChecker(unittest.TestCase):
         checker.check_combo_for_payoff({1, 0}, two_players_pd_payoff, 0)
         self.assertEqual(1, checker.questions_results[checker.questions[6]][checker.positives_str])
         self.assertEqual(2, checker.questions_results[checker.questions[6]][checker.n_samples_str])
+
+        # Remove empty directory
+        os.rmdir(checker.dir_path)

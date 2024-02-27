@@ -1,3 +1,4 @@
+import datetime
 import time
 
 from src.checkers.aggregation_checker import AggregationChecker
@@ -9,22 +10,27 @@ from src.player import Player
 from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 
-n_iterations = 5
+n_iterations = 10
+checkpoint = 2
 
 verbose = False
 game = TwoPlayersPD(iterations=n_iterations)
 payoff_function = game.get_payoff_function()
 game.add_player(Player("Alice"))
 game.add_player(Player("Bob"))
+start_time = time.time()
 timestamp = int(time.time())
 checkers = [
     TimeChecker(timestamp),
     RuleChecker(timestamp),
     AggregationChecker(timestamp),
 ]
+checkers_names = [checker.get_name() for checker in checkers]
+
 for iteration in range(n_iterations):
     print("\n\n") if verbose else None
-    print(f"Round {iteration + 1}")
+    curr_round = iteration + 1
+    print(f"Round {curr_round}")
     if not game.is_ended:
         for player in game.players.values():
             own_history = game.get_history().get_actions_by_player(player.get_name())
@@ -36,6 +42,11 @@ for iteration in range(n_iterations):
             else:
                 player.set_strategy(RndStrategy())
         game.play_round()
+        if curr_round % checkpoint == 0 and curr_round < n_iterations:
+            for checker in checkers:
+                checker.save_results(infix=curr_round)
+            plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
+            print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))} seconds")
 for checker in checkers:
     checker.save_results()
     checker.save_complete_answers()
@@ -43,5 +54,5 @@ print("Results and answers saved.")
 print("\n\n") if verbose else None
 print(game.get_history()) if verbose else None
 
-checkers_names = [checker.get_name() for checker in checkers]
-plot_checkers_results(checkers_names, timestamp)
+plot_checkers_results(checkers_names, timestamp, n_iterations)
+print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))} seconds")

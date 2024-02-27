@@ -11,9 +11,9 @@ class Checker:
 
     def __init__(self, checker_name, questions, questions_labels, timestamp):
         self.name = checker_name
-        dir_path = CHECKS_OUT_BASE_PATH + f"{checker_name}\\"
-        os.makedirs(dir_path, exist_ok=True)
-        self.out_file_name = dir_path + f"{timestamp}.json"
+        self.dir_path = CHECKS_OUT_BASE_PATH + f"{timestamp}\\"
+        os.makedirs(self.dir_path, exist_ok=True)
+        self.out_file_name = self.dir_path + f"{checker_name}.json"
 
         self.checker_str = "checker"
         self.label_str = "label"
@@ -135,7 +135,7 @@ class Checker:
                 correct = llm_answer == correct_answer
         self.questions_results[question][self.answers_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
-        if correct:
+        if correct:  # TODO weight answers(all_same, /curr_round,  1 quest per kind)
             self.questions_results[question][self.positives_str] += 1
             self.positives += 1
         self.questions_results[question][self.n_samples_str] += 1
@@ -147,27 +147,22 @@ class Checker:
         # Compute the sample mean for the question
         quest_positives = self.questions_results[question][self.positives_str]
         quest_n_samples = self.questions_results[question][self.n_samples_str]
-        if quest_n_samples == 0:
-            quest_sample_mean = 0
-        else:
-            quest_sample_mean = quest_positives / quest_n_samples
+        quest_sample_mean = quest_positives / quest_n_samples if quest_n_samples > 0 else 0
         self.questions_results[question][self.sample_mean_str] = quest_sample_mean
         # Compute the sample variance for the question
         quest_positive_diffs = (1 - quest_sample_mean) ** 2 * quest_positives
         quest_negative_diffs = (-quest_sample_mean) ** 2 * (quest_n_samples - quest_positives)
-        quest_sample_variance = (quest_positive_diffs + quest_negative_diffs) / (quest_n_samples - 1)
+        quest_sample_variance = (quest_positive_diffs + quest_negative_diffs) / (
+                quest_n_samples - 1) if quest_n_samples > 1 else 0
         self.questions_results[question][self.sample_variance_str] = quest_sample_variance
 
     def compute_sample_mean_and_variance_of_checker(self):
         # Compute sample mean for the checker
-        if self.n_samples == 0:
-            self.sample_mean = 0
-        else:
-            self.sample_mean = self.positives / self.n_samples
+        self.sample_mean = self.positives / self.n_samples if self.n_samples > 0 else 0
         # Compute the sample variance for the checker
         positive_diffs = (1 - self.sample_mean) ** 2 * self.positives
         negative_diffs = (-self.sample_mean) ** 2 * (self.n_samples - self.positives)
-        self.sample_variance = (positive_diffs + negative_diffs) / (self.n_samples - 1)
+        self.sample_variance = (positive_diffs + negative_diffs) / (self.n_samples - 1) if self.n_samples > 1 else 0
 
     def set_inference_client(self, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
         self.inference_client = inference_client
@@ -177,7 +172,7 @@ class Checker:
     def ask_questions(self, game):
         raise NotImplementedError
 
-    def save_results(self):
+    def save_results(self, infix=None):
         results = {}
         self.compute_sample_mean_and_variance_of_checker()
         results[self.name] = {
@@ -199,8 +194,12 @@ class Checker:
                 self.positives_str: self.questions_results[question][self.positives_str],
             }
         json_results = json.dumps(results, indent=4)
-        with open(self.out_file_name, "w") as out_file:
-            out_file.write(json_results)
+        if infix is None:
+            with open(self.out_file_name, "w") as out_file:
+                out_file.write(json_results)
+        else:
+            with open(self.out_file_name.replace(".json", f"_{infix}.json"), "w") as out_file:
+                out_file.write(json_results)
 
     def save_complete_answers(self):
         complete_answers = {}
