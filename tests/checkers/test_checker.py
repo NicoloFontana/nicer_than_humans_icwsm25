@@ -14,11 +14,13 @@ class TestChecker(unittest.TestCase):
             "single answer",
             "set answer",
             "list answer",
+            "weighted answer",
         ]
         self.questions_labels = [
             "single",
             "set",
             "list",
+            "weighted",
         ]
 
     def test_get_answer_from_llm(self):
@@ -153,3 +155,45 @@ class TestChecker(unittest.TestCase):
 
         # Remove empty directory
         os.rmdir(checker.dir_path)
+    #
+    #
+    # def test_update_aggregates_for_question(self):
+    #     checker = Checker("checker", self.questions, self.questions_labels, 0)
+    #     question = self.questions[3]
+    #     is_correct = True
+    #     weight = 1
+    #     checker.update_aggregates_for_question(question, is_correct, weight)
+    #     self.assertEqual(1, checker.questions_results[question][checker.positives_str])
+    #     self.assertEqual(1, checker.questions_results[question][checker.total_str])
+    #     self.assertEqual(1, checker.questions_results[question][checker.sample_mean_str])
+    #     self.assertEqual(0, checker.questions_results[question][checker.squared_diffs_sum_str])
+    #     self.assertEqual(0, checker.questions_results[question][checker.sample_variance_str])
+    #     is_correct = False
+    #     checker.update_aggregates_for_question(question, is_correct, weight)
+    #     self.assertEqual(1, checker.questions_results[question][checker.positives_str])
+    #     self.assertEqual(2, checker.questions_results[question][checker.total_str])
+    #     self.assertEqual(0.5, checker.questions_results[question][checker.sample_mean_str])
+    #     self.assertEqual(0, checker.questions_results[question][checker.squared_diffs_sum_str])
+    #     self.assertEqual(0.5, checker.questions_results[question][checker.sample_variance_str])
+    #     weight = 0.5
+    #     is_correct = True
+    #     checker.update_aggregates_for_question(question, is_correct, weight)
+    #     self.assertEqual(1.5, checker.questions_results[question][checker.positives_str])
+    #
+    #
+    #
+    #     # Weighted
+    #     question = self.questions[3]
+    #     correct_answer = 1
+    #     llm_answer = 1
+    #     checker.check_answer(llm_answer, correct_answer, question, weight=0.5)
+    #     self.assertEqual(0.5, checker.questions_results[question][checker.positives_str])
+    #     self.assertEqual(0.5, checker.questions_results[question][checker.total_str])
+    #     llm_answer = 0
+    #     checker.check_answer(llm_answer, correct_answer, question, weight=0.5)
+    #     self.assertEqual(0.5, checker.questions_results[question][checker.positives_str])
+    #     self.assertEqual(1, checker.questions_results[question][checker.total_str])
+    #     llm_answer = 1
+    #     checker.check_answer(llm_answer, correct_answer, question, weight=0.25)
+    #     self.assertEqual(0.75, checker.questions_results[question][checker.positives_str])
+    #     self.assertEqual(1.25, checker.questions_results[question][checker.total_str])

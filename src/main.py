@@ -46,7 +46,7 @@ for iteration in range(n_iterations):
             for checker in checkers:
                 checker.save_results(infix=curr_round)
             plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
-            print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))} seconds")
+            print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))}")
 for checker in checkers:
     checker.save_results()
     checker.save_complete_answers()
@@ -55,4 +55,4 @@ print("\n\n") if verbose else None
 print(game.get_history()) if verbose else None
 
 plot_checkers_results(checkers_names, timestamp, n_iterations)
-print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))} seconds")
+print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))}")
