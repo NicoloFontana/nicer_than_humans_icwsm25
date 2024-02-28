@@ -54,9 +54,9 @@ def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     if infix is None:
-        plt.savefig(f'{CHECKS_OUT_BASE_PATH}{timestamp}\\{OVERALL}.png')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.png')
     else:
-        plt.savefig(f'{CHECKS_OUT_BASE_PATH}{timestamp}\\{OVERALL}_{infix}.png')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.png')
     plt.show()
 
 
@@ -65,9 +65,9 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 
     for checker in checkers_names:
         if infix is None:
-            in_file_path = f"{CHECKS_OUT_BASE_PATH}{timestamp}\\{checkers_names[checkers_names.index(checker)]}.json"
+            in_file_path = CHECKS_OUT_BASE_PATH / str(timestamp) / f"{checkers_names[checkers_names.index(checker)]}.json"
         else:
-            in_file_path = f"{CHECKS_OUT_BASE_PATH}{timestamp}\\{checkers_names[checkers_names.index(checker)]}_{infix}.json"
+            in_file_path = CHECKS_OUT_BASE_PATH / str(timestamp) / f"{checkers_names[checkers_names.index(checker)]}_{infix}.json"
         with open(in_file_path, "r") as f:
             python_object = json.load(f)
             for key in python_object.keys():
@@ -75,9 +75,9 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 
     # Dump all the Python objects into a single JSON file.
     if infix is None:
-        out_file_path = f"{CHECKS_OUT_BASE_PATH}{timestamp}\\{OVERALL}.json"
+        out_file_path = CHECKS_OUT_BASE_PATH / str(timestamp) / f"{OVERALL}.json"
     else:
-        out_file_path = f"{CHECKS_OUT_BASE_PATH}{timestamp}\\{OVERALL}_{infix}.json"
+        out_file_path = CHECKS_OUT_BASE_PATH / str(timestamp) / f"{OVERALL}_{infix}.json"
     with open(out_file_path, "w") as f:
         json.dump(python_objects, f, indent=4)
         return out_file_path

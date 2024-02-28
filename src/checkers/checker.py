@@ -1,6 +1,7 @@
 import json
 import os
 import warnings
+from pathlib import Path
 
 from huggingface_hub import InferenceClient
 
@@ -11,9 +12,10 @@ class Checker:
 
     def __init__(self, checker_name, questions, questions_labels, timestamp):
         self.name = checker_name
-        self.dir_path = CHECKS_OUT_BASE_PATH + f"{timestamp}\\"
+        self.dir_path = CHECKS_OUT_BASE_PATH / str(timestamp)
         os.makedirs(self.dir_path, exist_ok=True)
-        self.out_file_name = self.dir_path + f"{checker_name}.json"
+        self.out_file_name = self.dir_path / checker_name
+        self.out_file_name = self.out_file_name.with_suffix(".json")
 
         self.checker_str = "checker"
         self.label_str = "label"
@@ -201,7 +203,8 @@ class Checker:
             with open(self.out_file_name, "w") as out_file:
                 out_file.write(json_results)
         else:
-            with open(self.out_file_name.replace(".json", f"_{infix}.json"), "w") as out_file:
+            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_{infix}.json")
+            with open(tmp_out_file_name, "w") as out_file:
                 out_file.write(json_results)
 
     def save_complete_answers(self):
@@ -213,5 +216,6 @@ class Checker:
                 self.answers_str: self.questions_results[question][self.answers_str],
             }
         json_complete_answers = json.dumps(complete_answers, indent=4)
-        with open(self.out_file_name.replace(".json", "_complete_answers.json"), "w") as out_file:
+        tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
+        with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)

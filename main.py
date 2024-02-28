@@ -10,8 +10,8 @@ from src.player import Player
 from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 
-n_iterations = 100
-checkpoint = 10
+n_iterations = 3
+checkpoint = 1
 
 verbose = False
 game = TwoPlayersPD(iterations=n_iterations)
