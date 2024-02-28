@@ -47,7 +47,11 @@ def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
     ax.set_xlabel('Questions')
     ax.set_ylabel('Accuracy')
     ax.set_title(f'LLM checks - {timestamp} - {n_iterations} iterations')
-
+    
+    labels = []
+    for result in results.values():
+        labels.append(result['label'])
+    ax.set_xticklabels(labels)
     for tick_label in ax.get_xticklabels():
         tick_label.set_color(entry_color_map[tick_label.get_text()])
 
