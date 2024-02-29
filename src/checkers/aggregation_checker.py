@@ -1,5 +1,5 @@
 from src.checkers.checker import Checker
-from src.strategies.strategy_utils import generate_game_rules_prompt
+from src.strategies.strategy_utils import generate_game_rules_prompt, generate_history_prompt
 from src.utils import find_first_int
 
 
@@ -50,11 +50,17 @@ class AggregationChecker(Checker):
 
     def ask_questions(self, game, player_name="", verbose=False):
         self.verbose = verbose
-        current_round = game.get_current_round()
+        opponent_name = ""
+        for name in game.get_players():
+            if name != player_name:
+                opponent_name = name
+                break
         action_space = game.get_action_space()
         payoff_function = game.get_payoff_function()
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
-        self.system_prompt = game_rules_prompt
+        history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
+                                                 game.get_actions_by_player(opponent_name))
+        self.system_prompt = game_rules_prompt + history_prompt
         own_history = game.get_actions_by_player(player_name)
         opponent_history = game.get_actions_by_player(game.get_opponent_name(player_name))
         own_payoff = game.get_total_payoff_by_player(player_name)
@@ -63,14 +69,14 @@ class AggregationChecker(Checker):
             # Question 0: "How many times did you choose {}?"
             print(f"Question 0: {self.questions[0]}") if self.verbose else None
             n_times = own_history.count(action)
-            self.check_action_chosen(True, action, n_times, weight=1.0 / current_round)
+            self.check_action_chosen(True, action, n_times)
             # Question 1: "How many times did your opponent choose {}?"
             print(f"Question 1: {self.questions[1]}") if self.verbose else None
             n_times = opponent_history.count(action)
-            self.check_action_chosen(False, action, n_times, weight=1.0 / current_round)
+            self.check_action_chosen(False, action, n_times)
         # Question 2: "What is your current total payoff?"
         print(f"Question 2: {self.questions[2]}") if self.verbose else None
-        self.check_total_payoff(True, own_payoff, weight=1.0 / current_round)
+        self.check_total_payoff(True, own_payoff)
         # Question 3: "What is your opponent's current total payoff?"
         print(f"Question 3: {self.questions[3]}") if self.verbose else None
-        self.check_total_payoff(False, opponent_payoff, weight=1.0 / current_round)
+        self.check_total_payoff(False, opponent_payoff)

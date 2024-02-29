@@ -29,12 +29,12 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
 
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
-    json_prompt = 'Remember to answer using only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}'
-
     history_prompt = generate_history_prompt(own_history, opponent_history)
+
+    json_prompt = '\tRemember to use only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}\n'
 
     next_action_prompt = f"<<SYS>>Now it is round {len(own_history) + 1}.\nAnswer saying which action you choose to play."
 
     end_prompt = "[/INST]"
 
-    return start_prompt + game_rules_prompt + json_prompt + history_prompt + next_action_prompt + end_prompt
+    return start_prompt + game_rules_prompt + history_prompt + json_prompt + next_action_prompt + end_prompt

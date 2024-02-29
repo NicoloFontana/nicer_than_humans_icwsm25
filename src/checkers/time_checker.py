@@ -85,23 +85,21 @@ class TimeChecker(Checker):
         print(f"Question 1: {self.questions[1]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_action_played(True, i, game.get_actions_by_iteration(i - 1)[player_name],
-                                     game.get_action_space(), weight=1.0 / current_round)
+                                     game.get_action_space())
         # Question 2: "Which action did your opponent play in round {}?"
         print(f"Question 2: {self.questions[2]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_action_played(False, i, game.get_actions_by_iteration(i - 1)[opponent_name],
-                                     game.get_action_space(), weight=1.0 / current_round)
+                                     game.get_action_space())
         # Question 3: "How many points did you collect in round {}?"
         print(f"Question 3: {self.questions[3]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_points_collected(True, i,
                                         game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[player_name],
-                                                                   game.get_actions_by_iteration(i - 1)[opponent_name]),
-                                        weight=1.0 / current_round)
+                                                                   game.get_actions_by_iteration(i - 1)[opponent_name]))
         # Question 4: "How many points did your opponent collect in round {}?"
         print(f"Question 4: {self.questions[4]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_points_collected(False, i,
                                         game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[opponent_name],
-                                                                   game.get_actions_by_iteration(i - 1)[player_name]),
-                                        weight=1.0 / current_round)
+                                                                   game.get_actions_by_iteration(i - 1)[player_name]))

@@ -58,9 +58,9 @@ def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     if infix is None:
-        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.png')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.svg')
     else:
-        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.png')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.svg')
     plt.show()
 
 
