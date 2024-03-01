@@ -1,6 +1,6 @@
 from src.checkers.checker import Checker
 from src.games.two_players_pd_utils import to_nat_lang
-from src.strategies.strategy_utils import generate_game_rules_prompt
+from src.strategies.strategy_utils import generate_game_rules_prompt, generate_history_prompt
 from src.utils import find_first_int, find_first_substring
 
 
@@ -122,10 +122,17 @@ class RuleChecker(Checker):
 
     def ask_questions(self, game, player_name="", verbose=False):
         self.verbose = verbose
+        opponent_name = ""
+        for name in game.get_players():
+            if name != player_name:
+                opponent_name = name
+                break
         action_space = game.get_action_space()
         payoff_function = game.get_payoff_function()
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
-        self.system_prompt = game_rules_prompt
+        history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
+                                                 game.get_actions_by_player(opponent_name))
+        self.system_prompt = game_rules_prompt + history_prompt
         # Question 0: "What is the highest payoff you can get in a single round?"
         print(f"Question 0: {self.questions[0]}") if self.verbose else None
         self.check_payoff_bounds(True, action_space, payoff_function)

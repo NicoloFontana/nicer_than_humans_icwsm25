@@ -68,6 +68,7 @@ class Checker:
         if self.inference_client is None:
             warnings.warn("Inference client not set. Using default one.")
             self.inference_client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+            self.inference_client.headers["x-use-cache"] = "0"
         try:
             generated_text = self.inference_client.text_generation(prompt, max_new_tokens=self.max_new_tokens,
                                                                    temperature=self.temperature)
@@ -142,7 +143,6 @@ class Checker:
         self.questions_results[question][self.answers_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
 
-        # TODO weight answers(all_same, /curr_round,  1 quest per kind)
         self.update_aggregates_for_question(question, int(correct), weight)
         self.update_aggregates_for_checker(correct, weight)
         return correct

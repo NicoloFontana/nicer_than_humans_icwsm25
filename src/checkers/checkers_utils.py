@@ -59,8 +59,10 @@ def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
     plt.tight_layout()
     if infix is None:
         plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.svg')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.png')
     else:
         plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.svg')
+        plt.savefig(CHECKS_OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.png')
     plt.show()
 
 

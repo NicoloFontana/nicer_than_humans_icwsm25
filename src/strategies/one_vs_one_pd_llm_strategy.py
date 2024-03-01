@@ -11,16 +11,20 @@ from src.utils import MODEL, HF_API_TOKEN, MAX_NEW_TOKENS, TEMPERATURE, find_jso
 
 class OneVsOnePDLlmStrategy(Strategy):
 
-    def __init__(self, game: GTGame, player_name: str, opponent_name: str, model=MODEL, token=HF_API_TOKEN,
+    def __init__(self, game: GTGame, player_name: str, opponent_name: str, client=None,
                  max_new_tokens=MAX_NEW_TOKENS,
-                 temperature=TEMPERATURE, update_client=True):
+                 temperature=TEMPERATURE):
         super().__init__("OneVsOnePDLlmStrategy")
         try:
-            self.client = InferenceClient(model=model, token=token)
-            # Check if the model and token are valid
+            if client is None:
+                self.client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+                self.client.headers["x-use-cache"] = "0"
+            else:
+                self.client = client
+            # Check if the client is valid
             self.client.text_generation("Test", max_new_tokens=1, temperature=TEMPERATURE)
         except Exception as e:
-            raise Exception(f"Error in creating InferenceClient with model {model} and token {token}") from e
+            raise Exception(f"Error in creating InferenceClient with model {MODEL} and token {HF_API_TOKEN}") from e
         if not isinstance(game, GTGame):
             raise TypeError(f"game must be of type GTGame, not {type(game)}")
         self.game = game
@@ -36,11 +40,8 @@ class OneVsOnePDLlmStrategy(Strategy):
         if opponent_name not in game.get_players():
             raise ValueError(f"opponent_name {opponent_name} not in game.get_players(): {game.get_players()}")
         self.opponent_name = opponent_name
-        self.model = model
-        self.token = token
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
-        self.update_client = update_client
 
     def get_client(self):
         return self.client
@@ -51,7 +52,6 @@ class OneVsOnePDLlmStrategy(Strategy):
         n_iterations = self.game.get_iterations()
         own_history = self.game.get_actions_by_player(self.player_name)
         opponent_history = self.game.get_actions_by_player(self.opponent_name)
-        self.client = InferenceClient(model=self.model, token=self.token) if self.update_client else self.client
         prompt = generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history)
         try:
             generated_text = self.client.text_generation(prompt, max_new_tokens=self.max_new_tokens,

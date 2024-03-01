@@ -72,8 +72,9 @@ class TimeChecker(Checker):
             if name != player_name:
                 opponent_name = name
                 break
-        game_rules_prompt = generate_game_rules_prompt(game.get_action_space(), game.get_payoff_function(),
-                                                       game.get_iterations())
+        action_space = game.get_action_space()
+        payoff_function = game.get_payoff_function()
+        game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
         history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
                                                  game.get_actions_by_player(opponent_name))
         self.system_prompt = game_rules_prompt + history_prompt
