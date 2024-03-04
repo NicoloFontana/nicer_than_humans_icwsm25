@@ -12,9 +12,6 @@ from src.player import Player
 from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 
-logging.basicConfig(level=logging.DEBUG, filename='logfile.log', format='%(asctime)s: %(levelname)s: %(message)s')
-log = logging.getLogger()
-
 n_iterations = 100
 checkpoint = 10
 ALICE ="Alice"
