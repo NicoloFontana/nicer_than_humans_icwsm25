@@ -1,5 +1,5 @@
 from src.checkers.checker import Checker
-from src.strategies.strategy_utils import generate_game_rules_prompt, generate_history_prompt
+from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts
 from src.utils import find_first_int
 
 
@@ -26,8 +26,8 @@ class AggregationChecker(Checker):
         question_idx = 0 if is_main_player else 1
         question = self.questions[question_idx]
         json_prompt = '\tRemember to use the following JSON format: {"answer": <N_TIMES>}<<SYS>>\n'
-        question_prompt = f"Answer to the following question: {question.format(action)}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question.format(action)}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
@@ -40,8 +40,8 @@ class AggregationChecker(Checker):
         question_idx = 2 if is_main_player else 3
         question = self.questions[question_idx]
         json_prompt = '\tRemember to use the following JSON format: {"answer": <TOTAL_PAYOFF>}<<SYS>>\n'
-        question_prompt = f"Answer to the following question: {question}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
@@ -59,7 +59,7 @@ class AggregationChecker(Checker):
         payoff_function = game.get_payoff_function()
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
         history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
-                                                 game.get_actions_by_player(opponent_name))
+                                                 game.get_actions_by_player(opponent_name), payoff_function)
         self.system_prompt = game_rules_prompt + history_prompt
         own_history = game.get_actions_by_player(player_name)
         opponent_history = game.get_actions_by_player(game.get_opponent_name(player_name))

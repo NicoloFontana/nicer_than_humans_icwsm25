@@ -56,6 +56,9 @@ class GTGame:
             return []
         return list(self.players.keys())
 
+    def get_player_by_name(self, name):
+        return self.players[name]
+
     def get_iterations(self):
         return self.iterations
 

@@ -1,13 +1,6 @@
 import json
 import re
 import warnings
-from pathlib import Path
-
-HF_API_TOKEN = "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"
-CHECKS_OUT_BASE_PATH = Path("out") / "llm_checks"
-MODEL = "meta-llama/Llama-2-70b-chat-hf"
-MAX_NEW_TOKENS = 200
-TEMPERATURE = 0.7
 
 
 def find_json_object(string):

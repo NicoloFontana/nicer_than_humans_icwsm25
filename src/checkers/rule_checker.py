@@ -1,6 +1,6 @@
 from src.checkers.checker import Checker
 from src.games.two_players_pd_utils import to_nat_lang
-from src.strategies.strategy_utils import generate_game_rules_prompt, generate_history_prompt
+from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts
 from src.utils import find_first_int, find_first_substring
 
 
@@ -47,8 +47,8 @@ class RuleChecker(Checker):
             question = self.questions[1]
             correct_answer = str(min_payoff)
             json_prompt = '\tRemember to use the following JSON format: {"answer": <MIN_PAYOFF>}<<SYS>>\n'
-        question_prompt = f"Answer to the following question: {question}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
         print(f"LLM: {llm_answer}") if self.verbose else None
@@ -60,8 +60,8 @@ class RuleChecker(Checker):
         correct_answer = {to_nat_lang(action) for action in action_space}
         json_prompt = '\tRemember to use the following JSON format: {"answer": [<LIST_OF_AVAILABLE_ACTIONS>]}<<SYS>>\n'
         # The answer is requested as a list for simplicity when finding the JSON. It is then converted to a set.
-        question_prompt = f"Answer to the following question: {question}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = set(self.get_answer_from_llm(prompt, question, need_str=False))
         print(f"LLM: {llm_answer}") if self.verbose else None
@@ -74,8 +74,8 @@ class RuleChecker(Checker):
         question = self.questions[question_idx]
         correct_answer = str(payoff_function(primary_action, secondary_action))
         json_prompt = '\tRemember to use the following JSON format: {"answer": <PAYOFF>}<<SYS>>\n'
-        question_prompt = f"Answer to the following question: {question.format(to_nat_lang(primary_action), to_nat_lang(secondary_action))}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question.format(to_nat_lang(primary_action), to_nat_lang(secondary_action))}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
         print(f"LLM: {llm_answer}") if self.verbose else None
@@ -88,8 +88,8 @@ class RuleChecker(Checker):
             payoff_function(primary_action, secondary_action) == given_payoff for primary_action in action_space for
             secondary_action in action_space) else "No"
         json_prompt = '\tRemember to use the following JSON format: {"answer": "Yes"} or {"answer": "No"}<<SYS>>\n'
-        question_prompt = f"Answer to the following question: {question.format(given_payoff)}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question.format(given_payoff)}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, question), {"Yes", "No"})
         print(f"LLM: {llm_answer}") if self.verbose else None
@@ -111,8 +111,8 @@ class RuleChecker(Checker):
         json_prompt = (
             '\tRemember to use the following JSON format: {"answer": [<FIRST_PLAYER_ACTION>, <SECOND_PLAYER_ACTION>]}. '
             '\nIf no combination of actions can give you a payoff of the required payoff, answer with {"answer": "None"}<<SYS>>\n')
-        question_prompt = f"Answer to the following question: {question.format(given_payoff)}"
-        prompt = self.start_prompt + self.system_prompt + json_prompt + question_prompt + self.end_prompt
+        question_prompt = f"\tAnswer to the following question: {question.format(given_payoff)}"
+        prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = self.get_answer_from_llm(prompt, question, need_str=False)
         if not isinstance(llm_answer, list):
@@ -131,7 +131,7 @@ class RuleChecker(Checker):
         payoff_function = game.get_payoff_function()
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
         history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
-                                                 game.get_actions_by_player(opponent_name))
+                                                 game.get_actions_by_player(opponent_name), payoff_function)
         self.system_prompt = game_rules_prompt + history_prompt
         # Question 0: "What is the highest payoff you can get in a single round?"
         print(f"Question 0: {self.questions[0]}") if self.verbose else None

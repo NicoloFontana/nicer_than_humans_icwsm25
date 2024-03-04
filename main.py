@@ -1,17 +1,16 @@
-import datetime
+import datetime as dt
 import time
 
 from huggingface_hub import InferenceClient
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.checkers.checkers_utils import plot_checkers_results
+from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
 from src.player import Player
 from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
-from src.utils import MODEL, HF_API_TOKEN
 
 n_iterations = 100
 checkpoint = 10
@@ -22,12 +21,14 @@ payoff_function = game.get_payoff_function()
 game.add_player(Player("Alice"))
 game.add_player(Player("Bob"))
 start_time = time.time()
+print("Starting time:", dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 timestamp = int(time.time())
 checkers = [
     TimeChecker(timestamp),
     RuleChecker(timestamp),
     AggregationChecker(timestamp),
 ]
+# checkers = []
 checkers_names = [checker.get_name() for checker in checkers]
 client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
 client.headers["x-use-cache"] = "0"
@@ -43,21 +44,21 @@ for iteration in range(n_iterations):
                 [p for p in game.players if p != player.get_name()][0])
             if player.get_name() == "Alice":
                 strategy = OneVsOnePDLlmStrategy(game, player.get_name(), game.get_opponent_name(player.get_name()), client)
-                player.set_strategy(strategy, checkers, verbose)
+                player.set_strategy(strategy, verbose)
             else:
                 player.set_strategy(RndStrategy())
         game.play_round()
-        if curr_round % checkpoint == 0 and curr_round < n_iterations:
+        game.get_player_by_name("Alice").get_strategy().ask_questions(checkers, game, verbose)
+        if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
             for checker in checkers:
                 checker.save_results(infix=curr_round)
             plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
-            print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))}")
+            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 for checker in checkers:
     checker.save_results()
     checker.save_complete_answers()
-print("Results and answers saved.")
 print("\n\n") if verbose else None
 print(game.get_history()) if verbose else None
 
 plot_checkers_results(checkers_names, timestamp, n_iterations)
-print(f"Time elapsed: {datetime.timedelta(seconds=int(time.time() - start_time))}")
+print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")

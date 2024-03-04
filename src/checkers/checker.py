@@ -1,18 +1,20 @@
 import json
 import os
+import time
 import warnings
 from pathlib import Path
 
 from huggingface_hub import InferenceClient
 
-from src.utils import CHECKS_OUT_BASE_PATH, MAX_NEW_TOKENS, TEMPERATURE, MODEL, HF_API_TOKEN, find_json_object
+from src.utils import find_json_object
+from src.llm_utils import HF_API_TOKEN, OUT_BASE_PATH, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
 
 
 class Checker:
 
     def __init__(self, checker_name, questions, questions_labels, timestamp):
         self.name = checker_name
-        self.dir_path = CHECKS_OUT_BASE_PATH / str(timestamp)
+        self.dir_path = OUT_BASE_PATH / str(timestamp) / checker_name
         os.makedirs(self.dir_path, exist_ok=True)
         self.out_file_name = self.dir_path / checker_name
         self.out_file_name = self.out_file_name.with_suffix(".json")
@@ -46,22 +48,20 @@ class Checker:
         self.total = 0
         self.positives = 0
         self.squared_diffs_sum = 0
-        self.start_prompt = "<s>[INST] "
         self.system_prompt = None
-        self.end_prompt = "[/INST]"
 
         self.inference_client = None
-        self.max_new_tokens = MAX_NEW_TOKENS
-        self.temperature = TEMPERATURE
 
     def get_name(self):
         return self.name
 
-    def get_answer_from_llm(self, prompt, question, need_str=True):
+    def get_answer_from_llm(self, prompt, question, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE, need_str=True):
         """
         Get an answer from the LLM model given a prompt.
         :param prompt: prompt to be used for the LLM model.
         :param question: question which the prompt and the generated text are related to.
+        :param max_new_tokens: parameter for the InferenceClient
+        :param temperature: parameter for the InferenceClient
         :param need_str: requires the answer to be a string.
         :return: always a string if need_str is True, otherwise the type of the answer extracted from the JSON object.
         """
@@ -69,23 +69,19 @@ class Checker:
             warnings.warn("Inference client not set. Using default one.")
             self.inference_client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
             self.inference_client.headers["x-use-cache"] = "0"
-        try:
-            generated_text = self.inference_client.text_generation(prompt, max_new_tokens=self.max_new_tokens,
-                                                                   temperature=self.temperature)
-        except Exception as e:
-            warnings.warn(f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-            generated_text = ""
+        generated_text = generate_text(prompt, self.inference_client, max_new_tokens=max_new_tokens,
+                                       temperature=temperature)
         self.questions_results[question][self.generated_texts_str].append(generated_text)
         json_object = find_json_object(generated_text)
         if json_object is not None:
             try:
                 answer = json_object["answer"]
             except Exception as e:
-                warnings.warn(f"Error {str(e)}. No key 'answer' in JSON: {json_object}")
-                answer = ""
+                warnings.warn(f"Error {str(e)}. No key 'answer' in JSON: {json_object}. Returning entire generated text.")
+                answer = generated_text
         else:
-            warnings.warn(f"Could not find a valid JSON object in the generated text: {generated_text}")
-            answer = ""
+            warnings.warn(f"Could not find a valid JSON object in the generated text: {generated_text}. Returning entire generated text.")
+            answer = generated_text
         if need_str:
             answer = str(answer)
         return answer
@@ -170,10 +166,8 @@ class Checker:
         self.squared_diffs_sum += ((answer - self.sample_mean) ** 2) * weight
         self.sample_variance = self.squared_diffs_sum / (self.total - 1) if self.total > 1 else 0
 
-    def set_inference_client(self, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
+    def set_inference_client(self, inference_client):
         self.inference_client = inference_client
-        self.max_new_tokens = max_new_tokens
-        self.temperature = temperature
 
     def ask_questions(self, game):
         raise NotImplementedError
@@ -202,10 +196,12 @@ class Checker:
         if infix is None:
             with open(self.out_file_name, "w") as out_file:
                 out_file.write(json_results)
+                print(f"{self.name} results saved.")
         else:
             tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_{infix}.json")
             with open(tmp_out_file_name, "w") as out_file:
                 out_file.write(json_results)
+                print(f"{self.name} results saved.")
 
     def save_complete_answers(self):
         complete_answers = {}
@@ -219,3 +215,4 @@ class Checker:
         tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
+            print(f"{self.name} answers saved.")
