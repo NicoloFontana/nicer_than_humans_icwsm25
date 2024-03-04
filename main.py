@@ -54,6 +54,7 @@ for iteration in range(n_iterations):
                 checker.save_results(infix=curr_round)
             plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
             print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+game.save_history(timestamp)
 for checker in checkers:
     checker.save_results()
     checker.save_complete_answers()
