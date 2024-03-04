@@ -25,7 +25,7 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
                                                               temperature=temperature)
             generated = True
         except Exception as e:
-            if str(e) == "Model is overloaded":
+            if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
                 warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
                 time.sleep(2)
             else:
@@ -132,7 +132,8 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     payoff_prompt = ""
     for action in action_space:
         for opponent_action in action_space:
-            payoff_prompt += f"If you play {to_nat_lang(action, True)} and the opponent plays {to_nat_lang(opponent_action, True)}, you get {payoff_function(action, opponent_action)} points and the opponent gets {payoff_function(opponent_action, action)} points.\n\t"
+            payoff_prompt += (f"If you play {to_nat_lang(action, True)} and the opponent plays {to_nat_lang(opponent_action, True)}, "
+                              f"you get {payoff_function(action, opponent_action)} points and the opponent gets {payoff_function(opponent_action, action)} points.\n\t")
 
     return (f"<<SYS>>\n"
             f"\tContext: You are playing a multi-round game against an opponent.\n"
