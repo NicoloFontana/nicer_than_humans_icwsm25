@@ -22,7 +22,7 @@ class OneVsOnePDLlmStrategy(Strategy):
             else:
                 self.client = client
             # Check if the client is valid
-            self.client.text_generation("Test", max_new_tokens=1)
+            generate_text("Test", self.client, max_new_tokens=1)
         except Exception as e:
             raise Exception(f"Error in creating InferenceClient with model {MODEL} and token {HF_API_TOKEN}") from e
         if not isinstance(game, GTGame):

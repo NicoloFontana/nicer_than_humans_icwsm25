@@ -18,10 +18,10 @@ checkpoint = 10
 verbose = False
 game = TwoPlayersPD(iterations=n_iterations)
 payoff_function = game.get_payoff_function()
-game.add_player(Player("Alice"))
+game.add_player(Player(ALICE))
 game.add_player(Player("Bob"))
 start_time = time.time()
-print("Starting time:", dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+print(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 timestamp = dt.datetime.now().strftime("%Y%m%d%H%M%S")
 checkers = [
     TimeChecker(timestamp),
@@ -31,6 +31,7 @@ checkers = [
 checkers_names = [checker.get_name() for checker in checkers]
 client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
 client.headers["x-use-cache"] = "0"
+strategy = OneVsOnePDLlmStrategy(game, ALICE, game.get_opponent_name(ALICE), client)
 
 for iteration in range(n_iterations):
     print("\n\n") if verbose else None
@@ -41,13 +42,12 @@ for iteration in range(n_iterations):
             own_history = game.get_history().get_actions_by_player(player.get_name())
             opponent_history = game.get_history().get_actions_by_player(
                 [p for p in game.players if p != player.get_name()][0])
-            if player.get_name() == "Alice":
-                strategy = OneVsOnePDLlmStrategy(game, player.get_name(), game.get_opponent_name(player.get_name()), client)
+            if player.get_name() == ALICE:
                 player.set_strategy(strategy, verbose)
             else:
                 player.set_strategy(RndStrategy())
         game.play_round()
-        game.get_player_by_name("Alice").get_strategy().ask_questions(checkers, game, verbose)
+        game.get_player_by_name(ALICE).get_strategy().ask_questions(checkers, game, verbose)
         if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
             for checker in checkers:
                 checker.save_results(infix=curr_round)
