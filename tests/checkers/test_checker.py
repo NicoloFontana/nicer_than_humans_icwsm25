@@ -73,25 +73,25 @@ class TestChecker(unittest.TestCase):
         checker.check_answer(llm_answer, correct_answer, question)
         # Answers storing
         self.assertEqual(correct_answer,
-                         checker.questions_results[question][checker.answers_str][idx]["correct_answer"])
-        self.assertEqual(llm_answer, checker.questions_results[question][checker.answers_str][idx]["llm_answer"])
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+                         checker.questions_results[question][checker.answer_str][idx]["correct_answer"])
+        self.assertEqual(llm_answer, checker.questions_results[question][checker.answer_str][idx]["llm_answer"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Incorrect single numeric answer
         llm_answer = "2"
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(False, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Correct single string answer
         correct_answer = "Cooperate"
         llm_answer = "Cooperate"
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Case insensitivity for string answer
         llm_answer = "cooperate"
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
 
         # Set
         question = self.questions[1]
@@ -100,28 +100,28 @@ class TestChecker(unittest.TestCase):
         # Correct set of numeric answers
         llm_answer = {1, 2}
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Incorrect set of numeric answers
         llm_answer = {1, 3}
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(False, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Set of strings of integers is not the same as set of integers
         llm_answer = {"1", "2"}
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(False, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         correct_answer = {"Cooperate", "Defect"}
         # Correct set of string answers
         llm_answer = {"Cooperate", "Defect"}
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Set order and case insensitivity
         llm_answer = {"defect", "cooperate"}
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
 
         # List
         question = self.questions[2]
@@ -130,28 +130,28 @@ class TestChecker(unittest.TestCase):
         # Correct list of numeric answers
         llm_answer = [1, 2]
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Incorrect list of numeric answers
         llm_answer = [1, 3]
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(False, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         correct_answer = ["Cooperate", "Defect"]
         # Correct list of string answers
         llm_answer = ["Cooperate", "Defect"]
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Case insensitivity
         llm_answer = ["cooperate", "defect"]
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(True, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(True, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
         idx += 1
         # Order sensitivity
         llm_answer = ["defect", "cooperate"]
         checker.check_answer(llm_answer, correct_answer, question)
-        self.assertEqual(False, checker.questions_results[question][checker.answers_str][idx]["is_correct"])
+        self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
 
         # Remove empty directory
         os.rmdir(checker.dir_path)

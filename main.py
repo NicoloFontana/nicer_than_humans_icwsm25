@@ -22,13 +22,12 @@ game.add_player(Player("Alice"))
 game.add_player(Player("Bob"))
 start_time = time.time()
 print("Starting time:", dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
-timestamp = int(time.time())
+timestamp = dt.datetime.now().strftime("%Y%m%d%H%M%S")
 checkers = [
     TimeChecker(timestamp),
     RuleChecker(timestamp),
     AggregationChecker(timestamp),
 ]
-# checkers = []
 checkers_names = [checker.get_name() for checker in checkers]
 client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
 client.headers["x-use-cache"] = "0"

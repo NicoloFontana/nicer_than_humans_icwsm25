@@ -26,8 +26,9 @@ class Checker:
         self.total_str = "total"
         self.positives_str = "positives"
         self.squared_diffs_sum_str = "squared_diffs_sum"
-        self.generated_texts_str = "generated_texts"
-        self.answers_str = "answers"
+        self.prompt_str = "prompt"
+        self.generated_text_str = "generated_text"
+        self.answer_str = "answer"
 
         self.questions = questions
         self.questions_results = {}
@@ -40,8 +41,9 @@ class Checker:
                 self.total_str: 0,
                 self.positives_str: 0,
                 self.squared_diffs_sum_str: 0,
-                self.generated_texts_str: [],
-                self.answers_str: [],
+                self.prompt_str: [],
+                self.generated_text_str: [],
+                self.answer_str: [],
             }
         self.sample_mean = 0
         self.sample_variance = 0
@@ -69,9 +71,10 @@ class Checker:
             warnings.warn("Inference client not set. Using default one.")
             self.inference_client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
             self.inference_client.headers["x-use-cache"] = "0"
+        self.questions_results[question][self.prompt_str].append(prompt)
         generated_text = generate_text(prompt, self.inference_client, max_new_tokens=max_new_tokens,
                                        temperature=temperature)
-        self.questions_results[question][self.generated_texts_str].append(generated_text)
+        self.questions_results[question][self.generated_text_str].append(generated_text)
         json_object = find_json_object(generated_text)
         if json_object is not None:
             try:
@@ -136,7 +139,7 @@ class Checker:
                 correct = llm_answer.casefold() == correct_answer.casefold()
             else:
                 correct = llm_answer == correct_answer
-        self.questions_results[question][self.answers_str].append(
+        self.questions_results[question][self.answer_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
 
         self.update_aggregates_for_question(question, int(correct), weight)
@@ -206,11 +209,15 @@ class Checker:
     def save_complete_answers(self):
         complete_answers = {}
         for question in self.questions_results:
-            complete_answers[question] = {
-                self.label_str: self.questions_results[question][self.label_str],
-                self.generated_texts_str: self.questions_results[question][self.generated_texts_str],
-                self.answers_str: self.questions_results[question][self.answers_str],
-            }
+            complete_answers[question] = {}
+            label = self.questions_results[question][self.label_str]
+            for idx in range(len(self.questions_results[question][self.prompt_str])):
+                complete_answers[question][idx] = {
+                    self.label_str: label,
+                    self.prompt_str: self.questions_results[question][self.prompt_str][idx],
+                    self.generated_text_str: self.questions_results[question][self.generated_text_str][idx],
+                    self.answer_str: self.questions_results[question][self.answer_str][idx],
+                }
         json_complete_answers = json.dumps(complete_answers, indent=4)
         tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
         with open(tmp_out_file_name, "w") as out_file:

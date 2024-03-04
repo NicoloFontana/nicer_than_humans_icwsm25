@@ -1,4 +1,5 @@
 from src.checkers.checker import Checker
+from src.games.two_players_pd_utils import to_nat_lang
 from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts
 from src.utils import find_first_int
 
@@ -26,7 +27,7 @@ class AggregationChecker(Checker):
         question_idx = 0 if is_main_player else 1
         question = self.questions[question_idx]
         json_prompt = '\tRemember to use the following JSON format: {"answer": <N_TIMES>}<<SYS>>\n'
-        question_prompt = f"\tAnswer to the following question: {question.format(action)}"
+        question_prompt = f"\tAnswer to the following question: {question.format(to_nat_lang(action))}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None

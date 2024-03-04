@@ -38,7 +38,9 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
 
 # CHECKERS UTILS
 
-def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
+def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=None):
+    if checkers_names is None or len(checkers_names) == 0:
+        return
     results_file_path = merge_checkers_results(checkers_names, timestamp, infix=infix)
 
     with open(results_file_path, "r") as results_file:
@@ -89,25 +91,25 @@ def plot_checkers_results(checkers_names, timestamp, n_iterations, infix=None):
 
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
+    out_path = OUT_BASE_PATH / str(timestamp)
     if infix is None:
-        plt.savefig(OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.svg')
-        plt.savefig(OUT_BASE_PATH / str(timestamp) / f'{OVERALL}.png')
+        plt.savefig(out_path / f'{OVERALL}.svg')
+        plt.savefig(out_path / f'{OVERALL}.png')
     else:
-        plt.savefig(OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.svg')
-        plt.savefig(OUT_BASE_PATH / str(timestamp) / f'{OVERALL}_{infix}.png')
+        plt.savefig(out_path / f'{OVERALL}_{infix}.svg')
+        plt.savefig(out_path / f'{OVERALL}_{infix}.png')
     plt.show()
 
 
 def merge_checkers_results(checkers_names, timestamp, infix=None):
     python_objects = {}
+    out_path = OUT_BASE_PATH / str(timestamp)
 
     for checker in checkers_names:
         if infix is None:
-            in_file_path = OUT_BASE_PATH / str(
-                timestamp) / checkers_names[checkers_names.index(checker)] / f"{checkers_names[checkers_names.index(checker)]}.json"
+            in_file_path = out_path / checkers_names[checkers_names.index(checker)] / f"{checkers_names[checkers_names.index(checker)]}.json"
         else:
-            in_file_path = OUT_BASE_PATH / str(
-                timestamp) / checkers_names[checkers_names.index(checker)] / f"{checkers_names[checkers_names.index(checker)]}_{infix}.json"
+            in_file_path = out_path / checkers_names[checkers_names.index(checker)] / f"{checkers_names[checkers_names.index(checker)]}_{infix}.json"
         with open(in_file_path, "r") as f:
             python_object = json.load(f)
             for key in python_object.keys():
@@ -115,11 +117,12 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 
     # Dump all the Python objects into a single JSON file.
     if infix is None:
-        out_file_path = OUT_BASE_PATH / str(timestamp) / f"{OVERALL}.json"
+        out_file_path = out_path / f"{OVERALL}.json"
     else:
-        out_file_path = OUT_BASE_PATH / str(timestamp) / f"{OVERALL}_{infix}.json"
-    with open(out_file_path, "w") as f:
-        json.dump(python_objects, f, indent=4)
+        out_file_path = out_path / f"{OVERALL}_{infix}.json"
+    with open(out_file_path, "w") as out_file:
+        json_out = json.dumps(python_objects, indent=4)
+        out_file.write(json_out)
         return out_file_path
 
 
@@ -160,9 +163,9 @@ def generate_history_prompt(own_history, opponent_history, payoff_function):
             f"You got {own_payoff} points and your opponent got {opponent_payoff} points.\n")
         own_total_payoff += own_payoff
         opponent_total_payoff += opponent_payoff
-    history_prompt += (f"\tIn total, you have cooperated {own_coop} times and defected {own_defect} times, "
-                       f"your opponent has cooperated {opponent_coop} times and defected {opponent_defect} times.\n")
-    history_prompt += f"\tIn total, you have collected {own_total_payoff} points and your opponent has collected {opponent_total_payoff} points.\n"
+    history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+                       f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
+    history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
     history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
 
     return history_prompt
