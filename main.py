@@ -15,8 +15,9 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 n_iterations = 100
 checkpoint = 10
 ALICE ="Alice"
-
 verbose = False
+save = False
+
 game = TwoPlayersPD(iterations=n_iterations)
 payoff_function = game.get_payoff_function()
 game.add_player(Player(ALICE))
@@ -49,17 +50,15 @@ for iteration in range(n_iterations):
                 player.set_strategy(RndStrategy())
         game.play_round()
         game.get_player_by_name(ALICE).get_strategy().ask_questions(checkers, game, verbose)
-        if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
+        if save and checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
             for checker in checkers:
                 checker.save_results(infix=curr_round)
             plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
-            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
-game.save_history(timestamp)
-for checker in checkers:
-    checker.save_results()
-    checker.save_complete_answers()
-print("\n\n") if verbose else None
-print(game.get_history()) if verbose else None
-
-plot_checkers_results(checkers_names, timestamp, n_iterations)
+        print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+if save:
+    game.save_history(timestamp)
+    for checker in checkers:
+        checker.save_results()
+        checker.save_complete_answers()
+    plot_checkers_results(checkers_names, timestamp, n_iterations)
 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")

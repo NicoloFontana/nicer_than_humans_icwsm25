@@ -47,6 +47,7 @@ class OneVsOnePDLlmStrategy(Strategy):
         return self.client
 
     def play(self, verbose=False) -> int:
+        is_ended = self.game.is_ended()
         action_space = self.game.get_action_space()
         payoff_function = self.game.get_payoff_function()
         n_iterations = self.game.get_iterations()
@@ -54,7 +55,7 @@ class OneVsOnePDLlmStrategy(Strategy):
         opponent_history = self.game.get_actions_by_player(self.opponent_name)
 
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
-        history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function)
+        history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
         json_prompt = '\tRemember to use only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}<<SYS>>\n'
         next_action_prompt = f"\tAnswer saying which action you choose to play."
         prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])

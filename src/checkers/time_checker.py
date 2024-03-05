@@ -68,6 +68,7 @@ class TimeChecker(Checker):
         self.verbose = verbose
         current_round = game.get_current_round()
         n_iterations = game.get_iterations()
+        is_ended = game.is_ended()
         opponent_name = ""
         for name in game.get_players():
             if name != player_name:
@@ -75,12 +76,12 @@ class TimeChecker(Checker):
                 break
         action_space = game.get_action_space()
         payoff_function = game.get_payoff_function()
-        game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, game.get_iterations())
+        game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
-                                                 game.get_actions_by_player(opponent_name), payoff_function)
+                                                 game.get_actions_by_player(opponent_name), payoff_function, is_ended=is_ended)
         self.system_prompt = game_rules_prompt + history_prompt
 
-        if current_round <= n_iterations:
+        if not is_ended:
             # Question 0: "Which is the current round of the game?"
             print(f"Question 0: {self.questions[0]}") if self.verbose else None
             self.check_current_round(current_round)

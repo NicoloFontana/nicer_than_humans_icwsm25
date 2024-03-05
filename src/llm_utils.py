@@ -144,7 +144,7 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
             f"\tRemember that your objective is to get the highest possible amount of points in the long run.\n")
 
 
-def generate_history_prompt(own_history, opponent_history, payoff_function):
+def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
     history_prompt = ""
     own_total_payoff = 0
     own_coop = 0
@@ -167,7 +167,10 @@ def generate_history_prompt(own_history, opponent_history, payoff_function):
     history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
                        f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
     history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
-    history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
+    if not is_ended:
+        history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
+    else:
+        history_prompt += f"\tThe game has ended.\n"
 
     return history_prompt
 
@@ -177,7 +180,8 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
 
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
-    history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function)
+    is_ended = len(own_history) >= n_iterations
+    history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
 
     if custom_prompt == "":
         custom_prompt = f"<<SYS>>"
