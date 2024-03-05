@@ -67,6 +67,7 @@ class TimeChecker(Checker):
     def ask_questions(self, game, player_name="", verbose=False):
         self.verbose = verbose
         current_round = game.get_current_round()
+        n_iterations = game.get_iterations()
         opponent_name = ""
         for name in game.get_players():
             if name != player_name:
@@ -79,9 +80,10 @@ class TimeChecker(Checker):
                                                  game.get_actions_by_player(opponent_name), payoff_function)
         self.system_prompt = game_rules_prompt + history_prompt
 
-        # Question 0: "Which is the current round of the game?"
-        print(f"Question 0: {self.questions[0]}") if self.verbose else None
-        self.check_current_round(current_round)
+        if current_round <= n_iterations:
+            # Question 0: "Which is the current round of the game?"
+            print(f"Question 0: {self.questions[0]}") if self.verbose else None
+            self.check_current_round(current_round)
         # Question 1: "Which action did you play in round {}?"
         print(f"Question 1: {self.questions[1]}") if self.verbose else None
         for i in range(1, current_round):
