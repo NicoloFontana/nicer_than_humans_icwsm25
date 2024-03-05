@@ -16,7 +16,7 @@ n_iterations = 100
 checkpoint = 10
 ALICE ="Alice"
 verbose = False
-save = False
+save = True
 
 game = TwoPlayersPD(iterations=n_iterations)
 payoff_function = game.get_payoff_function()
