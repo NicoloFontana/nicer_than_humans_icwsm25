@@ -47,7 +47,7 @@ class OneVsOnePDLlmStrategy(Strategy):
         return self.client
 
     def play(self, verbose=False) -> int:
-        is_ended = self.game.is_ended()
+        is_ended = self.game.is_ended
         action_space = self.game.get_action_space()
         payoff_function = self.game.get_payoff_function()
         n_iterations = self.game.get_iterations()

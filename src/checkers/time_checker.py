@@ -68,7 +68,7 @@ class TimeChecker(Checker):
         self.verbose = verbose
         current_round = game.get_current_round()
         n_iterations = game.get_iterations()
-        is_ended = game.is_ended()
+        is_ended = game.is_ended
         opponent_name = ""
         for name in game.get_players():
             if name != player_name:

@@ -52,7 +52,7 @@ class AggregationChecker(Checker):
     def ask_questions(self, game, player_name="", verbose=False):
         self.verbose = verbose
         n_iterations = game.get_iterations()
-        is_ended = game.is_ended()
+        is_ended = game.is_ended
         opponent_name = ""
         for name in game.get_players():
             if name != player_name:
