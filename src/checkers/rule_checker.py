@@ -7,13 +7,13 @@ from src.utils import find_first_int, find_first_substring
 class RuleChecker(Checker):
     def __init__(self, timestamp):
         questions = [
-            "What is the highest payoff you can get in a single round?",
-            "What is the lowest payoff you can get in a single round?",
-            "Which actions are you allowed to play?",
-            "Which is your payoff in a single round if you play {} and your opponent plays {}?",
-            "Which is your opponent's payoff in a single round if he plays {} and you play {}?",
-            "Does exists a combination of actions that gives you a payoff of {} in a single round?",
-            "Which is a combination of actions that gives you a payoff of {} in a single round?",
+            "Say what is the highest payoff you can get in a single round.",
+            "Say what is the lowest payoff you can get in a single round.",
+            "Say which actions are you allowed to play.",
+            "Say which is your payoff in a single round if you play {} and your opponent plays {}.",
+            "Say which is your opponent's payoff in a single round if he plays {} and you play {}.",
+            "Say if does exists a combination of actions that gives you a payoff of {} in a single round.",
+            "Say which is a combination of actions that gives you a payoff of {} in a single round.",
         ]
         questions_labels = [
             "max_payoff",
