@@ -1,12 +1,11 @@
 import json
 import os
-import time
 import warnings
 from pathlib import Path
 
 from huggingface_hub import InferenceClient
 
-from src.utils import find_json_object
+from src.utils import find_json_object, log
 from src.llm_utils import HF_API_TOKEN, OUT_BASE_PATH, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
 
 
@@ -199,12 +198,12 @@ class Checker:
         if infix is None:
             with open(self.out_file_name, "w") as out_file:
                 out_file.write(json_results)
-                print(f"{self.name} results saved.")
+                log.info(f"{self.name} results saved.")
         else:
             tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_{infix}.json")
             with open(tmp_out_file_name, "w") as out_file:
                 out_file.write(json_results)
-                print(f"{self.name} results saved.")
+                log.info(f"{self.name} results saved.")
 
     def save_complete_answers(self):
         complete_answers = {}
@@ -222,4 +221,4 @@ class Checker:
         tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
-            print(f"{self.name} answers saved.")
+            log.info(f"{self.name} answers saved.")

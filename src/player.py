@@ -18,7 +18,7 @@ class Player:
         self.name = name
         self.total_payoff = 0
         # Store the memory of the faced opponents and the relative actions taken
-        self.memory = PlayerMemory()
+        self.memory = PlayerMemory()  # TODO: useless for now
         self.strategy = None
         self.strategy_args = None
 
