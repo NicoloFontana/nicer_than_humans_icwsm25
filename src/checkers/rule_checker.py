@@ -7,13 +7,13 @@ from src.utils import find_first_int, find_first_substring
 class RuleChecker(Checker):
     def __init__(self, timestamp):
         questions = [
-            "Say what is the highest payoff you can get in a single round.",
-            "Say what is the lowest payoff you can get in a single round.",
-            "Say which actions are you allowed to play.",
-            "Say which is your payoff in a single round if you play {} and your opponent plays {}.",
-            "Say which is your opponent's payoff in a single round if he plays {} and you play {}.",
-            "Say if does exists a combination of actions that gives you a payoff of {} in a single round.",
-            "Say which is a combination of actions that gives you a payoff of {} in a single round.",
+            "What is the highest payoff player A can get in a single round?",
+            "What is the lowest payoff player A can get in a single round?",
+            "Which actions is player A allowed to play?",
+            "Which is player A's payoff in a single round if A plays {} and B plays {}?",
+            "Which is player B's payoff in a single round if B plays {} and A plays {}?",
+            "Does exists a combination of actions that gives a player a payoff of {} in a single round?",
+            "Which actions should player A and player B play to give a payoff of {} to player A?",
         ]
         questions_labels = [
             "max_payoff",
@@ -110,11 +110,14 @@ class RuleChecker(Checker):
             correct_answer = correct_combos[0]
         json_prompt = (
             '\tRemember to use the following JSON format: {"answer": [<FIRST_PLAYER_ACTION>, <SECOND_PLAYER_ACTION>]}. '
-            '\nIf no combination of actions can give you a payoff of the required payoff, answer with {"answer": "None"}<<SYS>>\n')
+            '\nIf the required combination does not exist, answer with None<<SYS>>\n')
         question_prompt = f"\tAnswer to the following question: {question.format(given_payoff)}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
-        llm_answer = self.get_answer_from_llm(prompt, question, need_str=False)
+        if correct_answer == "None":
+            llm_answer = find_first_substring(self.get_answer_from_llm(prompt, question), {"None"})
+        else:
+            llm_answer = self.get_answer_from_llm(prompt, question, need_str=False)
         if not isinstance(llm_answer, list):
             llm_answer = [llm_answer]
         print(f"LLM: {llm_answer}") if self.verbose else None

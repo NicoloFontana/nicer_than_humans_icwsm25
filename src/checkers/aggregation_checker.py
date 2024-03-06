@@ -7,10 +7,10 @@ from src.utils import find_first_int
 class AggregationChecker(Checker):
     def __init__(self, timestamp):
         questions = [
-            "Say how many times did you choose {}.",
-            "Say how many times did your opponent choose {}.",
-            "Say what is your current total payoff.",
-            "Say what is your opponent's current total payoff.",
+            "How many times did player A choose {}?",
+            "How many times did player B choose {}?",
+            "What is player A's current total payoff?",
+            "What is player B's current total payoff?",
         ]
         questions_labels = [
             "#actions",

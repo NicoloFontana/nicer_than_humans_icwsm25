@@ -7,14 +7,15 @@ import warnings
 
 from src.llm_utils import OUT_BASE_PATH
 
-
 timestamp = dt.datetime.now().strftime("%Y%m%d%H%M%S")
 dir_path = OUT_BASE_PATH / str(timestamp)
 os.makedirs(dir_path, exist_ok=True)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", filename=dir_path / f"{timestamp}.log")
 log = logging.getLogger()
 
+
 def find_json_object(string):
+    string = str(string).replace("'", '"')
     if not isinstance(string, str):
         warnings.warn(f"Input string is not of type str: {type(string)}. Returning None.")
         return None

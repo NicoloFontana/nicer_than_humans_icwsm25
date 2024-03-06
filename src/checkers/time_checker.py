@@ -7,11 +7,11 @@ from src.utils import find_first_int, find_first_substring
 class TimeChecker(Checker):
     def __init__(self, timestamp):
         questions = [
-            "Say which is the current round of the game.",
-            "Say which action did you play in round {}.",
-            "Say which action did your opponent play in round {}.",
-            "Say how many points did you collect in round {}.",
-            "Say how many points did your opponent collect in round {}.",
+            "Which is the current round of the game?",
+            "Which action did player A play in round {}?",
+            "Which action did player B play in round {}?",
+            "How many points did player A collect in round {}?",
+            "How many points did player B collect in round {}?",
         ]
         questions_labels = [
             "current_round",

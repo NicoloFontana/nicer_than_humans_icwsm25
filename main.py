@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = ""
+msg = "Using JSON format in prompt to summarize game."
 
 
 if msg == "":
