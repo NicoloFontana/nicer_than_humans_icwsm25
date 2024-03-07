@@ -1,0 +1,3 @@
+This is the second version of the prompt.
+It contains all the info useful to the LLM to answer the questions formatted using in JSON.
+It has the problem that now the number of tokens of the prompt exceeds the maximum allowed by the API of HuggingFace.

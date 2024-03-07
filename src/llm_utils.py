@@ -129,39 +129,39 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 # PROMPT UTILS
 
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
-    # payoff_prompt = ""
-    # for action in action_space:
-    #     for opponent_action in action_space:
-    #         payoff_dict = {
-    #             "action_of_A": to_nat_lang(action),
-    #             "action_of_B": to_nat_lang(opponent_action),
-    #             "payoff_of_A": payoff_function(action, opponent_action),
-    #             "payoff_of_B": payoff_function(opponent_action, action)
-    #         }
-    #         payoff_prompt += str(payoff_dict) + "\n"
-    #
-    # return (f"<<SYS>>\n"
-    #         f"\tContext: Player A is playing a multi-round game against player B.\n"
-    #         f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
-    #         f"\tThe payoffs for each combination of chosen action are the following:\n"
-    #         f"\t{payoff_prompt}"
-    #         f"They will play a total of {n_iterations} rounds of this game.\n"
-    #         f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
-
-    ### v0.1
     payoff_prompt = ""
     for action in action_space:
         for opponent_action in action_space:
-            payoff_prompt += (f"If you play {to_nat_lang(action, True)} and the opponent plays {to_nat_lang(opponent_action, True)}, "
-                              f"you get {payoff_function(action, opponent_action)} points and the opponent gets {payoff_function(opponent_action, action)} points.\n\t")
+            payoff_dict = {
+                "action_of_A": to_nat_lang(action),
+                "action_of_B": to_nat_lang(opponent_action),
+                "payoff_of_A": payoff_function(action, opponent_action),
+                "payoff_of_B": payoff_function(opponent_action, action)
+            }
+            payoff_prompt += str(payoff_dict) + "\n"
 
     return (f"<<SYS>>\n"
-            f"\tContext: You are playing a multi-round game against an opponent.\n"
-            f"\tAt each turn you and your opponent simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+            f"\tContext: Player A is playing a multi-round game against player B.\n"
+            f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
             f"\tThe payoffs for each combination of chosen action are the following:\n"
             f"\t{payoff_prompt}"
-            f"You and your opponent will play a total of {n_iterations} rounds of this game.\n"
-            f"\tRemember that your objective is to get the highest possible amount of points in the long run.\n")
+            f"They will play a total of {n_iterations} rounds of this game.\n"
+            f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
+
+    ### v0.1
+    # payoff_prompt = ""
+    # for action in action_space:
+    #     for opponent_action in action_space:
+    #         payoff_prompt += (f"If you play {to_nat_lang(action, True)} and the opponent plays {to_nat_lang(opponent_action, True)}, "
+    #                           f"you get {payoff_function(action, opponent_action)} points and the opponent gets {payoff_function(opponent_action, action)} points.\n\t")
+    #
+    # return (f"<<SYS>>\n"
+    #         f"\tContext: You are playing a multi-round game against an opponent.\n"
+    #         f"\tAt each turn you and your opponent simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+    #         f"\tThe payoffs for each combination of chosen action are the following:\n"
+    #         f"\t{payoff_prompt}"
+    #         f"You and your opponent will play a total of {n_iterations} rounds of this game.\n"
+    #         f"\tRemember that your objective is to get the highest possible amount of points in the long run.\n")
 
 
 def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
@@ -179,43 +179,43 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
         opponent_defect += 1 if not opponent_history[i] else 0
         own_payoff = payoff_function(own_history[i], opponent_history[i])
         opponent_payoff = payoff_function(opponent_history[i], own_history[i])
-        #     round_dict = {
-        #         "round": i + 1,
-        #         "action_of_A": to_nat_lang(own_history[i]),
-        #         "action_of_B": to_nat_lang(opponent_history[i]),
-        #         "payoff_of_A": own_payoff,
-        #         "payoff_of_B": opponent_payoff
-        #     }
-        #     history_prompt += str(round_dict) + "\n"
-        #     own_total_payoff += own_payoff
-        #     opponent_total_payoff += opponent_payoff
-        # aggregate_dict = {
-        #     "n_times_coop_A": own_coop,
-        #     "n_times_defect_A": own_defect,
-        #     "n_times_coop_B": opponent_coop,
-        #     "n_times_defect_B": opponent_defect,
-        #     "total_payoff_A": own_total_payoff,
-        #     "total_payoff_B": opponent_total_payoff
-        # }
-        # history_prompt += str(aggregate_dict) + "\n"
-        # if not is_ended:
-        #     history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
-        # else:
-        #     history_prompt += f"\tThe game has ended.\n"
-
-        ### v0.1
-        history_prompt += (
-            f"\tIn round {i + 1} you played {to_nat_lang(own_history[i], True)} and your opponent played {to_nat_lang(opponent_history[i], True)}. "
-            f"You got {own_payoff} points and your opponent got {opponent_payoff} points.\n")
+        round_dict = {
+            "round": i + 1,
+            "action_of_A": to_nat_lang(own_history[i]),
+            "action_of_B": to_nat_lang(opponent_history[i]),
+            "payoff_of_A": own_payoff,
+            "payoff_of_B": opponent_payoff
+        }
+        history_prompt += str(round_dict) + "\n"
         own_total_payoff += own_payoff
         opponent_total_payoff += opponent_payoff
-    history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
-                       f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
+    aggregate_dict = {
+        "n_times_coop_A": own_coop,
+        "n_times_defect_A": own_defect,
+        "n_times_coop_B": opponent_coop,
+        "n_times_defect_B": opponent_defect,
+        "total_payoff_A": own_total_payoff,
+        "total_payoff_B": opponent_total_payoff
+    }
+    history_prompt += str(aggregate_dict) + "\n"
     if not is_ended:
         history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
     else:
         history_prompt += f"\tThe game has ended.\n"
+
+    ### v0.1
+    #     history_prompt += (
+    #         f"\tIn round {i + 1} you played {to_nat_lang(own_history[i], True)} and your opponent played {to_nat_lang(opponent_history[i], True)}. "
+    #         f"You got {own_payoff} points and your opponent got {opponent_payoff} points.\n")
+    #     own_total_payoff += own_payoff
+    #     opponent_total_payoff += opponent_payoff
+    # history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+    #                    f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
+    # history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
+    # if not is_ended:
+    #     history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
+    # else:
+    #     history_prompt += f"\tThe game has ended.\n"
 
     return history_prompt
 
