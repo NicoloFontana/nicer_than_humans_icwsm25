@@ -14,13 +14,13 @@ from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log
 
-n_iterations = 100
+n_iterations = 50
 checkpoint = 10
 ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Using JSON format in prompt to summarize game."
+msg = "Using JSON format in prompt to summarize game. Need to run less iterations to avoid exceeding the token limit."
 
 
 if msg == "":

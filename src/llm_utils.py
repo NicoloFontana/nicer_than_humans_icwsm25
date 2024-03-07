@@ -144,11 +144,11 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
             f"\tContext: Player A is playing a multi-round game against player B.\n"
             f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
             f"\tThe payoffs for each combination of chosen action are the following:\n"
-            f"\t{payoff_prompt}"
+            f"\t[{payoff_prompt}]"
             f"They will play a total of {n_iterations} rounds of this game.\n"
             f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
 
-    ### v0.1
+    ### v0.1 - compact, but less functional-based (up to 100 rounds)
     # payoff_prompt = ""
     # for action in action_space:
     #     for opponent_action in action_space:
@@ -203,7 +203,7 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
     else:
         history_prompt += f"\tThe game has ended.\n"
 
-    ### v0.1
+    ### v0.1 - compact, but less functional-based (up to 100 rounds)
     #     history_prompt += (
     #         f"\tIn round {i + 1} you played {to_nat_lang(own_history[i], True)} and your opponent played {to_nat_lang(opponent_history[i], True)}. "
     #         f"You got {own_payoff} points and your opponent got {opponent_payoff} points.\n")
