@@ -1,0 +1,20 @@
+<s>[INST] <<SYS>>
+	Context: You are playing a multi-round game against an opponent.
+	At each turn you and your opponent simultaneously perform one of the following actions: "{"Cooperate", "Defect"}"
+	The payoffs for each combination of chosen action are the following:
+	If you play "Defect" and the opponent plays "Defect", you get 1 points and the opponent gets 1 points.
+	If you play "Defect" and the opponent plays "Cooperate", you get 5 points and the opponent gets 0 points.
+	If you play "Cooperate" and the opponent plays "Defect", you get 0 points and the opponent gets 5 points.
+	If you play "Cooperate" and the opponent plays "Cooperate", you get 3 points and the opponent gets 3 points.
+	You and your opponent will play a total of 100 rounds of this game.
+	Remember that your objective is to get the highest possible amount of points in the long run.
+	In round 1 you played "Cooperate" and your opponent played "Defect". You got 0 points and your opponent got 5 points.
+	In round 2 you played "Defect" and your opponent played "Cooperate". You got 5 points and your opponent got 0 points.
+	In round 3 you played "Cooperate" and your opponent played "Defect". You got 0 points and your opponent got 5 points.
+	In round 4 you played "Defect" and your opponent played "Cooperate". You got 5 points and your opponent got 0 points.
+	In round 5 you played "Cooperate" and your opponent played "Defect". You got 0 points and your opponent got 5 points.
+	In total, you chose "Cooperate" 3 times and chose "Defect" 2 times, your opponent chose "Cooperate" 2 times and chose "Defect" 3 times.
+	In total, you collected 10 points and your opponent collected 15 points.
+	Now it is round 6.
+	Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}<<SYS>>
+	Answer saying which action player A should play.[/INST]
