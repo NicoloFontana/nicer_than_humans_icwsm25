@@ -129,43 +129,26 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 # PROMPT UTILS
 
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
-    ### v0.3 - the most compact, but info are more implicit (up to 120~130 rounds)
     payoff_prompt = ""
+
+    ### v0.4
     for action in action_space:
         for opponent_action in action_space:
             payoff_dict = {
-                "actions": [to_nat_lang(action), to_nat_lang(opponent_action)],
-                "payoffs": [payoff_function(action, opponent_action), payoff_function(opponent_action, action)],
+                "action_of_A": to_nat_lang(action),
+                "action_of_B": to_nat_lang(opponent_action),
+                "payoff_of_A": payoff_function(action, opponent_action),
+                "payoff_of_B": payoff_function(opponent_action, action)
             }
-            payoff_prompt += str(payoff_dict) + "\n"
+            payoff_prompt += str(payoff_dict)
 
     game_rules_prompt = (f"<<SYS>>\n"
-            f"\tContext: Player A is playing a multi-round game against player B.\n"
-            f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
-            f"\tThe payoffs for each combination of chosen action are the following:\n"
-            f"\t[{payoff_prompt}]"
-            f"They will play a total of {n_iterations} rounds of this game.\n"
-            f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
-
-    # ### v0.4
-    # payoff_prompt = ""
-    # for action in action_space:
-    #     for opponent_action in action_space:
-    #         payoff_dict = {
-    #             "action_of_A": to_nat_lang(action),
-    #             "action_of_B": to_nat_lang(opponent_action),
-    #             "payoff_of_A": payoff_function(action, opponent_action),
-    #             "payoff_of_B": payoff_function(opponent_action, action)
-    #         }
-    #         payoff_prompt += str(payoff_dict)
-    #
-    # game_rules_prompt = (f"<<SYS>>\n"
-    #                      f"\tContext: Player A is playing a multi-round game against player B.\n"
-    #                      f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
-    #                      f"\tThe payoffs for each combination of chosen action are the following:\n"
-    #                      f"\t[{payoff_prompt}]"
-    #                      f"They will play a total of {n_iterations} rounds of this game.\n"
-    #                      f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
+                         f"\tContext: Player A is playing a multi-round game against player B.\n"
+                         f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+                         f"\tThe payoffs for each combination of chosen action are the following:\n"
+                         f"\t[{payoff_prompt}]"
+                         f"They will play a total of {n_iterations} rounds of this game.\n"
+                         f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
 
     return game_rules_prompt
 
@@ -173,58 +156,25 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
 def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
     history_prompt = ""
 
-    # ### v0.4 - Pass the action and payoff histories as lists
-    # # TODO: check which is the min length to allow LLM to understand history without specifying number of each round
-    # # TODO: check if changing the token representing the action is better
-    # own_history_nat_lang = [to_nat_lang(action) for action in own_history]
-    # opponent_history_nat_lang = [to_nat_lang(action) for action in opponent_history]
-    # own_payoff_history = [payoff_function(own_history[i], opponent_history[i]) for i in range(len(own_history))]
-    # opponent_payoff_history = [payoff_function(opponent_history[i], own_history[i]) for i in range(len(own_history))]
-    # history_prompt += f"\tIn the last {len(own_history)} rounds, player A played {own_history_nat_lang}\nplayer B played {opponent_history_nat_lang}.\n"
-    # own_coop = own_history.count(1)
-    # own_defect = own_history.count(0)
-    # opponent_coop = opponent_history.count(1)
-    # opponent_defect = opponent_history.count(0)
-    # history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
-    #                    f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    # own_total_payoff = sum(own_payoff_history)
-    # opponent_total_payoff = sum(opponent_payoff_history)
-    # history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
-    # if not is_ended:
-    #     history_prompt += f"\tCurrent round: {len(own_history) + 1}.\n"
-    # else:
-    #     history_prompt += f"\tThe game has ended.\n"
-
-    ### v0.3 - the most compact, but info are more implicit (up to 120~130 rounds)
-    own_total_payoff = 0
-    own_coop = 0
-    own_defect = 0
-    opponent_total_payoff = 0
-    opponent_coop = 0
-    opponent_defect = 0
-    for i in range(len(own_history)):
-        own_coop += 1 if own_history[i] else 0
-        own_defect += 1 if not own_history[i] else 0
-        opponent_coop += 1 if opponent_history[i] else 0
-        opponent_defect += 1 if not opponent_history[i] else 0
-        own_payoff = payoff_function(own_history[i], opponent_history[i])
-        opponent_payoff = payoff_function(opponent_history[i], own_history[i])
-        round_dict = {
-            "round": i + 1,
-            "actions": [to_nat_lang(own_history[i]), to_nat_lang(opponent_history[i])],
-            "payoffs": [own_payoff, opponent_payoff],
-        }
-        history_prompt += str(round_dict) + "\n"
-        own_total_payoff += own_payoff
-        opponent_total_payoff += opponent_payoff
-    aggregate_dict = {
-        "n_times_coop": [own_coop, opponent_coop],
-        "n_times_defect": [own_defect, opponent_defect],
-        "total_payoffs": [own_total_payoff, opponent_total_payoff],
-    }
-    history_prompt += str(aggregate_dict) + "\n"
+    ### v0.4 - Pass the action and payoff histories as lists
+    # TODO: check which is the min length to allow LLM to understand history without specifying number of each round
+    # TODO: check if changing the token representing the action is better
+    own_history_nat_lang = [to_nat_lang(action) for action in own_history]
+    opponent_history_nat_lang = [to_nat_lang(action) for action in opponent_history]
+    own_payoff_history = [payoff_function(own_history[i], opponent_history[i]) for i in range(len(own_history))]
+    opponent_payoff_history = [payoff_function(opponent_history[i], own_history[i]) for i in range(len(own_history))]
+    history_prompt += f"\tIn the last {len(own_history)} rounds, player A played {own_history_nat_lang}\nplayer B played {opponent_history_nat_lang}.\n"
+    own_coop = own_history.count(1)
+    own_defect = own_history.count(0)
+    opponent_coop = opponent_history.count(1)
+    opponent_defect = opponent_history.count(0)
+    history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+                       f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
+    own_total_payoff = sum(own_payoff_history)
+    opponent_total_payoff = sum(opponent_payoff_history)
+    history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
     if not is_ended:
-        history_prompt += f"\tCurrent round {len(own_history) + 1}.\n"
+        history_prompt += f"\tCurrent round: {len(own_history) + 1}.\n"
     else:
         history_prompt += f"\tThe game has ended.\n"
 
