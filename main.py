@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Trying compact implicit JSON format in prompt to summarize game."
+msg = "Trying histories as lists. Very implicit, but much more compact."
 
 
 if msg == "":
