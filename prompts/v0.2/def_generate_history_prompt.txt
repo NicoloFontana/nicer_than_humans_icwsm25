@@ -1,0 +1,42 @@
+def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
+    history_prompt = ""
+    own_total_payoff = 0
+    own_coop = 0
+    own_defect = 0
+    opponent_total_payoff = 0
+    opponent_coop = 0
+    opponent_defect = 0
+
+    ### v0.2 - JSON format, but least compact (up to 68 rounds)
+    for i in range(len(own_history)):
+        own_coop += 1 if own_history[i] else 0
+        own_defect += 1 if not own_history[i] else 0
+        opponent_coop += 1 if opponent_history[i] else 0
+        opponent_defect += 1 if not opponent_history[i] else 0
+        own_payoff = payoff_function(own_history[i], opponent_history[i])
+        opponent_payoff = payoff_function(opponent_history[i], own_history[i])
+        round_dict = {
+            "round": i + 1,
+            "action_of_A": to_nat_lang(own_history[i]),
+            "action_of_B": to_nat_lang(opponent_history[i]),
+            "payoff_of_A": own_payoff,
+            "payoff_of_B": opponent_payoff
+        }
+        history_prompt += str(round_dict) + "\n"
+        own_total_payoff += own_payoff
+        opponent_total_payoff += opponent_payoff
+    aggregate_dict = {
+        "n_times_coop_A": own_coop,
+        "n_times_defect_A": own_defect,
+        "n_times_coop_B": opponent_coop,
+        "n_times_defect_B": opponent_defect,
+        "total_payoff_A": own_total_payoff,
+        "total_payoff_B": opponent_total_payoff
+    }
+    history_prompt += str(aggregate_dict) + "\n"
+    if not is_ended:
+        history_prompt += f"\tNow it is round {len(own_history) + 1}.\n"
+    else:
+        history_prompt += f"\tThe game has ended.\n"
+
+    return history_prompt

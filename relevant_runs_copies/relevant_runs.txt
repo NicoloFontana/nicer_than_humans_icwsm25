@@ -1,0 +1,10 @@
+1709232726:
+    First run, not all info for the questions was added (missing curr_round, point got, aggregates)
+20240304182346:
+    Second run, add missing info.
+20240305134839:
+    Second and half run, fix some bugs.
+20240305135918:
+    Attempt with imperative questions.
+20240307183455:
+    Second version of prompt using JSON format. Run on fewer iterations to avoid exceeding token limit.
