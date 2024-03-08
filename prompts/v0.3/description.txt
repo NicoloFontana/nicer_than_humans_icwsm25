@@ -1,0 +1,1 @@
+Compacted the info by putting each pair of actions/payoffs playerA-playerB in a list. This made the prompt more implicit.
