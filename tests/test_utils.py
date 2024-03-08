@@ -7,6 +7,8 @@ from src.utils import find_json_object, find_first_int, find_first_substring
 class TestUtils(unittest.TestCase):
 
     def test_find_json_object(self):
+        string = '{"action": "Cooperate", "reason": "Since it\'s optimal"}'
+        self.assertEqual({"action": "Cooperate", "reason": "Since it,s optimal"}, find_json_object(string))
         string = "{\"answer\": ['Defect', 'Cooperate']}"
         self.assertEqual({"answer": ["Defect", "Cooperate"]}, find_json_object(string))
         string = '{"action": "Cooperate", "reason": "I want to start with a cooperative move."}'

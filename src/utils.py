@@ -15,7 +15,9 @@ log = logging.getLogger()
 
 
 def find_json_object(string):
-    string = str(string).replace("'", '"')
+    string = re.sub(r"([a-zA-Z])'([a-zA-Z])", r'\1,\2', string)
+    string = re.sub(r"'", '"', string)
+    # string = str(string).replace("'", '"')
     if not isinstance(string, str):
         warnings.warn(f"Input string is not of type str: {type(string)}. Returning None.")
         return None
