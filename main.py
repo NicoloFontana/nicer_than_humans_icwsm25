@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Trying histories as lists. Very implicit, but much more compact."
+msg = "Trying histories as 10-long-chunked lists to reduce the level of implicit information."
 
 
 if msg == "":

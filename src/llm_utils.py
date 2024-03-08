@@ -156,22 +156,32 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
 def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
     history_prompt = ""
 
-    ### v0.4 - Pass the action and payoff histories as lists
+    ### v0.5 - Pass the action and payoff histories as 10-long-chunked lists
     # TODO: check which is the min length to allow LLM to understand history without specifying number of each round
     # TODO: check if changing the token representing the action is better
-    own_history_nat_lang = [to_nat_lang(action) for action in own_history]
-    opponent_history_nat_lang = [to_nat_lang(action) for action in opponent_history]
-    own_payoff_history = [payoff_function(own_history[i], opponent_history[i]) for i in range(len(own_history))]
-    opponent_payoff_history = [payoff_function(opponent_history[i], own_history[i]) for i in range(len(own_history))]
-    history_prompt += f"\tIn the last {len(own_history)} rounds, player A played {own_history_nat_lang}\nplayer B played {opponent_history_nat_lang}.\n"
-    own_coop = own_history.count(1)
-    own_defect = own_history.count(0)
-    opponent_coop = opponent_history.count(1)
-    opponent_defect = opponent_history.count(0)
+    own_coop = 0
+    own_defect = 0
+    opponent_coop = 0
+    opponent_defect = 0
+    own_total_payoff = 0
+    opponent_total_payoff = 0
+    for chunk in range(0, len(own_history), 10):
+        chunk_length = 10 if chunk + 10 < len(own_history) else len(own_history) - chunk
+        own_history_nat_lang = [to_nat_lang(action) for action in own_history[chunk:chunk + chunk_length]]
+        opponent_history_nat_lang = [to_nat_lang(action) for action in opponent_history[chunk:chunk + chunk_length]]
+        own_payoff_history = [payoff_function(own_history[i], opponent_history[i]) for i in range(chunk, chunk + chunk_length)]
+        opponent_payoff_history = [payoff_function(opponent_history[i], own_history[i]) for i in range(chunk, chunk + chunk_length)]
+        history_prompt += (f"\tIn rounds from {chunk + 1} to {chunk + chunk_length}:\n"
+                           f"\tplayer A played {own_history_nat_lang}\n"
+                           f"\tplayer B played {opponent_history_nat_lang}.\n")
+        own_coop += own_history[chunk:chunk + chunk_length].count(1)
+        own_defect += own_history[chunk:chunk + chunk_length].count(0)
+        opponent_coop += opponent_history[chunk:chunk + chunk_length].count(1)
+        opponent_defect += opponent_history[chunk:chunk + chunk_length].count(0)
+        own_total_payoff += sum(own_payoff_history)
+        opponent_total_payoff += sum(opponent_payoff_history)
     history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
                        f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    own_total_payoff = sum(own_payoff_history)
-    opponent_total_payoff = sum(opponent_payoff_history)
     history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
     if not is_ended:
         history_prompt += f"\tCurrent round: {len(own_history) + 1}.\n"
