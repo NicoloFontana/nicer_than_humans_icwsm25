@@ -1,0 +1,173 @@
+{
+    "time_checker": {
+        "checker": "time_checker",
+        "label": "time_checker",
+        "sample_mean": 0.8539522237327637,
+        "sample_variance": 0.12465991271411335,
+        "total": 5149.0,
+        "positives": 4397.0,
+        "squared_diffs_sum": 641.7492306522555
+    },
+    "Which is the current round of the game?": {
+        "checker": "time_checker",
+        "label": "current_round",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 49.0,
+        "positives": 49.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which action did player A play in round {}?": {
+        "checker": "time_checker",
+        "label": "own_action",
+        "sample_mean": 0.9443137254901961,
+        "sample_variance": 0.05248756271837976,
+        "total": 1275.0,
+        "positives": 1204.0,
+        "squared_diffs_sum": 66.86915490321582
+    },
+    "Which action did player B play in round {}?": {
+        "checker": "time_checker",
+        "label": "opponent_action",
+        "sample_mean": 0.8062745098039216,
+        "sample_variance": 0.15585566895028602,
+        "total": 1275.0,
+        "positives": 1028.0,
+        "squared_diffs_sum": 198.5601222426644
+    },
+    "How many points did player A collect in round {}?": {
+        "checker": "time_checker",
+        "label": "own_points",
+        "sample_mean": 0.8352941176470589,
+        "sample_variance": 0.13737555617786137,
+        "total": 1275.0,
+        "positives": 1065.0,
+        "squared_diffs_sum": 175.0164585705954
+    },
+    "How many points did player B collect in round {}?": {
+        "checker": "time_checker",
+        "label": "opponent_points",
+        "sample_mean": 0.8243137254901961,
+        "sample_variance": 0.14451960718113074,
+        "total": 1275.0,
+        "positives": 1051.0,
+        "squared_diffs_sum": 184.11797954876056
+    },
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.6991304347826087,
+        "sample_variance": 0.20955262724127963,
+        "total": 1150.0,
+        "positives": 804.0,
+        "squared_diffs_sum": 240.7759687002303
+    },
+    "What is the highest payoff player A can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "max_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "What is the lowest payoff player A can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "min_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which actions is player A allowed to play?": {
+        "checker": "rule_checker",
+        "label": "allowed_actions",
+        "sample_mean": 0.96,
+        "sample_variance": 0.03755327917469659,
+        "total": 50.0,
+        "positives": 48.0,
+        "squared_diffs_sum": 1.840110679560133
+    },
+    "Which is player A's payoff in a single round if A plays {} and B plays {}?": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 200.0,
+        "positives": 200.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which is player B's payoff in a single round if B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.875,
+        "sample_variance": 0.1065661930539795,
+        "total": 200.0,
+        "positives": 175.0,
+        "squared_diffs_sum": 21.20667241774192
+    },
+    "Does exists a combination of actions that gives a player a payoff of {} in a single round?": {
+        "checker": "rule_checker",
+        "label": "exists_combo",
+        "sample_mean": 0.68,
+        "sample_variance": 0.21437253848142224,
+        "total": 300.0,
+        "positives": 204.0,
+        "squared_diffs_sum": 64.09738900594525
+    },
+    "Which actions should player A and player B play to give a payoff of {} to player A?": {
+        "checker": "rule_checker",
+        "label": "combo_for_payoff",
+        "sample_mean": 0.25666666666666665,
+        "sample_variance": 0.1872798348283982,
+        "total": 300.0,
+        "positives": 77.0,
+        "squared_diffs_sum": 55.99667061369106
+    },
+    "aggregation_checker": {
+        "checker": "aggregation_checker",
+        "label": "aggregation_checker",
+        "sample_mean": 0.9666666666666667,
+        "sample_variance": 0.030744896560763492,
+        "total": 300.0,
+        "positives": 290.0,
+        "squared_diffs_sum": 9.192724071668284
+    },
+    "How many times did player A choose {}?": {
+        "checker": "aggregation_checker",
+        "label": "#actions",
+        "sample_mean": 0.99,
+        "sample_variance": 0.009125232193941117,
+        "total": 100.0,
+        "positives": 99.0,
+        "squared_diffs_sum": 0.9033979872001706
+    },
+    "How many times did player B choose {}?": {
+        "checker": "aggregation_checker",
+        "label": "#opponent_actions",
+        "sample_mean": 0.91,
+        "sample_variance": 0.0752642154285778,
+        "total": 100.0,
+        "positives": 91.0,
+        "squared_diffs_sum": 7.451157327429201
+    },
+    "What is player A's current total payoff?": {
+        "checker": "aggregation_checker",
+        "label": "total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "What is player B's current total payoff?": {
+        "checker": "aggregation_checker",
+        "label": "opponent_total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    }
+}

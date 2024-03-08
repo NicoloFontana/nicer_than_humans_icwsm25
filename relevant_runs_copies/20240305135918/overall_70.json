@@ -1,0 +1,173 @@
+{
+    "time_checker": {
+        "checker": "time_checker",
+        "label": "time_checker",
+        "sample_mean": 0.9338661338661338,
+        "sample_variance": 0.061748134163328354,
+        "total": 10010.0,
+        "positives": 9348.0,
+        "squared_diffs_sum": 618.0370748407535
+    },
+    "Say which is the current round of the game.": {
+        "checker": "time_checker",
+        "label": "current_round",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which action did you play in round {}.": {
+        "checker": "time_checker",
+        "label": "own_action",
+        "sample_mean": 0.9895372233400402,
+        "sample_variance": 0.010335781981905528,
+        "total": 2485.0,
+        "positives": 2459.0,
+        "squared_diffs_sum": 25.67408244305333
+    },
+    "Say which action did your opponent play in round {}.": {
+        "checker": "time_checker",
+        "label": "opponent_action",
+        "sample_mean": 0.9484909456740442,
+        "sample_variance": 0.04881331613265969,
+        "total": 2485.0,
+        "positives": 2357.0,
+        "squared_diffs_sum": 121.25227727352667
+    },
+    "Say how many points did you collect in round {}.": {
+        "checker": "time_checker",
+        "label": "own_points",
+        "sample_mean": 0.9078470824949698,
+        "sample_variance": 0.08359706875460415,
+        "total": 2485.0,
+        "positives": 2256.0,
+        "squared_diffs_sum": 207.6551187864367
+    },
+    "Say how many points did your opponent collect in round {}.": {
+        "checker": "time_checker",
+        "label": "opponent_points",
+        "sample_mean": 0.8877263581488933,
+        "sample_variance": 0.09959523067808838,
+        "total": 2485.0,
+        "positives": 2206.0,
+        "squared_diffs_sum": 247.39455300437155
+    },
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.7652173913043478,
+        "sample_variance": 0.17924013182168394,
+        "total": 1610.0,
+        "positives": 1232.0,
+        "squared_diffs_sum": 288.39737210108945
+    },
+    "Say what is the highest payoff you can get in a single round.": {
+        "checker": "rule_checker",
+        "label": "max_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say what is the lowest payoff you can get in a single round.": {
+        "checker": "rule_checker",
+        "label": "min_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which actions are you allowed to play.": {
+        "checker": "rule_checker",
+        "label": "allowed_actions",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which is your payoff in a single round if you play {} and your opponent plays {}.": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 280.0,
+        "positives": 280.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which is your opponent's payoff in a single round if he plays {} and you play {}.": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.7821428571428571,
+        "sample_variance": 0.16924069660049298,
+        "total": 280.0,
+        "positives": 219.0,
+        "squared_diffs_sum": 47.21815435153754
+    },
+    "Say if does exists a combination of actions that gives you a payoff of {} in a single round.": {
+        "checker": "rule_checker",
+        "label": "exists_combo",
+        "sample_mean": 0.7547619047619047,
+        "sample_variance": 0.18368315486597245,
+        "total": 420.0,
+        "positives": 317.0,
+        "squared_diffs_sum": 76.96324188884246
+    },
+    "Say which is a combination of actions that gives you a payoff of {} in a single round.": {
+        "checker": "rule_checker",
+        "label": "combo_for_payoff",
+        "sample_mean": 0.49047619047619045,
+        "sample_variance": 0.2468841093837877,
+        "total": 420.0,
+        "positives": 206.0,
+        "squared_diffs_sum": 103.44444183180704
+    },
+    "aggregation_checker": {
+        "checker": "aggregation_checker",
+        "label": "aggregation_checker",
+        "sample_mean": 0.9904761904761905,
+        "sample_variance": 0.008989772189989914,
+        "total": 420.0,
+        "positives": 416.0,
+        "squared_diffs_sum": 3.7667145476057744
+    },
+    "Say how many times did you choose {}.": {
+        "checker": "aggregation_checker",
+        "label": "#actions",
+        "sample_mean": 0.9785714285714285,
+        "sample_variance": 0.018715981603470586,
+        "total": 140.0,
+        "positives": 137.0,
+        "squared_diffs_sum": 2.6015214428824116
+    },
+    "Say how many times did your opponent choose {}.": {
+        "checker": "aggregation_checker",
+        "label": "#opponent_actions",
+        "sample_mean": 0.9928571428571429,
+        "sample_variance": 0.006302299331059674,
+        "total": 140.0,
+        "positives": 139.0,
+        "squared_diffs_sum": 0.8760196070172948
+    },
+    "Say what is your current total payoff.": {
+        "checker": "aggregation_checker",
+        "label": "total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say what is your opponent's current total payoff.": {
+        "checker": "aggregation_checker",
+        "label": "opponent_total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    }
+}
