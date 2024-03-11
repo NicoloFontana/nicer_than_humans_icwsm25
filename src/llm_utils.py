@@ -10,7 +10,7 @@ from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff
 HF_API_TOKEN = "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"
 OUT_BASE_PATH = Path("out")
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
-MAX_NEW_TOKENS = 200
+MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
 
 OVERALL = "overall"
@@ -135,15 +135,15 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     for action in action_space:
         for opponent_action in action_space:
             payoff_prompt += (f"If A plays {to_nat_lang(action, True)} and B plays {to_nat_lang(opponent_action, True)}, "
-                              f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n\t")
+                              f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n")
 
     game_rules_prompt = (f"<<SYS>>\n"
-                         f"\tContext: Player A is playing a multi-round game against player B.\n"
-                         f"\tAt each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
-                         f"\tThe payoffs for each combination of chosen action are the following:\n"
-                         f"\t[{payoff_prompt}]"
+                         f"Context: Player A is playing a multi-round game against player B.\n"
+                         f"At each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+                         f"The payoffs for each combination of chosen action are the following:\n"
+                         f"{payoff_prompt}"
                          f"They will play a total of {n_iterations} rounds of this game.\n"
-                         f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
+                         f"Remember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
 
     return game_rules_prompt
 
@@ -166,23 +166,22 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
         own_payoff = payoff_function(own_history[i], opponent_history[i])
         opponent_payoff = payoff_function(opponent_history[i], own_history[i])
         history_prompt += (
-            f"\tRound {i + 1}: A played {to_nat_lang(own_history[i], True)} and B played {to_nat_lang(opponent_history[i], True)}. "
+            f"Round {i + 1}: A played {to_nat_lang(own_history[i], True)} and B played {to_nat_lang(opponent_history[i], True)}. "
             f"A collected {own_payoff} points and B collected {opponent_payoff} points.\n")
         own_total_payoff += own_payoff
         opponent_total_payoff += opponent_payoff
-    history_prompt += (f'\tIn total, A chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+    history_prompt += (f'In total, A chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
                        f'B chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    history_prompt += f"\tIn total, A collected {own_total_payoff} points and B collected {opponent_total_payoff} points.\n"
+    history_prompt += f"In total, A collected {own_total_payoff} points and B collected {opponent_total_payoff} points.\n"
     if not is_ended:
-        history_prompt += f"\tCurrent round: {len(own_history) + 1}.\n"
+        history_prompt += f"Current round: {len(own_history) + 1}.\n"
     else:
-        history_prompt += f"\tThe game has ended.\n"
+        history_prompt += f"The game has ended.\n"
 
     return history_prompt
 
 
-def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt=""):
-    start_prompt = "<s>[INST] "
+def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=True):
 
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
@@ -192,29 +191,33 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
     # if custom_prompt == "":
     #     custom_prompt = f"<<SYS>>"
 
-    end_prompt = "[/INST]"
 
-    return start_prompt + game_rules_prompt + history_prompt + custom_prompt + end_prompt
+    prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, custom_prompt], zero_shot=zero_shot)
+
+    return prompt
 
 
-def generate_prompt_from_sub_prompts(sub_prompts):
+def generate_prompt_from_sub_prompts(sub_prompts, zero_shot=True):
     start_prompt = "<s>[INST] "
 
     body_prompt = "".join(sub_prompts)
 
-    end_prompt = "[/INST]"
+    end_prompt = "\nRemember to answer using the right format.[/INST]"
+
+    if zero_shot:
+        end_prompt += f"\nLet's think step by step "
 
     return start_prompt + body_prompt + end_prompt
 
 
 def save_prompt(version, description=None):
-    if description is None:
+    if description is None or description == "":
         print("Remember to add a description to the prompt.")
         return
     out_path = Path("prompts") / f"v{version}"
     out_path.mkdir(parents=True, exist_ok=True)
-    custom_prompt = ('\tRemember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}\n'
-                     '\tAnswer saying which action player A should play.')
+    custom_prompt = ('Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}\n'
+                     'Answer saying which action player A should play.')
     with open(out_path / "prompt.txt", "w") as f:
         f.write(generate_prompt({1, 0}, two_players_pd_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
     with open(out_path / "description.txt", "w") as f:

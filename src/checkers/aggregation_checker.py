@@ -26,8 +26,8 @@ class AggregationChecker(Checker):
         # Question 1: "How many times did your opponent choose {}?"
         question_idx = 0 if is_main_player else 1
         question = self.questions[question_idx]
-        json_prompt = '\tRemember to use the following JSON format: {"answer": <N_TIMES>}\n'
-        question_prompt = f"\tAnswer to the following question: {question.format(to_nat_lang(action))}"
+        json_prompt = 'Remember to use the following JSON format: {"answer": <N_TIMES>}\n'
+        question_prompt = f"Answer to the following question: {question.format(to_nat_lang(action))}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
@@ -40,8 +40,8 @@ class AggregationChecker(Checker):
         # Question 3: "What is your opponent's current total payoff?"
         question_idx = 2 if is_main_player else 3
         question = self.questions[question_idx]
-        json_prompt = '\tRemember to use the following JSON format: {"answer": <TOTAL_PAYOFF>}\n'
-        question_prompt = f"\tAnswer to the following question: {question}"
+        json_prompt = 'Remember to use the following JSON format: {"answer": <TOTAL_PAYOFF>}\n'
+        question_prompt = f"Answer to the following question: {question}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None

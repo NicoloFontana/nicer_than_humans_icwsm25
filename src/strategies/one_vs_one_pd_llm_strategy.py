@@ -56,12 +56,12 @@ class OneVsOnePDLlmStrategy(Strategy):
 
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
-        json_prompt = '\tRemember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}<<SYS>>\n'
-        next_action_prompt = f"\tAnswer saying which action player A should play."
+        json_prompt = 'Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}<<SYS>>\n'
+        next_action_prompt = f"Answer saying which action player A should play."
 
         ### v0.1
-        # json_prompt = '\tRemember to use only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}<<SYS>>\n'
-        # next_action_prompt = f"\tAnswer saying which action you choose to play."
+        # json_prompt = 'Remember to use only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}<<SYS>>\n'
+        # next_action_prompt = f"Answer saying which action you choose to play."
         prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])
         generated_text = generate_text(prompt, self.client, max_new_tokens=self.max_new_tokens, temperature=self.temperature)
         answer = find_json_object(generated_text)
