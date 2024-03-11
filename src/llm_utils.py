@@ -131,16 +131,11 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     payoff_prompt = ""
 
-    ### v0.4
+    ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
     for action in action_space:
         for opponent_action in action_space:
-            payoff_dict = {
-                "action_of_A": to_nat_lang(action),
-                "action_of_B": to_nat_lang(opponent_action),
-                "payoff_of_A": payoff_function(action, opponent_action),
-                "payoff_of_B": payoff_function(opponent_action, action)
-            }
-            payoff_prompt += str(payoff_dict)
+            payoff_prompt += (f"If A plays {to_nat_lang(action, True)} and B plays {to_nat_lang(opponent_action, True)}, "
+                              f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n\t")
 
     game_rules_prompt = (f"<<SYS>>\n"
                          f"\tContext: Player A is playing a multi-round game against player B.\n"
@@ -156,33 +151,28 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
 def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
     history_prompt = ""
 
-    ### v0.5 - Pass the action and payoff histories as 10-long-chunked lists
-    # TODO: check which is the min length to allow LLM to understand history without specifying number of each round
-    # TODO: check if changing the token representing the action is better
+    ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
     own_coop = 0
     own_defect = 0
     opponent_coop = 0
     opponent_defect = 0
     own_total_payoff = 0
     opponent_total_payoff = 0
-    for chunk in range(0, len(own_history), 10):
-        chunk_length = 10 if chunk + 10 < len(own_history) else len(own_history) - chunk
-        own_history_nat_lang = [to_nat_lang(action) for action in own_history[chunk:chunk + chunk_length]]
-        opponent_history_nat_lang = [to_nat_lang(action) for action in opponent_history[chunk:chunk + chunk_length]]
-        own_payoff_history = [payoff_function(own_history[i], opponent_history[i]) for i in range(chunk, chunk + chunk_length)]
-        opponent_payoff_history = [payoff_function(opponent_history[i], own_history[i]) for i in range(chunk, chunk + chunk_length)]
-        history_prompt += (f"\tIn rounds from {chunk + 1} to {chunk + chunk_length}:\n"
-                           f"\tplayer A played {own_history_nat_lang}\n"
-                           f"\tplayer B played {opponent_history_nat_lang}.\n")
-        own_coop += own_history[chunk:chunk + chunk_length].count(1)
-        own_defect += own_history[chunk:chunk + chunk_length].count(0)
-        opponent_coop += opponent_history[chunk:chunk + chunk_length].count(1)
-        opponent_defect += opponent_history[chunk:chunk + chunk_length].count(0)
-        own_total_payoff += sum(own_payoff_history)
-        opponent_total_payoff += sum(opponent_payoff_history)
-    history_prompt += (f'\tIn total, you chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
-                       f'your opponent chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    history_prompt += f"\tIn total, you collected {own_total_payoff} points and your opponent collected {opponent_total_payoff} points.\n"
+    for i in range(len(own_history)):
+        own_coop += 1 if own_history[i] else 0
+        own_defect += 1 if not own_history[i] else 0
+        opponent_coop += 1 if opponent_history[i] else 0
+        opponent_defect += 1 if not opponent_history[i] else 0
+        own_payoff = payoff_function(own_history[i], opponent_history[i])
+        opponent_payoff = payoff_function(opponent_history[i], own_history[i])
+        history_prompt += (
+            f"\tRound {i + 1}: A played {to_nat_lang(own_history[i], True)} and B played {to_nat_lang(opponent_history[i], True)}. "
+            f"A collected {own_payoff} points and B collected {opponent_payoff} points.\n")
+        own_total_payoff += own_payoff
+        opponent_total_payoff += opponent_payoff
+    history_prompt += (f'\tIn total, A chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+                       f'B chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
+    history_prompt += f"\tIn total, A collected {own_total_payoff} points and B collected {opponent_total_payoff} points.\n"
     if not is_ended:
         history_prompt += f"\tCurrent round: {len(own_history) + 1}.\n"
     else:
