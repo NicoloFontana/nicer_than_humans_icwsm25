@@ -1,0 +1,22 @@
+def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
+    payoff_prompt = ""
+
+    ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
+    for action in action_space:
+        for opponent_action in action_space:
+            payoff_prompt += (f"If A plays {to_nat_lang(action, True)} and B plays {to_nat_lang(opponent_action, True)}, "
+                              f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n")
+
+    game_rules_prompt = (f"<<SYS>>\n"
+                         f"Context: Player A is playing a multi-round game against player B.\n"
+                         f"At each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+                         f"The payoffs for each combination of chosen action are the following:\n"
+                         f"{payoff_prompt}"
+                         f"They will play a total of {n_iterations} rounds of this game.\n"
+                         f"Remember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
+
+    return game_rules_prompt
+                if "def generate_game_rules_prompt(" in line.strip():
+                    outfile.write(line)
+                    copy = True
+                elif "return game_rules_prompt" in line.strip():
