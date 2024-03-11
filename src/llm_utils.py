@@ -205,7 +205,7 @@ def generate_prompt_from_sub_prompts(sub_prompts, zero_shot=True):
     end_prompt = "\nRemember to answer using the right format.[/INST]"
 
     if zero_shot:
-        end_prompt += f"\nLet's think step by step "
+        end_prompt += f"\nLet's work this out in a step-by-step way to be sure we have the right answer in the right format"
 
     return start_prompt + body_prompt + end_prompt
 

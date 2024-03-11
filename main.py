@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Trying natural language AvsB prompt with Kojima et al. (2023) zero-shot addition."
+msg = "Trying natural language AvsB prompt with Zhou et al. (2023) APE zero-shot addition with modification to request the right format."
 
 
 if msg == "":
