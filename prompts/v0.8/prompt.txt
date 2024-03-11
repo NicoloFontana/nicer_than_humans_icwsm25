@@ -19,4 +19,4 @@ Current round: 6.
 Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}
 Answer saying which action player A should play.
 Remember to answer using the right format.[/INST]
-Let’s work this out in a step-by-step way to be sure we have the right answer in the right format
+Let's work this out in a step-by-step way to be sure we have the right answer in the right format
