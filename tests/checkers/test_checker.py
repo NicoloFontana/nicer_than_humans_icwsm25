@@ -156,8 +156,11 @@
 #         checker.check_answer(llm_answer, correct_answer, question)
 #         self.assertEqual(False, checker.questions_results[question][checker.answer_str][idx]["is_correct"])
 #
+#
 #         # Remove empty directory
-#         os.rmdir(checker.dir_path)
+#         logging.shutdown()
+#         print(dir_path)
+#         shutil.rmtree(dir_path)
 #     #
 #     #
 #     # def test_update_aggregates_for_question(self):
