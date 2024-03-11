@@ -7,4 +7,10 @@
 20240305135918:
     Attempt with imperative questions.
 20240307183455:
-    Second version of prompt using JSON format. Run on fewer iterations to avoid exceeding token limit.
+    prompt v0.2, using JSON format. Run on fewer iterations to avoid exceeding token limit.
+20240307185046:
+    prompt v0.3, for each round put into a list the action of A and the action for B. Same for the payoffs.
+20240308162745:
+    prompt v0.4, for each player put their history inside a single list.
+20240308175513:
+    prompt v0.5, for each player put their history inside many 10-round-long lists.

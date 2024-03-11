@@ -26,7 +26,7 @@ class TimeChecker(Checker):
     def check_current_round(self, current_round, weight=1.0):
         # Question 0: "Which is the current round of the game?"
         question = self.questions[0]
-        json_prompt = '\tRemember to use the following JSON format: {"answer": <CURRENT_ROUND>}<<SYS>>\n'
+        json_prompt = '\tRemember to use the following JSON format: {"answer": <CURRENT_ROUND>}\n'
         question_prompt = f"\tAnswer to the following question: {question}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(current_round)
@@ -40,7 +40,7 @@ class TimeChecker(Checker):
         # Question 2: "Which action did your opponent play in round {}?"
         question_idx = 1 if is_main_player else 2
         question = self.questions[question_idx]
-        json_prompt = '\tRemember to use the following JSON format: {"answer": <ACTION_PLAYED>}<<SYS>>\n'
+        json_prompt = '\tRemember to use the following JSON format: {"answer": <ACTION_PLAYED>}\n'
         question_prompt = f"\tAnswer to the following question: {question.format(inspected_round)}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = to_nat_lang(action_played)
@@ -55,7 +55,7 @@ class TimeChecker(Checker):
         # Question 4: "How many points did your opponent collect in round {}?"
         question_idx = 3 if is_main_player else 4
         question = self.questions[question_idx]
-        json_prompt = '\tRemember to use the following JSON format: {"answer": <POINTS_COLLECTED>}<<SYS>>\n'
+        json_prompt = '\tRemember to use the following JSON format: {"answer": <POINTS_COLLECTED>}\n'
         question_prompt = f"\tAnswer to the following question: {question.format(inspected_round)}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(points_collected)

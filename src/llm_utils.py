@@ -148,7 +148,7 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
                          f"\tThe payoffs for each combination of chosen action are the following:\n"
                          f"\t[{payoff_prompt}]"
                          f"They will play a total of {n_iterations} rounds of this game.\n"
-                         f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.\n")
+                         f"\tRemember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
 
     return game_rules_prompt
 
@@ -199,8 +199,8 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
     is_ended = len(own_history) >= n_iterations
     history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
 
-    if custom_prompt == "":
-        custom_prompt = f"<<SYS>>"
+    # if custom_prompt == "":
+    #     custom_prompt = f"<<SYS>>"
 
     end_prompt = "[/INST]"
 
@@ -223,7 +223,7 @@ def save_prompt(version, description=None):
         return
     out_path = Path("prompts") / f"v{version}"
     out_path.mkdir(parents=True, exist_ok=True)
-    custom_prompt = ('\tRemember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}<<SYS>>\n'
+    custom_prompt = ('\tRemember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}\n'
                      '\tAnswer saying which action player A should play.')
     with open(out_path / "prompt.txt", "w") as f:
         f.write(generate_prompt({1, 0}, two_players_pd_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
