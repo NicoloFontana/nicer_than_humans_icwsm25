@@ -27,6 +27,7 @@ if msg == "":
     log.info("Set a message.")
     sys.exit()
 log.info(msg)
+print(msg)
 game = TwoPlayersPD(iterations=n_iterations)
 # payoff_function = game.get_payoff_function()
 game.add_player(Player(ALICE))
