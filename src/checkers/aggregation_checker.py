@@ -77,9 +77,9 @@ class AggregationChecker(Checker):
             print(f"Question 1: {self.questions[1]}") if self.verbose else None
             n_times = opponent_history.count(action)
             self.check_action_chosen(False, action, n_times)
-        # Question 2: "What is your current total payoff?"
-        print(f"Question 2: {self.questions[2]}") if self.verbose else None
-        self.check_total_payoff(True, own_payoff)
+        # # Question 2: "What is your current total payoff?"
+        # print(f"Question 2: {self.questions[2]}") if self.verbose else None
+        # self.check_total_payoff(True, own_payoff)
         # Question 3: "What is your opponent's current total payoff?"
         print(f"Question 3: {self.questions[3]}") if self.verbose else None
         self.check_total_payoff(False, opponent_payoff)
