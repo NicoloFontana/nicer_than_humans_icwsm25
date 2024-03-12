@@ -67,6 +67,7 @@ for iteration in range(n_iterations):
             if save:
                 for checker in checkers:
                     checker.save_results(infix=curr_round)
+                    checker.save_complete_answers(infix=curr_round)
                 plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
             log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
             print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")

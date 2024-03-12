@@ -205,7 +205,7 @@ class Checker:
                 out_file.write(json_results)
                 log.info(f"{self.name} results saved.")
 
-    def save_complete_answers(self):
+    def save_complete_answers(self, infix=None):
         complete_answers = {}
         for question in self.questions_results:
             complete_answers[question] = {}
@@ -218,7 +218,10 @@ class Checker:
                     self.answer_str: self.questions_results[question][self.answer_str][idx],
                 }
         json_complete_answers = json.dumps(complete_answers, indent=4)
-        tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
+        if infix is None:
+            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
+        else:
+            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_complete_answers_{infix}.json")
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
             log.info(f"{self.name} answers saved.")
