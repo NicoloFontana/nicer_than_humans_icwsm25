@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Trying natural language AvsB prompt with Zhou et al. (2023) APE zero-shot addition with modification to request the right format."
+msg = "Check only some rule-related questions to compare how different formulation of the same conceptual question can impact the accuracy. Use prompt v0.6."
 
 
 if msg == "":
@@ -37,9 +37,9 @@ log.info(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 print(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 if checkers:
     checkers = [
-        TimeChecker(timestamp),
+        # TimeChecker(timestamp),
         RuleChecker(timestamp),
-        AggregationChecker(timestamp),
+        # AggregationChecker(timestamp),
     ]
 else:
     checkers = []

@@ -181,7 +181,7 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
     return history_prompt
 
 
-def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=True):
+def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=False):
 
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
@@ -197,7 +197,7 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
     return prompt
 
 
-def generate_prompt_from_sub_prompts(sub_prompts, zero_shot=True):
+def generate_prompt_from_sub_prompts(sub_prompts, zero_shot=False):
     start_prompt = "<s>[INST] "
 
     body_prompt = "".join(sub_prompts)
