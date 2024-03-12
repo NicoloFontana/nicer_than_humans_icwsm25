@@ -81,12 +81,10 @@ class RuleChecker(Checker):
         print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, question)
 
-    def check_payoff_of_combo(self, is_main_player, primary_action, secondary_action, payoff_function, is_inverse=False):
+    def check_payoff_of_combo(self, primary_action, secondary_action, payoff_function, is_inverse=False, question_idx=None):
         # Question 3: "Which is your payoff if you play {} and your opponent plays {}?"
         # Question 4: "Which is your opponent's payoff if he plays {} and you play {}?"
         # Question 5: "Which is your opponent's payoff if you play {} and he plays {}?"
-        question_idx = 3 if is_main_player else 4
-        question_idx = 5 if is_inverse else question_idx
         question = self.questions[question_idx]
         correct_answer = str(payoff_function(primary_action, secondary_action))
         json_prompt = 'Remember to use the following JSON format: {"answer": <PAYOFF>}\n'
@@ -100,9 +98,9 @@ class RuleChecker(Checker):
         print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, question)
 
-    def check_exists_combo_for_payoff(self, action_space, payoff_function, given_payoff):
+    def check_exists_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
         # Question 5: "Does exist a combination of actions that gives you a payoff of {} in a single round?"
-        question = self.questions[5]
+        question = self.questions[question_idx]
         correct_answer = "Yes" if any(
             payoff_function(primary_action, secondary_action) == given_payoff for primary_action in action_space for
             secondary_action in action_space) else "No"
@@ -114,9 +112,9 @@ class RuleChecker(Checker):
         print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, question)
 
-    def check_combo_for_payoff(self, action_space, payoff_function, given_payoff):
+    def check_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
         # Question 6: "Which is a combination of actions that gives you a payoff of {}?"
-        question = self.questions[6]
+        question = self.questions[question_idx]
         correct_combos = []
         for primary_action in action_space:
             for secondary_action in action_space:
@@ -170,30 +168,30 @@ class RuleChecker(Checker):
             for secondary_action in action_space:
                 # Question 3: "Which is your payoff if you play {} and your opponent plays {}?"
                 print(f"Question 3: {self.questions[3].format(primary_action, secondary_action)}") if self.verbose else None
-                self.check_payoff_of_combo(True, primary_action, secondary_action, payoff_function)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=3)
                 print(f"Question 4: {self.questions[4].format(primary_action, secondary_action)}") if self.verbose else None
                 # Question 4: "Which is your opponent's payoff if he plays {} and you play {}?"
-                self.check_payoff_of_combo(False, primary_action, secondary_action, payoff_function)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=4)
                 print(f"Question 5: {self.questions[5].format(primary_action, secondary_action)}") if self.verbose else None
                 # Question 5: "Which is your opponent's payoff if you play {} and he plays {}?"
-                self.check_payoff_of_combo(False, primary_action, secondary_action, payoff_function, is_inverse=True)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, is_inverse=True, question_idx=5)
                 # Questions 6, 7, 8
                 print(f"Question 6: {self.questions[6].format(primary_action, secondary_action)}") if self.verbose else None
-                self.check_payoff_of_combo(True, primary_action, secondary_action, payoff_function)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=6)
                 print(f"Question 7: {self.questions[7].format(primary_action, secondary_action)}") if self.verbose else None
-                self.check_payoff_of_combo(False, primary_action, secondary_action, payoff_function)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=7)
                 print(f"Question 8: {self.questions[8].format(primary_action, secondary_action)}") if self.verbose else None
-                self.check_payoff_of_combo(False, primary_action, secondary_action, payoff_function, is_inverse=True)
+                self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, is_inverse=True, question_idx=8)
         for payoff in range(0, 6):
             # Question 6: "Does exist a combination of actions that gives you a payoff of {} in a single round?"
             print(f"Question 9: {self.questions[9].format(payoff)}") if self.verbose else None
-            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff)
+            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=9)
             print(f"Question 10: {self.questions[10].format(payoff)}") if self.verbose else None
-            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff)
+            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=10)
             print(f"Question 11: {self.questions[11].format(payoff)}") if self.verbose else None
-            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff)
+            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=11)
             # Question 7: "Which is a combination of actions that gives you a payoff of {}?"
             print(f"Question 12: {self.questions[12].format(payoff)}") if self.verbose else None
-            self.check_combo_for_payoff(action_space, payoff_function, payoff)
+            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=12)
             print(f"Question 13: {self.questions[13].format(payoff)}") if self.verbose else None
-            self.check_combo_for_payoff(action_space, payoff_function, payoff)
+            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=13)
