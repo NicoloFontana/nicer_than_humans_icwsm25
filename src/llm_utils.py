@@ -13,7 +13,7 @@ MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
 player_1_ = "F"
-player_2_ = "K"
+player_2_ = "J"
 
 OVERALL = "overall"
 
