@@ -1,26 +1,26 @@
 from src.checkers.checker import Checker
 from src.games.two_players_pd_utils import to_nat_lang
-from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts
+from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, player_1_, player_2_
 from src.utils import find_first_int, find_first_substring
 
 
 class RuleChecker(Checker):
     def __init__(self, timestamp):
         questions = [
-            "What is the highest payoff player A can get in a single round?",
-            "What is the lowest payoff player A can get in a single round?",
-            "Which actions is player A allowed to play?",
-            "Which is player A's payoff in a single round if A plays {} and B plays {}?",
-            "Which is player B's payoff in a single round if B plays {} and A plays {}?",
-            "Which is player B's payoff in a single round if A plays {} and B plays {}?",  # Extra question for comparison
-            "How many point does player A collect in a single round in A plays {} and B plays {}?",  # Extra question for comparison
-            "How many point does player B collect in a single round in B plays {} and A plays {}?",  # Extra question for comparison
-            "How many point does player B collect in a single round in A plays {} and B plays {}?",  # Extra question for comparison
-            "Does exists a combination of actions that gives a player a payoff of {} in a single round?",
-            "Can player A collect {} points in a single round?",  # Extra question for comparison
-            "Can player B collect {} points in a single round?",  # Extra question for comparison
-            "Which actions should player A and player B play to give a payoff of {} to player A?",
-            "Which actions should player A and player B play to make player A collect {} points?",  # Extra question for comparison
+            f"What is the highest payoff player {player_1_} can get in a single round?",
+            f"What is the lowest payoff player {player_1_} can get in a single round?",
+            f"Which actions is player {player_1_} allowed to play?",
+            f"Which is player {player_1_}'s payoff in a single round if {player_1_} plays {{}} and {player_2_} plays {{}}?",
+            f"Which is player {player_2_}'s payoff in a single round if {player_2_} plays {{}} and {player_1_} plays {{}}?",
+            f"Which is player {player_2_}'s payoff in a single round if {player_1_} plays {{}} and {player_2_} plays {{}}?",  # Extra question for comparison
+            f"How many point does player {player_1_} collect in a single round in {player_1_} plays {{}} and {player_2_} plays {{}}?",  # Extra question for comparison
+            f"How many point does player {player_2_} collect in a single round in {player_2_} plays {{}} and {player_1_} plays {{}}?",  # Extra question for comparison
+            f"How many point does player {player_2_} collect in a single round in {player_1_} plays {{}} and {player_2_} plays {{}}?",  # Extra question for comparison
+            f"Does exists a combination of actions that gives a player a payoff of {{}} in a single round?",
+            f"Can player {player_1_} collect {{}} points in a single round?",  # Extra question for comparison
+            f"Can player {player_2_} collect {{}} points in a single round?",  # Extra question for comparison
+            f"Which actions should player {player_1_} and player {player_2_} play to give a payoff of {{}} to player A?",
+            f"Which actions should player {player_1_} and player {player_2_} play to make player {player_1_} collect {{}} points?",  # Extra question for comparison
         ]
         questions_labels = [
             "max_payoff",

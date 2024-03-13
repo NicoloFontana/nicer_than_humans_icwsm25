@@ -7,7 +7,7 @@ from src.games.gt_game import GTGame
 from src.games.two_players_pd_utils import from_nat_lang
 from src.strategies.strategy import Strategy
 from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, \
-    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
+    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text, player_1_
 from src.utils import find_json_object
 
 
@@ -56,8 +56,8 @@ class OneVsOnePDLlmStrategy(Strategy):
 
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
-        json_prompt = 'Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}<<SYS>>\n'
-        next_action_prompt = f"Answer saying which action player A should play."
+        json_prompt = f'Remember to use only the following JSON format: {{"action": <ACTION_of_{player_1_}>, "reason": <YOUR_REASON>}}<<SYS>>\n'
+        next_action_prompt = f"Answer saying which action player {player_1_} should play."
 
         ### v0.1
         # json_prompt = 'Remember to use only the following JSON format: {"action": <YOUR_ACTION>, "reason": <YOUR_REASON>}<<SYS>>\n'

@@ -12,6 +12,8 @@ OUT_BASE_PATH = Path("out")
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
+player_1_ = "F"
+player_2_ = "K"
 
 OVERALL = "overall"
 
@@ -134,13 +136,13 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
     for action in action_space:
         for opponent_action in action_space:
-            payoff_prompt += (f"If A plays {to_nat_lang(action, True)} and B plays {to_nat_lang(opponent_action, True)}, "
-                              f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n")
+            payoff_prompt += (f"If {player_1_} plays {to_nat_lang(action, True)} and {player_2_} plays {to_nat_lang(opponent_action, True)}, "
+                              f"{player_1_} collects {payoff_function(action, opponent_action)} points and {player_2_} collects {payoff_function(opponent_action, action)} points.\n")
 
     game_rules_prompt = (f"<<SYS>>\n"
-                         # f"Context: Player A is playing a multi-round game against player B.\n"
-                         f"Context: Player A and player B are playing a multi-round game.\n"
-                         f"At each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
+                         # f"Context: Player {player_1_} is playing a multi-round game against player B.\n"
+                         f"Context: Player {player_1_} and player {player_2_} are playing a multi-round game.\n"
+                         f"At each turn player {player_1_} and player {player_2_} simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
                          f"The payoffs for each combination of chosen action are the following:\n"
                          f"{payoff_prompt}"
                          f"They will play a total of {n_iterations} rounds of this game.\n"
@@ -167,13 +169,13 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
         own_payoff = payoff_function(own_history[i], opponent_history[i])
         opponent_payoff = payoff_function(opponent_history[i], own_history[i])
         history_prompt += (
-            f"Round {i + 1}: A played {to_nat_lang(own_history[i], True)} and B played {to_nat_lang(opponent_history[i], True)}. "
-            f"A collected {own_payoff} points and B collected {opponent_payoff} points.\n")
+            f"Round {i + 1}: {player_1_} played {to_nat_lang(own_history[i], True)} and {player_2_} played {to_nat_lang(opponent_history[i], True)}. "
+            f"{player_1_} collected {own_payoff} points and {player_2_} collected {opponent_payoff} points.\n")
         own_total_payoff += own_payoff
         opponent_total_payoff += opponent_payoff
-    history_prompt += (f'In total, A chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
-                       f'B chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
-    history_prompt += f"In total, A collected {own_total_payoff} points and B collected {opponent_total_payoff} points.\n"
+    history_prompt += (f'In total, {player_1_} chose "Cooperate" {own_coop} times and chose "Defect" {own_defect} times, '
+                       f'{player_2_} chose "Cooperate" {opponent_coop} times and chose "Defect" {opponent_defect} times.\n')
+    history_prompt += f"In total, {player_1_} collected {own_total_payoff} points and {player_2_} collected {opponent_total_payoff} points.\n"
     if not is_ended:
         history_prompt += f"Current round: {len(own_history) + 1}.\n"
     else:
@@ -218,7 +220,7 @@ def save_prompt(version, description=None):
     out_path = Path("prompts") / f"v{version}"
     out_path.mkdir(parents=True, exist_ok=True)
     custom_prompt = ('Remember to use only the following JSON format: {"action": <ACTION_of_A>, "reason": <YOUR_REASON>}\n'
-                     'Answer saying which action player A should play.')
+                     'Answer saying which action player {player_1_} should play.')
     with open(out_path / "prompt.txt", "w") as f:
         f.write(generate_prompt({1, 0}, two_players_pd_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
     with open(out_path / "description.txt", "w") as f:

@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Check some rule-related questions using a more neutral description of the game."
+msg = "Check some rule-related questions using neutral identifiers for the players from Binz & Schulz (2023)."
 
 if msg == "":
     log.info("Set a message.")
