@@ -138,7 +138,8 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
                               f"A collects {payoff_function(action, opponent_action)} points and B collects {payoff_function(opponent_action, action)} points.\n")
 
     game_rules_prompt = (f"<<SYS>>\n"
-                         f"Context: Player A is playing a multi-round game against player B.\n"
+                         # f"Context: Player A is playing a multi-round game against player B.\n"
+                         f"Context: Player A and player B are playing a multi-round game.\n"
                          f"At each turn player A and player B simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
                          f"The payoffs for each combination of chosen action are the following:\n"
                          f"{payoff_prompt}"

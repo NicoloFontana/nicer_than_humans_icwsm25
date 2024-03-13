@@ -20,8 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Check only some rule-related questions to compare how different formulation of the same conceptual question can impact the accuracy. Use prompt v0.6."
-
+msg = "Check some rule-related questions using a more neutral description of the game."
 
 if msg == "":
     log.info("Set a message.")
