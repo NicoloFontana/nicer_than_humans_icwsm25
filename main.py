@@ -19,7 +19,7 @@ checkpoint = 10
 verbose = False
 checkers = True
 save = True
-msg = "Check some rule-related questions variations trying to improve results"
+msg = "Redo run with inverted identifiers after fixing plot labels."
 
 if msg == "":
     log.info("Set a message.")

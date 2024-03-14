@@ -12,8 +12,8 @@ OUT_BASE_PATH = Path("out")
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
-player_1_ = "A"
-player_2_ = "B"
+player_1_ = "B"
+player_2_ = "A"
 
 OVERALL = "overall"
 
@@ -65,15 +65,12 @@ def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=N
     #         entry_color_map[result['label']] = checker_color_map[result['checker']]
     entry_color_map = {
         "rule_checker": "red",
-        "round_payoff": first_cmap(0),
+        "round_payoff": first_cmap(5),
         "opponent_round_payoff": first_cmap(0),
         "opponent_round_payoff_inverse": first_cmap(0),  # Extra
-        "exists_combo": first_cmap(1),
-        "exists_combo_for_A": first_cmap(1),  # Extra
-        "exists_combo_resulting_A": first_cmap(1),  # ChatGPT
-        "combo_for_payoff": first_cmap(2),
-        "combo_for_A": first_cmap(2),  # Extra
-        "combo_resulting_A": first_cmap(2)  # ChatGPT
+        f"{player_1_}_round_points": first_cmap(5),  # Extra
+        f"{player_2_}_round_points": first_cmap(0),  # Extra
+        f"{player_2_}_round_points_inverse": first_cmap(0),  # Extra
     }
     for entry, mean, variance in zip(entries, means, variances):
         ax.plot([entry, entry], [mean - variance, mean + variance], '_:k', markersize=10, label='Variance')
@@ -152,6 +149,7 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
                               f"{player_1_} collects {payoff_function(action, opponent_action)} points and {player_2_} collects {payoff_function(opponent_action, action)} points.\n")
 
     game_rules_prompt = (f"<<SYS>>\n"
+                         # f"Context: Player {player_1_} is playing a multi-round game against player B.\n"
                          f"Context: Player {player_1_} and player {player_2_} are playing a multi-round game.\n"
                          f"At each turn player {player_1_} and player {player_2_} simultaneously perform one of the following actions: {to_nat_lang(action_space, True)}\n"
                          f"The payoffs for each combination of chosen action are the following:\n"
@@ -196,6 +194,7 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
 
 
 def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=False):
+
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
     is_ended = len(own_history) >= n_iterations
@@ -203,6 +202,7 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
 
     # if custom_prompt == "":
     #     custom_prompt = f"<<SYS>>"
+
 
     prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, custom_prompt], zero_shot=zero_shot)
 
