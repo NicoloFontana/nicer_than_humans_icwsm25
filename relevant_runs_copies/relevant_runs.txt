@@ -51,3 +51,5 @@ Try to solve LLM's bias for player1 questions (which get higher accuracy than th
     No significant change
 >> :
     Invert player identifiers to check if the cause of the bias is the order or (somehow) the token itself
+>> :
+    Try some variations of some rules questions to improve accuracy.
