@@ -1,0 +1,74 @@
+{
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.6764705882352942,
+        "sample_variance": 0.21553595752869115,
+        "total": 170.0,
+        "positives": 115.0,
+        "squared_diffs_sum": 36.4255768223488
+    },
+    "What is the highest payoff player A can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "max_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "What is the lowest payoff player A can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "min_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which actions is player A allowed to play?": {
+        "checker": "rule_checker",
+        "label": "allowed_actions",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 10.0,
+        "positives": 10.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which is player A's payoff in a single round if A plays {} and B plays {}?": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which is player B's payoff in a single round if B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.9,
+        "sample_variance": 0.08905703216460532,
+        "total": 40.0,
+        "positives": 36.0,
+        "squared_diffs_sum": 3.4732242544196077
+    },
+    "Does exists a combination of actions that gives a player a payoff of {} in a single round?": {
+        "checker": "rule_checker",
+        "label": "exists_combo",
+        "sample_mean": 0.7833333333333333,
+        "sample_variance": 0.16311315452385666,
+        "total": 60.0,
+        "positives": 47.0,
+        "squared_diffs_sum": 9.623676116907543
+    },
+    "Which actions should player A and player B play to give a payoff of {} to player A?": {
+        "checker": "rule_checker",
+        "label": "combo_for_payoff",
+        "sample_mean": 0.36666666666666664,
+        "sample_variance": 0.21945810243030078,
+        "total": 60.0,
+        "positives": 22.0,
+        "squared_diffs_sum": 12.948028043387746
+    }
+}

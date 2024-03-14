@@ -2,15 +2,52 @@
     First run, not all info for the questions was added (missing curr_round, point got, aggregates)
 20240304182346:
     Second run, add missing info.
-20240305134839:
-    Second and half run, fix some bugs.
+>> 20240305134839:
+    prompt v0.1, second and half run, fix some bugs.
+    Time: poor performance in opponent action at round X both's points at round X. (~0.75)
+    Rules: poor performance in opponent payoff per round, exists combo to get X points, which combo. (~0.75, ~0.75, ~0.4)
 20240305135918:
     Attempt with imperative questions.
-20240307183455:
+    No significant changes + Binz & Schulz (2023) reason to prefer questions
+
+Change perspective from you-vs-opponent to player1-vs-player2, try to use a more code-like prompt.
+>> 20240307183455:
     prompt v0.2, using JSON format. Run on fewer iterations to avoid exceeding token limit.
-20240307185046:
+    Basically the same as v0.1, but it uses double the tokens
+>> 20240307185046:
     prompt v0.3, for each round put into a list the action of A and the action for B. Same for the payoffs.
-20240308162745:
+    Make worse own action (time) and both's #actions (aggregates)
+>> 20240308162745:
     prompt v0.4, for each player put their history inside a single list.
-20240308175513:
+    Much worse in the same time questions as v0.1
+>> 20240308175513:
     prompt v0.5, for each player put their history inside many 10-round-long lists.
+    Basically the same as v0.4
+
+Revert to natural language prompt, but keeping the player1-vs-player2 perspective
+>> 20240311115510:
+    prompt v0.6, v0.1 but with different perspective
+    Improves the time questions, doesn't touch the rules questions. (GOOD)
+>> 20240311135514:
+    prompt v0.7, add Kojima (2023) zero-shot prompting part
+    Slightly worse (then v0.6) in time questions, much worse in rules and aggregates
+>> 20240311140702:
+    prompt v0.8, add Zhou (2023) zero-shot prompting part
+    Basically as v0.7
+
+USING v0.6 (and start saving generated text also at checkpoints)
+Try to improve the performance of some rules questions.
+>> 20240312151218:
+    Reformulate rules questions that have poor performances.
+    It shows that the LLM's bias for player1 is independent of the formulation of the question.
+    No improvement is obtained for the questions about the combo of actions to get a specific payoff in a round.
+
+Try to solve LLM's bias for player1 questions (which get higher accuracy than the same about player2)
+>> 20240313114605:
+    Change first line, from "A playing a game against B" to "A and B playing a game"
+    Improvement of the player2 questions (from ~0.65 to ~0.75), but the gap with player1 still exists.
+>> 20240313160040:
+    Change player identifiers to more neutral ones (F, J from Binz and Schulz (2023))
+    No significant change
+>> :
+    Invert player identifiers to check if the cause of the bias is the order or (somehow) the token itself
