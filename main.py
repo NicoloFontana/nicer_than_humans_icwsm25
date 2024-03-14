@@ -5,7 +5,7 @@ import time
 from huggingface_hub import InferenceClient
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL
+from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
@@ -16,11 +16,10 @@ from src.utils import timestamp, log
 
 n_iterations = 100
 checkpoint = 10
-ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Check some rule-related questions inverting the player identifiers A and B to check if the order of presentation is the cause of the LLM bias towards A."
+msg = "Check some rule-related questions variations trying to improve results"
 
 if msg == "":
     log.info("Set a message.")
@@ -29,8 +28,8 @@ log.info(msg)
 print(msg)
 game = TwoPlayersPD(iterations=n_iterations)
 # payoff_function = game.get_payoff_function()
-game.add_player(Player(ALICE))
-game.add_player(Player("Bob"))
+game.add_player(Player(player_1_))
+game.add_player(Player(player_2_))
 start_time = time.time()
 log.info(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 print(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
@@ -45,7 +44,7 @@ else:
 checkers_names = [checker.get_name() for checker in checkers]
 client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
 client.headers["x-use-cache"] = "0"
-strategy = OneVsOnePDLlmStrategy(game, ALICE, game.get_opponent_name(ALICE), client)
+strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
 
 for iteration in range(n_iterations):
     curr_round = iteration + 1
@@ -56,12 +55,12 @@ for iteration in range(n_iterations):
             # own_history = game.get_history().get_actions_by_player(player.get_name())
             # opponent_history = game.get_history().get_actions_by_player(
             #     [p for p in game.players if p != player.get_name()][0])
-            if player.get_name() == ALICE:
+            if player.get_name() == player_1_:
                 player.set_strategy(strategy, verbose)
             else:
                 player.set_strategy(RndStrategy())
         game.play_round()
-        game.get_player_by_name(ALICE).get_strategy().ask_questions(checkers, game, verbose)
+        game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, verbose)
         if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
             if save:
                 for checker in checkers:
