@@ -12,8 +12,8 @@ OUT_BASE_PATH = Path("out")
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
-player_1_ = "F"
-player_2_ = "J"
+player_1_ = "B"
+player_2_ = "A"
 
 OVERALL = "overall"
 

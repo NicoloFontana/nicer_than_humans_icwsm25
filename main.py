@@ -20,7 +20,7 @@ ALICE = "Alice"
 verbose = False
 checkers = True
 save = True
-msg = "Check some rule-related questions using neutral identifiers for the players from Binz & Schulz (2023)."
+msg = "Check some rule-related questions inverting the player identifiers A and B to check if the order of presentation is the cause of the LLM bias towards A."
 
 if msg == "":
     log.info("Set a message.")
