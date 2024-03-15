@@ -1,8 +1,11 @@
 import json
+import os
 import time
 import warnings
 from pathlib import Path
 
+import numpy as np
+import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff
@@ -40,6 +43,77 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
 
 # CHECKERS UTILS
 
+def extract_questions_from_checker_answers(answers_dir_path, in_file_name=None):
+    if in_file_name is None:
+        in_file_name = answers_dir_path.name + "_complete_answers.json"
+    in_file_path = answers_dir_path / in_file_name
+    with open(in_file_path, "r") as in_file:
+        json_data = in_file.read()
+        dict_data = json.loads(json_data)
+        questions = list(dict_data.keys())
+        return questions
+
+
+def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=None, title=None, mat_labels=None):
+    if in_file_name is None:
+        in_file_name = answers_dir_path.name + "_complete_answers.json"
+    in_file_path = answers_dir_path / in_file_name
+    with open(in_file_path, "r") as in_file:
+        json_data = in_file.read()
+        dict_data = json.loads(json_data)
+        answers = dict_data[question]
+
+        # Get the correct labels
+        y_labels = []
+        other_str = "Other"
+        for quest in answers.values():
+            ans = quest["answer"]["correct_answer"]
+            if ans not in y_labels:
+                y_labels.append(ans)
+
+        # Get the LLM's answers
+        actual = []
+        predicted = []
+        other = False
+        for quest in answers.values():
+            actual.append(quest["answer"]["correct_answer"])
+            if quest["answer"]["llm_answer"] not in y_labels:
+                predicted.append(other_str)  # Normalize unexpected answers as "Other"
+                other = True
+            else:
+                predicted.append(quest["answer"]["llm_answer"])
+
+        # Get the LLM labels
+        x_labels = y_labels.copy()
+        if other:
+            x_labels.append(other_str)
+
+        # Compute the confusion matrix
+        confusion_matrix = np.zeros((len(y_labels), len(x_labels)), dtype=int)
+        for correct_answer, llm_answer in zip(actual, predicted):
+            correct_idx = y_labels.index(correct_answer)
+            llm_idx = x_labels.index(llm_answer)
+            confusion_matrix[correct_idx, llm_idx] += 1
+
+        # Create the plot and save it
+        label = answers[str(0)]["label"]
+        if title is None:
+            title = label
+        else:
+            title += f"\n{label}"
+        sns.heatmap(confusion_matrix, annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='d')
+        plt.title(title, loc="center", wrap=True)
+        plt.xlabel('LLM answer')
+        plt.ylabel('Correct answer')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        out_path = answers_dir_path / "confusion_matrices"
+        os.makedirs(out_path, exist_ok=True)
+        plt.savefig(out_path / f"{label}.svg")
+        plt.savefig(out_path / f"{label}.png")
+        plt.show()
+
+
 def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=None):
     if checkers_names is None or len(checkers_names) == 0:
         return
@@ -63,7 +137,7 @@ def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=N
     #         entry_color_map[result['label']] = 'red'
     #     else:
     #         entry_color_map[result['label']] = checker_color_map[result['checker']]
-    entry_color_map = {  #TODO fix
+    entry_color_map = {  # TODO fix
         "rule_checker": "red",
         "round_payoff": first_cmap(5),
         "opponent_round_payoff": first_cmap(0),
@@ -193,7 +267,6 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
 
 
 def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=False):
-
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
     is_ended = len(own_history) >= n_iterations
