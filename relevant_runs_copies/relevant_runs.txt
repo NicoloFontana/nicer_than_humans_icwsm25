@@ -41,6 +41,8 @@ Try to improve the performance of some rules questions.
     Reformulate rules questions that have poor performances.
     It shows that the LLM's bias for player1 is independent of the formulation of the question.
     No improvement is obtained for the questions about the combo of actions to get a specific payoff in a round.
+>> 20240314133459:
+    Try some variations of some rules questions to improve accuracy.
 
 Try to solve LLM's bias for player1 questions (which get higher accuracy than the same about player2)
 >> 20240313114605:
@@ -49,7 +51,5 @@ Try to solve LLM's bias for player1 questions (which get higher accuracy than th
 >> 20240313160040:
     Change player identifiers to more neutral ones (F, J from Binz and Schulz (2023))
     No significant change
->> :
+>> 20240314150845:
     Invert player identifiers to check if the cause of the bias is the order or (somehow) the token itself
->> :
-    Try some variations of some rules questions to improve accuracy.
