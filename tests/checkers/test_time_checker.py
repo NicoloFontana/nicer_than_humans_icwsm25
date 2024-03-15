@@ -37,7 +37,7 @@
 #     #     self.assertEqual(2, checker.questions_results[checker.questions[0]][checker.n_samples_str])
 #     #
 #     #     # Remove empty directory
-#     #     os.rmdir(checker.dir_path)
+#     #     os.rmdir(checker.out_path)
 #     #
 #     # def test_check_action_played(self):
 #     #     checker = TimeChecker(0)
@@ -56,4 +56,4 @@
 #     #     self.assertEqual(2, checker.questions_results[checker.questions[1]][checker.n_samples_str])
 #     #
 #     #     # Remove empty directory
-#     #     os.rmdir(checker.dir_path)
+#     #     os.rmdir(checker.out_path)

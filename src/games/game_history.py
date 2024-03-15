@@ -2,8 +2,7 @@ import json
 import os
 import warnings
 
-from src.utils import log
-from src.llm_utils import OUT_BASE_PATH
+from src.utils import log, OUT_BASE_PATH
 
 
 class GameHistory:

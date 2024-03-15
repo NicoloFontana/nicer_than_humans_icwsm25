@@ -9,14 +9,14 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff
+from src.utils import OUT_BASE_PATH
 
 HF_API_TOKEN = "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"
-OUT_BASE_PATH = Path("out")
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
-player_1_ = "B"
-player_2_ = "A"
+player_1_ = "A"
+player_2_ = "B"
 
 OVERALL = "overall"
 
@@ -43,6 +43,17 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
 
 # CHECKERS UTILS
 
+def compact_format(x, is_percentage=False):
+    if x == int(x):
+        if x == 0:
+            new_text = '-'
+        else:
+            new_text = '{:.0f}%'.format(x) if is_percentage else '{:.0f}'.format(x)
+    else:
+        new_text = '{:.2f}%'.format(x) if is_percentage else '{:.2f}'.format(x)
+    return new_text
+
+
 def extract_questions_from_checker_answers(answers_dir_path, in_file_name=None):
     if in_file_name is None:
         in_file_name = answers_dir_path.name + "_complete_answers.json"
@@ -59,6 +70,8 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
         in_file_name = answers_dir_path.name + "_complete_answers.json"
     in_file_path = answers_dir_path / in_file_name
     with open(in_file_path, "r") as in_file:
+        out_path = answers_dir_path / "confusion_matrices"
+        os.makedirs(out_path, exist_ok=True)
         json_data = in_file.read()
         dict_data = json.loads(json_data)
         answers = dict_data[question]
@@ -101,16 +114,29 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
             title = label
         else:
             title += f"\n{label}"
-        sns.heatmap(confusion_matrix, annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='d')
+        ax = sns.heatmap(confusion_matrix, annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='d')
+        for text in ax.texts:
+            x = float(text.get_text())
+            text.set_text(compact_format(x))
         plt.title(title, loc="center", wrap=True)
         plt.xlabel('LLM answer')
         plt.ylabel('Correct answer')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
-        out_path = answers_dir_path / "confusion_matrices"
-        os.makedirs(out_path, exist_ok=True)
         plt.savefig(out_path / f"{label}.svg")
         plt.savefig(out_path / f"{label}.png")
+        plt.show()
+        ax = sns.heatmap(confusion_matrix / np.sum(confusion_matrix), annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='.2%')
+        for text in ax.texts:
+            x = float(text.get_text().replace('%', ''))
+            text.set_text(compact_format(x, is_percentage=True))
+        plt.title(title, loc="center", wrap=True)
+        plt.xlabel('LLM answer')
+        plt.ylabel('Correct answer')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.savefig(out_path / f"{label}_percentage.svg")
+        plt.savefig(out_path / f"{label}_percentage.png")
         plt.show()
 
 
@@ -122,7 +148,7 @@ def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=N
     with open(results_file_path, "r") as results_file:
         results = json.load(results_file)
 
-    entries = [result["label"] for result in results.values()]
+    entries = [label for label in results.keys()]
     means = [result["sample_mean"] for result in results.values()]
     variances = [result["sample_variance"] for result in results.values()]
 
@@ -130,22 +156,13 @@ def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=N
 
     first_cmap = plt.get_cmap('Dark2')
 
-    # checker_color_map = {checker: first_cmap(i / len(checkers_names)) for i, checker in enumerate(checkers_names)}
-    # entry_color_map = {}
-    # for result in results.values():
-    #     if result['label'] in checkers_names:
-    #         entry_color_map[result['label']] = 'red'
-    #     else:
-    #         entry_color_map[result['label']] = checker_color_map[result['checker']]
-    entry_color_map = {  # TODO fix
-        "rule_checker": "red",
-        "round_payoff": first_cmap(5),
-        "opponent_round_payoff": first_cmap(0),
-        "opponent_round_payoff_inverse": first_cmap(0),  # Extra
-        f"{player_1_}_round_points": first_cmap(5),  # Extra
-        f"{player_2_}_round_points": first_cmap(0),  # Extra
-        f"{player_2_}_round_points_inverse": first_cmap(0),  # Extra
-    }
+    checker_color_map = {checker: first_cmap(i / len(checkers_names)) for i, checker in enumerate(checkers_names)}
+    entry_color_map = {}
+    for label in results.keys():
+        if label in checkers_names:
+            entry_color_map[label] = 'red'
+        else:
+            entry_color_map[label] = checker_color_map[results[label]['checker']]
     for entry, mean, variance in zip(entries, means, variances):
         ax.plot([entry, entry], [mean - variance, mean + variance], '_:k', markersize=10, label='Variance')
 
@@ -167,9 +184,9 @@ def plot_checkers_results(checkers_names: list, timestamp, n_iterations, infix=N
     ax.set_title(f'LLM checks - {timestamp} - {n_iterations} iterations')
 
     labels = []
-    for result in results.values():
-        labels.append(result['label'])
-    ax.set_xticks(range(len(entries)))  #
+    for label in results.keys():
+        labels.append(label)
+    ax.set_xticks(range(len(entries)))
     ax.set_xticklabels(labels)
     for tick_label in ax.get_xticklabels():
         tick_label.set_color(entry_color_map[tick_label.get_text()])

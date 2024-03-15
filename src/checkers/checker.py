@@ -5,21 +5,22 @@ from pathlib import Path
 
 from huggingface_hub import InferenceClient
 
-from src.utils import find_json_object, log
-from src.llm_utils import HF_API_TOKEN, OUT_BASE_PATH, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
+from src.utils import find_json_object, log, out_path
+from src.llm_utils import HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
 
 
 class Checker:
 
-    def __init__(self, checker_name, questions, questions_labels, timestamp):
+    def __init__(self, checker_name, questions, questions_labels):
         self.name = checker_name
-        self.dir_path = OUT_BASE_PATH / str(timestamp) / checker_name
+        self.dir_path = out_path / checker_name
         os.makedirs(self.dir_path, exist_ok=True)
         self.out_file_name = self.dir_path / checker_name
         self.out_file_name = self.out_file_name.with_suffix(".json")
 
         self.checker_str = "checker"
-        self.label_str = "label"
+        self.question_str = "question"
+        # self.label_str = "label"
         self.sample_mean_str = "sample_mean"
         self.sample_variance_str = "sample_variance"
         self.total_str = "total"
@@ -30,11 +31,14 @@ class Checker:
         self.answer_str = "answer"
 
         self.questions = questions
+        self.questions_labels = questions_labels
         self.questions_results = {}
-        for question in questions:
-            self.questions_results[question] = {
+        for label in self.questions_labels:
+            question = self.questions[self.questions_labels.index(label)]
+            self.questions_results[label] = {
                 self.checker_str: checker_name,
-                self.label_str: questions_labels[questions.index(question)],
+                self.question_str: question,
+                # self.label_str: questions_labels[questions.index(label)],
                 self.sample_mean_str: 0,
                 self.sample_variance_str: 0,
                 self.total_str: 0,
@@ -56,11 +60,11 @@ class Checker:
     def get_name(self):
         return self.name
 
-    def get_answer_from_llm(self, prompt, question, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE, need_str=True):
+    def get_answer_from_llm(self, prompt, label, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE, need_str=True):
         """
         Get an answer from the LLM model given a prompt.
         :param prompt: prompt to be used for the LLM model.
-        :param question: question which the prompt and the generated text are related to.
+        :param label: label of the label to which the prompt and the generated text are related.
         :param max_new_tokens: parameter for the InferenceClient
         :param temperature: parameter for the InferenceClient
         :param need_str: requires the answer to be a string.
@@ -70,10 +74,10 @@ class Checker:
             warnings.warn("Inference client not set. Using default one.")
             self.inference_client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
             self.inference_client.headers["x-use-cache"] = "0"
-        self.questions_results[question][self.prompt_str].append(prompt)
+        self.questions_results[label][self.prompt_str].append(prompt)
         generated_text = generate_text(prompt, self.inference_client, max_new_tokens=max_new_tokens,
                                        temperature=temperature)
-        self.questions_results[question][self.generated_text_str].append(generated_text)
+        self.questions_results[label][self.generated_text_str].append(generated_text)
         json_object = find_json_object(generated_text)
         if json_object is not None:
             try:
@@ -88,7 +92,7 @@ class Checker:
             answer = str(answer)
         return answer
 
-    def check_answer(self, llm_answer, correct_answer, question, weight=1.0):
+    def check_answer(self, llm_answer, correct_answer, label, weight=1.0):
         """
         Check if the LLM answer is correct and update the scores and checks accordingly.\n
         The correct answer can be a string, a set of strings or a list of strings.\n
@@ -98,7 +102,7 @@ class Checker:
         :param weight: how much the answer should be weighted.
         :param llm_answer: answer from the LLM to be checked.
         :param correct_answer: correct answer.
-        :param question: question to which the correct answer is related to.
+        :param label: label to which the correct answer is related.
         :return: if the LLM answer is correct.
         """
         is_set = isinstance(correct_answer, set)
@@ -138,26 +142,26 @@ class Checker:
                 correct = llm_answer.casefold() == correct_answer.casefold()
             else:
                 correct = llm_answer == correct_answer
-        self.questions_results[question][self.answer_str].append(
+        self.questions_results[label][self.answer_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
 
-        self.update_aggregates_for_question(question, int(correct), weight)
+        self.update_aggregates_for_question(label, int(correct), weight)
         self.update_aggregates_for_checker(correct, weight)
         return correct
 
-    def update_aggregates_for_question(self, question, answer, weight):
+    def update_aggregates_for_question(self, label, answer, weight):
         # Compute weighted sample mean
-        self.questions_results[question][self.positives_str] += answer * weight
-        positives = self.questions_results[question][self.positives_str]
-        self.questions_results[question][self.total_str] += weight
-        total = self.questions_results[question][self.total_str]
+        self.questions_results[label][self.positives_str] += answer * weight
+        positives = self.questions_results[label][self.positives_str]
+        self.questions_results[label][self.total_str] += weight
+        total = self.questions_results[label][self.total_str]
         sample_mean = positives / total if total > 0 else 0
-        self.questions_results[question][self.sample_mean_str] = sample_mean
+        self.questions_results[label][self.sample_mean_str] = sample_mean
         # Compute weighted sample variance
-        self.questions_results[question][self.squared_diffs_sum_str] += ((answer - sample_mean) ** 2) * weight
-        squared_diffs_sum = self.questions_results[question][self.squared_diffs_sum_str]
+        self.questions_results[label][self.squared_diffs_sum_str] += ((answer - sample_mean) ** 2) * weight
+        squared_diffs_sum = self.questions_results[label][self.squared_diffs_sum_str]
         sample_variance = squared_diffs_sum / (total - 1) if total > 1 else 0
-        self.questions_results[question][self.sample_variance_str] = sample_variance
+        self.questions_results[label][self.sample_variance_str] = sample_variance
 
     def update_aggregates_for_checker(self, answer, weight):
         # Compute weighted sample mean for the checker
@@ -177,22 +181,22 @@ class Checker:
     def save_results(self, infix=None):
         results = {self.name: {
             self.checker_str: self.name,
-            self.label_str: self.name,
+            self.question_str: self.name,
             self.sample_mean_str: self.sample_mean,
             self.sample_variance_str: self.sample_variance,
             self.total_str: self.total,
             self.positives_str: self.positives,
             self.squared_diffs_sum_str: self.squared_diffs_sum,
         }}
-        for question in self.questions_results:
-            results[question] = {
+        for label in self.questions_results:
+            results[label] = {
                 self.checker_str: self.name,
-                self.label_str: self.questions_results[question][self.label_str],
-                self.sample_mean_str: self.questions_results[question][self.sample_mean_str],
-                self.sample_variance_str: self.questions_results[question][self.sample_variance_str],
-                self.total_str: self.questions_results[question][self.total_str],
-                self.positives_str: self.questions_results[question][self.positives_str],
-                self.squared_diffs_sum_str: self.questions_results[question][self.squared_diffs_sum_str],
+                self.question_str: self.questions_results[label][self.question_str],
+                self.sample_mean_str: self.questions_results[label][self.sample_mean_str],
+                self.sample_variance_str: self.questions_results[label][self.sample_variance_str],
+                self.total_str: self.questions_results[label][self.total_str],
+                self.positives_str: self.questions_results[label][self.positives_str],
+                self.squared_diffs_sum_str: self.questions_results[label][self.squared_diffs_sum_str],
             }
         json_results = json.dumps(results, indent=4)
         if infix is None:
@@ -207,15 +211,15 @@ class Checker:
 
     def save_complete_answers(self, infix=None):
         complete_answers = {}
-        for question in self.questions_results:
-            complete_answers[question] = {}
-            label = self.questions_results[question][self.label_str]
-            for idx in range(len(self.questions_results[question][self.prompt_str])):
-                complete_answers[question][idx] = {
-                    self.label_str: label,
-                    self.prompt_str: self.questions_results[question][self.prompt_str][idx],
-                    self.generated_text_str: self.questions_results[question][self.generated_text_str][idx],
-                    self.answer_str: self.questions_results[question][self.answer_str][idx],
+        for label in self.questions_results:
+            complete_answers[label] = {}
+            question = self.questions_results[label][self.question_str]
+            for idx in range(len(self.questions_results[label][self.prompt_str])):
+                complete_answers[label][idx] = {
+                    self.question_str: question,
+                    self.prompt_str: self.questions_results[label][self.prompt_str][idx],
+                    self.generated_text_str: self.questions_results[label][self.generated_text_str][idx],
+                    self.answer_str: self.questions_results[label][self.answer_str][idx],
                 }
         json_complete_answers = json.dumps(complete_answers, indent=4)
         if infix is None:

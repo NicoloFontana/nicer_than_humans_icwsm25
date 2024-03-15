@@ -5,7 +5,7 @@ from src.utils import find_first_int
 
 
 class AggregationChecker(Checker):
-    def __init__(self, timestamp):
+    def __init__(self):
         questions = [
             f"How many times did player {player_1_} choose {{}}?",
             f"How many times did player {player_2_} choose {{}}?",
@@ -19,33 +19,35 @@ class AggregationChecker(Checker):
             f"total_payoff_{player_2_}",
         ]
         self.verbose = None
-        super().__init__("aggregation_checker", questions, questions_labels, timestamp)
+        super().__init__("aggregation_checker", questions, questions_labels)
 
     def check_action_chosen(self, action, n_times, question_idx, weight=1.0):
         # Question 0: "How many times did you choose {}?"
         # Question 1: "How many times did your opponent choose {}?"
         question = self.questions[question_idx]
+        label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <N_TIMES>}\n'
         question_prompt = f"Answer to the following question: {question.format(to_nat_lang(action))}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
-        llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
+        llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
         print(f"LLM: {llm_answer}") if self.verbose else None
-        self.check_answer(llm_answer, correct_answer, question, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
     def check_total_payoff(self, payoff, question_idx, weight=1.0):
         # Question 2: "What is your current total payoff?"
         # Question 3: "What is your opponent's current total payoff?"
         question = self.questions[question_idx]
+        label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <TOTAL_PAYOFF>}\n'
         question_prompt = f"Answer to the following question: {question}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
-        llm_answer = find_first_int(self.get_answer_from_llm(prompt, question))
+        llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
         print(f"LLM: {llm_answer}") if self.verbose else None
-        self.check_answer(llm_answer, correct_answer, question, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
     def ask_questions(self, game, player_name="", verbose=False):
         self.verbose = verbose

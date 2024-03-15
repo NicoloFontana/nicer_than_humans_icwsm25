@@ -4,13 +4,13 @@ import logging
 import os
 import re
 import warnings
-
-from src.llm_utils import OUT_BASE_PATH
+from pathlib import Path
 
 timestamp = dt.datetime.now().strftime("%Y%m%d%H%M%S")
-dir_path = OUT_BASE_PATH / str(timestamp)
-os.makedirs(dir_path, exist_ok=True)
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", filename=dir_path / f"{timestamp}.log")
+OUT_BASE_PATH = Path("out")
+out_path = OUT_BASE_PATH / str(timestamp)
+os.makedirs(out_path, exist_ok=True)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", filename=out_path / f"{timestamp}.log")
 log = logging.getLogger()
 
 

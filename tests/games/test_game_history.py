@@ -20,7 +20,7 @@
 #         for handler in handlers:
 #             log.removeHandler(handler)
 #             handler.close()
-#         shutil.rmtree(utils.dir_path)
+#         shutil.rmtree(utils.out_path)
 #
 #
 #     def test_add_last_iteration(self):

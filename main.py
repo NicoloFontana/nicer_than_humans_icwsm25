@@ -1,6 +1,7 @@
 import datetime as dt
 import sys
 import time
+from pathlib import Path
 
 from huggingface_hub import InferenceClient
 
@@ -19,7 +20,7 @@ checkpoint = 10
 verbose = False
 checkers = True
 save = True
-msg = "Redo run with inverted identifiers after some fixes."
+msg = "Run complete of all modifications to prompt and questions."
 
 if msg == "":
     log.info("Set a message.")
@@ -35,9 +36,9 @@ log.info(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 print(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
 if checkers:
     checkers = [
-        # TimeChecker(timestamp),
-        RuleChecker(timestamp),
-        # AggregationChecker(timestamp),
+        TimeChecker(),
+        RuleChecker(),
+        AggregationChecker(),
     ]
 else:
     checkers = []
@@ -67,6 +68,7 @@ for iteration in range(n_iterations):
                     checker.save_results(infix=curr_round)
                     checker.save_complete_answers(infix=curr_round)
                 plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
+                strategy.save_action_answers(infix=curr_round)
             log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
             print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 if save:
@@ -75,5 +77,6 @@ if save:
         checker.save_results()
         checker.save_complete_answers()
     plot_checkers_results(checkers_names, timestamp, n_iterations)
+    strategy.save_action_answers()
 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
