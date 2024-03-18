@@ -79,8 +79,13 @@ class OneVsOnePDLlmStrategy(Strategy):
             except Exception as e:
                 warnings.warn(f"{str(e)} in answer: {answer}. Returning 'Defect' action as 0.")
                 action = 0
+            try:
+                reason = answer[self.reason_str]
+            except Exception as e:
+                warnings.warn(f"{str(e)} in answer: {answer}. Reason not found.")
+                reason = ""
         action_answer[self.action_str] = action
-        action_answer[self.reason_str] = answer[self.reason_str]
+        action_answer[self.reason_str] = reason
         self.action_answers.append(action_answer)
         return int(action)
 
