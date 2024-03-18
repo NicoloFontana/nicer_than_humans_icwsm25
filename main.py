@@ -20,7 +20,7 @@ checkpoint = 10
 verbose = False
 checkers = True
 save = True
-msg = "Run complete of all modifications to prompt and questions."
+msg = "Try neutral identifiers for the actions."
 
 if msg == "":
     log.info("Set a message.")
