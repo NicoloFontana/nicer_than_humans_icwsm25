@@ -44,9 +44,9 @@ class TimeChecker(Checker):
         json_prompt = 'Remember to use the following JSON format: {"answer": <ACTION_PLAYED>}\n'
         question_prompt = f"Answer to the following question: {question.format(inspected_round)}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        correct_answer = to_nat_lang(action_played)
+        correct_answer = to_nat_lang(action_played, string_of_string=False)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
-        nat_action_space = {to_nat_lang(action) for action in action_space}
+        nat_action_space = {to_nat_lang(action, string_of_string=False) for action in action_space}
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), nat_action_space)
         print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)

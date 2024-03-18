@@ -62,7 +62,7 @@ class RuleChecker(Checker):
         # Question 2: "Which actions are you allowed to play?"
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
-        correct_answer = {to_nat_lang(action) for action in action_space}
+        correct_answer = {to_nat_lang(action, string_of_string=False) for action in action_space}
         json_prompt = 'Remember to use the following JSON format: {"answer": [<LIST_OF_AVAILABLE_ACTIONS>]}\n'
         # The answer is requested as a list for simplicity when finding the JSON. It is then converted to a set.
         question_prompt = f"Answer to the following question: {question}"
@@ -114,13 +114,13 @@ class RuleChecker(Checker):
             for secondary_action in action_space:
                 payoff = payoff_function(primary_action, secondary_action)
                 if payoff == given_payoff:
-                    correct_combos.append([to_nat_lang(primary_action), to_nat_lang(secondary_action)])
+                    correct_combos.append([to_nat_lang(primary_action, string_of_string=False), to_nat_lang(secondary_action, string_of_string=False)])
         if len(correct_combos) == 0:
             correct_answer = "None"
         else:
             correct_answer = correct_combos[0]
         json_prompt = (
-            'Remember to use the following JSON format: {"answer": [<FIRST_PLAYER_ACTION>, <SECOND_PLAYER_ACTION>]}.\n'
+            'Remember to use the following JSON format: {"answer": ["<FIRST_PLAYER_ACTION>", "<SECOND_PLAYER_ACTION>"]}.\n'
             'If the required combination does not exist, answer with None\n')
         question_prompt = f"Answer to the following question: {question.format(given_payoff)}"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
