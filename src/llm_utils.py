@@ -54,35 +54,41 @@ def compact_format(x, is_percentage=False):
     return new_text
 
 
-def extract_questions_from_checker_answers(answers_dir_path, in_file_name=None):
+def extract_labels_and_questions_from_checker_answers(answers_dir_path, in_file_name=None):
     if in_file_name is None:
         in_file_name = answers_dir_path.name + "_complete_answers.json"
     in_file_path = answers_dir_path / in_file_name
     with open(in_file_path, "r") as in_file:
         json_data = in_file.read()
         dict_data = json.loads(json_data)
-        questions = list(dict_data.keys())
-        return questions
+        labels = list(dict_data.keys())
+        questions = {}
+        for label in dict_data.keys():
+            questions[label] = dict_data[label][str(0)]["question"]
+        return labels, questions
 
 
-def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=None, title=None, mat_labels=None):
+def plot_confusion_matrix_for_question(answers_dir_path, label, in_file_name=None, title=None, infix=None):
     if in_file_name is None:
-        in_file_name = answers_dir_path.name + "_complete_answers.json"
+        if infix is None:
+            in_file_name = answers_dir_path.name + "_complete_answers.json"
+        else:
+            in_file_name = answers_dir_path.name + f"_complete_answers_{infix}.json"
     in_file_path = answers_dir_path / in_file_name
     with open(in_file_path, "r") as in_file:
         out_path = answers_dir_path / "confusion_matrices"
         os.makedirs(out_path, exist_ok=True)
         json_data = in_file.read()
         dict_data = json.loads(json_data)
-        answers = dict_data[question]
+        answers = dict_data[label]
 
         # Get the correct labels
         y_labels = []
         other_str = "Other"
         for quest in answers.values():
-            ans = quest["answer"]["correct_answer"]
-            if ans not in y_labels:
-                y_labels.append(ans)
+            correct_ans = quest["answer"]["correct_answer"]
+            if correct_ans not in y_labels:
+                y_labels.append(correct_ans)
 
         # Get the LLM's answers
         actual = []
@@ -91,7 +97,7 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
         for quest in answers.values():
             actual.append(quest["answer"]["correct_answer"])
             if quest["answer"]["llm_answer"] not in y_labels:
-                predicted.append(other_str)  # Normalize unexpected answers as "Other"
+                predicted.append(other_str)  # Group unexpected answers as "Other"
                 other = True
             else:
                 predicted.append(quest["answer"]["llm_answer"])
@@ -109,11 +115,8 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
             confusion_matrix[correct_idx, llm_idx] += 1
 
         # Create the plot and save it
-        label = answers[str(0)]["label"]
         if title is None:
             title = label
-        else:
-            title += f"\n{label}"
         ax = sns.heatmap(confusion_matrix, annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='d')
         for text in ax.texts:
             x = float(text.get_text())
@@ -123,8 +126,12 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
         plt.ylabel('Correct answer')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
-        plt.savefig(out_path / f"{label}.svg")
-        plt.savefig(out_path / f"{label}.png")
+        if infix is None:
+            plt.savefig(out_path / f"{label}.svg")
+            plt.savefig(out_path / f"{label}.png")
+        else:
+            plt.savefig(out_path / f"{label}_{infix}.svg")
+            plt.savefig(out_path / f"{label}_{infix}.png")
         plt.show()
         ax = sns.heatmap(confusion_matrix / np.sum(confusion_matrix), annot=True, xticklabels=x_labels, yticklabels=y_labels, cmap="Blues", fmt='.2%')
         for text in ax.texts:
@@ -135,8 +142,12 @@ def plot_confusion_matrix_for_question(answers_dir_path, question, in_file_name=
         plt.ylabel('Correct answer')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
-        plt.savefig(out_path / f"{label}_percentage.svg")
-        plt.savefig(out_path / f"{label}_percentage.png")
+        if infix is None:
+            plt.savefig(out_path / f"{label}_percentage.svg")
+            plt.savefig(out_path / f"{label}_percentage.png")
+        else:
+            plt.savefig(out_path / f"{label}_percentage_{infix}.svg")
+            plt.savefig(out_path / f"{label}_percentage_{infix}.png")
         plt.show()
 
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import InferenceClient
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, player_1_, player_2_
+from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, player_1_, player_2_, plot_confusion_matrix_for_question
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
@@ -67,6 +67,9 @@ for iteration in range(n_iterations):
                 for checker in checkers:
                     checker.save_results(infix=curr_round)
                     checker.save_complete_answers(infix=curr_round)
+                    # labels = checker.questions_labels
+                    # for label in labels:
+                    #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
                 plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
                 strategy.save_action_answers(infix=curr_round)
             log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
@@ -76,6 +79,9 @@ if save:
     for checker in checkers:
         checker.save_results()
         checker.save_complete_answers()
+        # labels = checker.questions_labels
+        # for label in labels:
+        #     plot_confusion_matrix_for_question(checker.dir_path, label)
     plot_checkers_results(checkers_names, timestamp, n_iterations)
     strategy.save_action_answers()
 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")

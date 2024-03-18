@@ -45,6 +45,9 @@ class OneVsOnePDLlmStrategy(Strategy):
         self.max_new_tokens = MAX_NEW_TOKENS
         self.temperature = TEMPERATURE
 
+        self.action_str = "action"
+        self.reason_str = "reason"
+
     def get_client(self):
         return self.client
 
@@ -58,7 +61,7 @@ class OneVsOnePDLlmStrategy(Strategy):
 
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
-        json_prompt = f'Remember to use only the following JSON format: {{"action": <ACTION_of_{player_1_}>, "reason": <YOUR_REASON>}}<<SYS>>\n'
+        json_prompt = f'Remember to use only the following JSON format: {{"{self.action_str}": <ACTION_of_{player_1_}>, "{self.reason_str}": <YOUR_REASON>}}<<SYS>>\n'
         next_action_prompt = f"Answer saying which action player {player_1_} should play."
         prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])
         generated_text = generate_text(prompt, self.client, max_new_tokens=self.max_new_tokens, temperature=self.temperature)
@@ -72,11 +75,12 @@ class OneVsOnePDLlmStrategy(Strategy):
             action = 0
         else:
             try:
-                action = from_nat_lang(answer["action"])
+                action = from_nat_lang(answer[self.action_str])
             except Exception as e:
                 warnings.warn(f"{str(e)} in answer: {answer}. Returning 'Defect' action as 0.")
                 action = 0
-        action_answer["action"] = action
+        action_answer[self.action_str] = action
+        action_answer[self.reason_str] = answer[self.reason_str]
         self.action_answers.append(action_answer)
         return int(action)
 
