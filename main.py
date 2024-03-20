@@ -20,7 +20,7 @@ checkpoint = 10
 verbose = False
 checkers = True
 save = True
-msg = "Try neutral identifiers for the actions."
+msg = "Trying run with questions using neutral identifiers for the actions."
 
 if msg == "":
     log.info("Set a message.")
