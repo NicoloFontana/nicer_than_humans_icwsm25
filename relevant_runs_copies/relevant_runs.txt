@@ -56,3 +56,9 @@ Try to solve LLM's bias for player1 questions (which get higher accuracy than th
 >> 20240314150845:
     Invert player identifiers to check if the cause of the bias is the order or (somehow) the token itself.
     Confirm that the bias is due to the order in which the players are presented: the first one is preferred.
+
+Run with all modifications to increase confidence
+>> 20240315190502:
+    run 0
+>> 20240318120135:
+    run 1
