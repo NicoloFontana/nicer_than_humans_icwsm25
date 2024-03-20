@@ -13,7 +13,7 @@ from src.games.two_players_pd import TwoPlayersPD
 from src.player import Player
 from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
-from src.utils import timestamp, log
+from src.utils import timestamp, log, start_time, dt_start_time
 
 n_iterations = 100
 checkpoint = 10
@@ -31,9 +31,8 @@ game = TwoPlayersPD(iterations=n_iterations)
 # payoff_function = game.get_payoff_function()
 game.add_player(Player(player_1_))
 game.add_player(Player(player_2_))
-start_time = time.time()
-log.info(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
-print(f"Starting time: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}")
+log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 if checkers:
     checkers = [
         TimeChecker(),

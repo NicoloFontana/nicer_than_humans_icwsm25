@@ -3,10 +3,13 @@ import json
 import logging
 import os
 import re
+import time
 import warnings
 from pathlib import Path
 
-timestamp = dt.datetime.now().strftime("%Y%m%d%H%M%S")
+dt_start_time = dt.datetime.now()
+start_time = time.mktime(dt_start_time.timetuple())
+timestamp = dt_start_time.strftime("%Y%m%d%H%M%S")
 OUT_BASE_PATH = Path("out")
 out_path = OUT_BASE_PATH / str(timestamp)
 os.makedirs(out_path, exist_ok=True)
