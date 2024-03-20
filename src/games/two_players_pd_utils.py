@@ -1,8 +1,8 @@
 import warnings
 
 
-action_0_ = "F"
-action_1_ = "J"
+action_0_ = "Defect"
+action_1_ = "Cooperate"
 
 def to_nat_lang(action, string_of_string=True):
     if isinstance(action, set) and len(action) == 2 and 1 in action and 0 in action:

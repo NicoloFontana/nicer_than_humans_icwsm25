@@ -20,7 +20,7 @@ checkpoint = 10
 verbose = False
 checkers = False
 save = True
-msg = "Run without questions. F, J actions."
+msg = "Run without questions. Defect, Cooperate actions."
 
 if msg == "":
     log.info("Set a message.")
