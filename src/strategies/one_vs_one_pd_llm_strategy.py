@@ -73,6 +73,7 @@ class OneVsOnePDLlmStrategy(Strategy):
             warnings.warn(
                 f"No JSON parsable object found in generated text: {generated_text}. Returning 'Defect' action as 0.")
             action = 0
+            reason = ""
         else:
             try:
                 action = from_nat_lang(answer[self.action_str])
