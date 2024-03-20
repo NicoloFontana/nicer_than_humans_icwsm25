@@ -18,9 +18,9 @@ from src.utils import timestamp, log, start_time, dt_start_time
 n_iterations = 100
 checkpoint = 10
 verbose = False
-checkers = True
+checkers = False
 save = True
-msg = "Trying run with questions using neutral identifiers for the actions."
+msg = "Run without questions. F, J actions."
 
 if msg == "":
     log.info("Set a message.")
@@ -31,8 +31,11 @@ game = TwoPlayersPD(iterations=n_iterations)
 # payoff_function = game.get_payoff_function()
 game.add_player(Player(player_1_))
 game.add_player(Player(player_2_))
-log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+time.sleep(86400)  # TODO remove this line. Added just to avoid having too many jobs on hpc querying the model.
+new_dt_start_time = dt.datetime.now()  # Change
+new_start_time = time.mktime(dt_start_time.timetuple())  # Change
+log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")  # Change
+print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")  # Change
 if checkers:
     checkers = [
         TimeChecker(),
@@ -71,8 +74,8 @@ for iteration in range(n_iterations):
                     #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
                 plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
                 strategy.save_action_answers(infix=curr_round)
-            log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
-            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+            log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
+            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
 if save:
     game.save_history(timestamp)
     for checker in checkers:
@@ -83,5 +86,5 @@ if save:
         #     plot_confusion_matrix_for_question(checker.dir_path, label)
     plot_checkers_results(checkers_names, timestamp, n_iterations)
     strategy.save_action_answers()
-log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
-print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
+print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
