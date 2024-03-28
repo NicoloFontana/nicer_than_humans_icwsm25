@@ -22,7 +22,7 @@ checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = "Run multiple games without questions."
+msg = ""
 
 if msg == "":
     log.info("Set a message.")
@@ -35,8 +35,8 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 for n_game in range(n_games):
-    log.info(f"Game {n_game + 1}")
-    print(f"Game {n_game + 1}")
+    log.info(f"Game {n_game + 1}") if n_games > 1 else None
+    print(f"Game {n_game + 1}") if n_games > 1 else None
     if checkers:
         checkers = [
             TimeChecker(),
@@ -55,8 +55,8 @@ for n_game in range(n_games):
     strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
     for iteration in range(n_iterations):
         curr_round = iteration + 1
-        log.info(f"Round {curr_round}") if curr_round % 10 == 0 else None
-        print(f"Round {curr_round}") if curr_round % 10 == 0 else None
+        log.info(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
+        print(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
         if not game.is_ended:
             for player in game.players.values():
                 # own_history = game.get_history().get_actions_by_player(player.get_name())
@@ -77,7 +77,8 @@ for n_game in range(n_games):
                         # for label in labels:
                         #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
                     plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
-                    strategy.save_action_answers(infix=f"{n_game+1}_{curr_round}")
+                    infix = f"{n_game+1}_{curr_round}" if n_games > 1 else curr_round
+                    strategy.save_action_answers(infix=infix)
                 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
                 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
     if save:
@@ -88,8 +89,9 @@ for n_game in range(n_games):
             # for label in labels:
             #     plot_confusion_matrix_for_question(checker.dir_path, label)
         plot_checkers_results(checkers_names, timestamp, n_iterations)
-        game.save_history(timestamp, infix=n_game+1)
-        strategy.save_action_answers(infix=n_game+1)
+        infix = n_game + 1 if n_games > 1 else None
+        game.save_history(timestamp, infix=infix)
+        strategy.save_action_answers(infix=infix)
 
     log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
     print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
