@@ -16,76 +16,80 @@ from src.strategies.basic_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
+n_games = 10
 n_iterations = 100
-checkpoint = 10
+checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = "Run without questions. Defect, Cooperate actions."
+msg = "Run multiple games without questions."
 
 if msg == "":
     log.info("Set a message.")
     sys.exit()
 log.info(msg)
 print(msg)
-game = TwoPlayersPD(iterations=n_iterations)
-# payoff_function = game.get_payoff_function()
-game.add_player(Player(player_1_))
-game.add_player(Player(player_2_))
-time.sleep(86400)  # TODO remove this line. Added just to avoid having too many jobs on hpc querying the model.
-new_dt_start_time = dt.datetime.now()  # Change
-new_start_time = time.mktime(dt_start_time.timetuple())  # Change
-log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")  # Change
-print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")  # Change
-if checkers:
-    checkers = [
-        TimeChecker(),
-        RuleChecker(),
-        AggregationChecker(),
-    ]
-else:
-    checkers = []
-checkers_names = [checker.get_name() for checker in checkers]
-client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-client.headers["x-use-cache"] = "0"
-strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
 
-for iteration in range(n_iterations):
-    curr_round = iteration + 1
-    log.info(f"Round {curr_round}")
-    print(f"Round {curr_round}")
-    if not game.is_ended:
-        for player in game.players.values():
-            # own_history = game.get_history().get_actions_by_player(player.get_name())
-            # opponent_history = game.get_history().get_actions_by_player(
-            #     [p for p in game.players if p != player.get_name()][0])
-            if player.get_name() == player_1_:
-                player.set_strategy(strategy, verbose)
-            else:
-                player.set_strategy(RndStrategy())
-        game.play_round()
-        game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, verbose)
-        if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
-            if save:
-                for checker in checkers:
-                    checker.save_results(infix=curr_round)
-                    checker.save_complete_answers(infix=curr_round)
-                    # labels = checker.questions_labels
-                    # for label in labels:
-                    #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
-                plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
-                strategy.save_action_answers(infix=curr_round)
-            log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
-            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
-if save:
-    game.save_history(timestamp)
-    for checker in checkers:
-        checker.save_results()
-        checker.save_complete_answers()
-        # labels = checker.questions_labels
-        # for label in labels:
-        #     plot_confusion_matrix_for_question(checker.dir_path, label)
-    plot_checkers_results(checkers_names, timestamp, n_iterations)
-    strategy.save_action_answers()
-log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
-print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # Change
+log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+
+for n_game in range(n_games):
+    log.info(f"Game {n_game + 1}")
+    print(f"Game {n_game + 1}")
+    if checkers:
+        checkers = [
+            TimeChecker(),
+            RuleChecker(),
+            AggregationChecker(),
+        ]
+    else:
+        checkers = []
+    checkers_names = [checker.get_name() for checker in checkers]
+    client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+    client.headers["x-use-cache"] = "0"
+    game = TwoPlayersPD(iterations=n_iterations)
+    # payoff_function = game.get_payoff_function()
+    game.add_player(Player(player_1_))
+    game.add_player(Player(player_2_))
+    strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
+    for iteration in range(n_iterations):
+        curr_round = iteration + 1
+        log.info(f"Round {curr_round}")
+        print(f"Round {curr_round}")
+        if not game.is_ended:
+            for player in game.players.values():
+                # own_history = game.get_history().get_actions_by_player(player.get_name())
+                # opponent_history = game.get_history().get_actions_by_player(
+                #     [p for p in game.players if p != player.get_name()][0])
+                if player.get_name() == player_1_:
+                    player.set_strategy(strategy, verbose)
+                else:
+                    player.set_strategy(RndStrategy())
+            game.play_round()
+            game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, verbose)
+            if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
+                if save:
+                    for checker in checkers:
+                        checker.save_results(infix=curr_round)
+                        checker.save_complete_answers(infix=curr_round)
+                        # labels = checker.questions_labels
+                        # for label in labels:
+                        #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
+                    plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
+                    strategy.save_action_answers(infix=f"{n_game+1}_{curr_round}")
+                log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+                print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    if save:
+        for checker in checkers:
+            checker.save_results()
+            checker.save_complete_answers()
+            # labels = checker.questions_labels
+            # for label in labels:
+            #     plot_confusion_matrix_for_question(checker.dir_path, label)
+        plot_checkers_results(checkers_names, timestamp, n_iterations)
+        game.save_history(timestamp, infix=n_game+1)
+        strategy.save_action_answers(infix=n_game+1)
+
+    log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
