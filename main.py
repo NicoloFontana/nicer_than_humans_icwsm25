@@ -6,7 +6,8 @@ from pathlib import Path
 from huggingface_hub import InferenceClient
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, player_1_, player_2_, plot_confusion_matrix_for_question
+from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, plot_confusion_matrix_for_question
+from src.games.two_players_pd_utils import player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD

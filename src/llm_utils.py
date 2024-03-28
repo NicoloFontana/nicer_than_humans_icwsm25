@@ -8,15 +8,13 @@ import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff
+from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff, player_1_, player_2_
 from src.utils import OUT_BASE_PATH
 
 HF_API_TOKEN = "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"
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
-player_1_ = "A"
-player_2_ = "B"
 
 OVERALL = "overall"
 

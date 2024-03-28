@@ -4,6 +4,10 @@ import warnings
 action_0_ = "Defect"
 action_1_ = "Cooperate"
 
+player_1_ = "A"
+player_2_ = "B"
+
+
 def to_nat_lang(action, string_of_string=True):
     if isinstance(action, set) and len(action) == 2 and 1 in action and 0 in action:
         return f'{{\"{action_1_}\", \"{action_0_}\"}}' if string_of_string else f'{{{action_1_}, {action_0_}}}'

@@ -5,10 +5,10 @@ import warnings
 from huggingface_hub import InferenceClient
 
 from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import from_nat_lang
+from src.games.two_players_pd_utils import from_nat_lang, player_1_
 from src.strategies.strategy import Strategy
 from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, \
-    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text, player_1_
+    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
 from src.utils import find_json_object, log, out_path
 
 
