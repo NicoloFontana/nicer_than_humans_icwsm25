@@ -1,0 +1,41 @@
+def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
+    history_prompt = ""
+
+    ### v0.3 - the most compact, but info are more implicit (up to 120~130 rounds)
+    own_total_payoff = 0
+    own_coop = 0
+    own_defect = 0
+    opponent_total_payoff = 0
+    opponent_coop = 0
+    opponent_defect = 0
+    for i in range(len(own_history)):
+        own_coop += 1 if own_history[i] else 0
+        own_defect += 1 if not own_history[i] else 0
+        opponent_coop += 1 if opponent_history[i] else 0
+        opponent_defect += 1 if not opponent_history[i] else 0
+        own_payoff = payoff_function(own_history[i], opponent_history[i])
+        opponent_payoff = payoff_function(opponent_history[i], own_history[i])
+        round_dict = {
+            "round": i + 1,
+            "actions": [to_nat_lang(own_history[i]), to_nat_lang(opponent_history[i])],
+            "payoffs": [own_payoff, opponent_payoff],
+        }
+        history_prompt += str(round_dict) + "\n"
+        own_total_payoff += own_payoff
+        opponent_total_payoff += opponent_payoff
+    aggregate_dict = {
+        "n_times_coop": [own_coop, opponent_coop],
+        "n_times_defect": [own_defect, opponent_defect],
+        "total_payoffs": [own_total_payoff, opponent_total_payoff],
+    }
+    history_prompt += str(aggregate_dict) + "\n"
+    if not is_ended:
+        history_prompt += f"\tCurrent round {len(own_history) + 1}.\n"
+    else:
+        history_prompt += f"\tThe game has ended.\n"
+
+    return history_prompt
+                if "def generate_history_prompt(" in line.strip():
+                    outfile.write(line)
+                    copy = True
+                elif "return history_prompt" in line.strip():

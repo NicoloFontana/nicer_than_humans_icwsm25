@@ -1,0 +1,137 @@
+{
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.8114583333333333,
+        "sample_variance": 0.15269209516030627,
+        "total": 1920.0,
+        "positives": 1558.0,
+        "squared_diffs_sum": 293.0161306126277
+    },
+    "What is the highest payoff player F can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "max_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "What is the lowest payoff player F can get in a single round?": {
+        "checker": "rule_checker",
+        "label": "min_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which actions is player F allowed to play?": {
+        "checker": "rule_checker",
+        "label": "allowed_actions",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which is player F's payoff in a single round if F plays {} and J plays {}?": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 0.9375,
+        "sample_variance": 0.0583558374173752,
+        "total": 320.0,
+        "positives": 300.0,
+        "squared_diffs_sum": 18.615512136142687
+    },
+    "Which is player J's payoff in a single round if J plays {} and F plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.75,
+        "sample_variance": 0.18484045976193095,
+        "total": 320.0,
+        "positives": 240.0,
+        "squared_diffs_sum": 58.964106664055976
+    },
+    "Which is player J's payoff in a single round if F plays {} and J plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff_inverse",
+        "sample_mean": 0.784375,
+        "sample_variance": 0.16799365250721263,
+        "total": 320.0,
+        "positives": 251.0,
+        "squared_diffs_sum": 53.58997514980083
+    },
+    "How many point does player F collect in a single round in F plays {} and J plays {}?": {
+        "checker": "rule_checker",
+        "label": "A_round_points",
+        "sample_mean": 0.965625,
+        "sample_variance": 0.03269947316566019,
+        "total": 320.0,
+        "positives": 309.0,
+        "squared_diffs_sum": 10.4311319398456
+    },
+    "How many point does player J collect in a single round in J plays {} and F plays {}?": {
+        "checker": "rule_checker",
+        "label": "B_round_points",
+        "sample_mean": 0.671875,
+        "sample_variance": 0.2174551194176235,
+        "total": 320.0,
+        "positives": 215.0,
+        "squared_diffs_sum": 69.36818309422189
+    },
+    "How many point does player J collect in a single round in F plays {} and J plays {}?": {
+        "checker": "rule_checker",
+        "label": "B_round_points_inverse",
+        "sample_mean": 0.759375,
+        "sample_variance": 0.18156166917272978,
+        "total": 320.0,
+        "positives": 243.0,
+        "squared_diffs_sum": 57.9181724661008
+    },
+    "Does exists a combination of actions that gives a player a payoff of {} in a single round?": {
+        "checker": "rule_checker",
+        "label": "exists_combo",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Can player F collect {} points in a single round?": {
+        "checker": "rule_checker",
+        "label": "can_A_collect",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Can player J collect {} points in a single round?": {
+        "checker": "rule_checker",
+        "label": "can_B_collect",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which actions should player F and player J play to give a payoff of {} to player A?": {
+        "checker": "rule_checker",
+        "label": "combo_for_payoff",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    },
+    "Which actions should player F and player J play to make player F collect {} points?": {
+        "checker": "rule_checker",
+        "label": "combo_for_points",
+        "sample_mean": 0,
+        "sample_variance": 0,
+        "total": 0,
+        "positives": 0,
+        "squared_diffs_sum": 0
+    }
+}

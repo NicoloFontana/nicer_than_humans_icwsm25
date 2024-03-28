@@ -1,26 +1,31 @@
+import json
+import time
 import warnings
 
 from huggingface_hub import InferenceClient
 
 from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import from_nat_lang
+from src.games.two_players_pd_utils import from_nat_lang, player_1_
 from src.strategies.strategy import Strategy
-from src.strategies.strategy_utils import generate_prompt
-from src.utils import MODEL, HF_API_TOKEN, MAX_NEW_TOKENS, TEMPERATURE, find_json_object
+from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, \
+    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
+from src.utils import find_json_object, log, out_path
 
 
 class OneVsOnePDLlmStrategy(Strategy):
 
-    def __init__(self, game: GTGame, player_name: str, opponent_name: str, model=MODEL, token=HF_API_TOKEN,
-                 max_new_tokens=MAX_NEW_TOKENS,
-                 temperature=TEMPERATURE, update_client=True):
+    def __init__(self, game: GTGame, player_name: str, opponent_name: str, client=None):
         super().__init__("OneVsOnePDLlmStrategy")
         try:
-            self.client = InferenceClient(model=model, token=token)
-            # Check if the model and token are valid
-            self.client.text_generation("Test", max_new_tokens=1, temperature=TEMPERATURE)
+            if client is None:
+                self.client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+                self.client.headers["x-use-cache"] = "0"
+            else:
+                self.client = client
+            # Check if the client is valid
+            generate_text("Test", self.client, max_new_tokens=1)
         except Exception as e:
-            raise Exception(f"Error in creating InferenceClient with model {model} and token {token}") from e
+            raise Exception(f"Error in creating InferenceClient with model {MODEL} and token {HF_API_TOKEN}") from e
         if not isinstance(game, GTGame):
             raise TypeError(f"game must be of type GTGame, not {type(game)}")
         self.game = game
@@ -36,46 +41,74 @@ class OneVsOnePDLlmStrategy(Strategy):
         if opponent_name not in game.get_players():
             raise ValueError(f"opponent_name {opponent_name} not in game.get_players(): {game.get_players()}")
         self.opponent_name = opponent_name
-        self.model = model
-        self.token = token
-        self.max_new_tokens = max_new_tokens
-        self.temperature = temperature
-        self.update_client = update_client
+        self.action_answers = []
+        self.max_new_tokens = MAX_NEW_TOKENS
+        self.temperature = TEMPERATURE
+
+        self.action_str = "action"
+        self.reason_str = "reason"
 
     def get_client(self):
         return self.client
 
-    def play(self, checkers=None, verbose=False):
+    def play(self, verbose=False) -> int:
+        is_ended = self.game.is_ended
         action_space = self.game.get_action_space()
         payoff_function = self.game.get_payoff_function()
         n_iterations = self.game.get_iterations()
         own_history = self.game.get_actions_by_player(self.player_name)
         opponent_history = self.game.get_actions_by_player(self.opponent_name)
-        self.client = InferenceClient(model=self.model, token=self.token) if self.update_client else self.client
-        prompt = generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history)
-        try:
-            generated_text = self.client.text_generation(prompt, max_new_tokens=self.max_new_tokens,
-                                                         temperature=self.temperature)
-        except Exception as e:
-            warnings.warn(f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-            generated_text = ""
+
+        game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
+        history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
+        json_prompt = f'Remember to use only the following JSON format: {{"{self.action_str}": <ACTION_of_{player_1_}>, "{self.reason_str}": <YOUR_REASON>}}<<SYS>>\n'
+        next_action_prompt = f"Answer saying which action player {player_1_} should play."
+        prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])
+        generated_text = generate_text(prompt, self.client, max_new_tokens=self.max_new_tokens, temperature=self.temperature)
+        action_answer = {
+            "generated_text": generated_text,
+        }
         answer = find_json_object(generated_text)
         if answer is None:
             warnings.warn(
                 f"No JSON parsable object found in generated text: {generated_text}. Returning 'Defect' action as 0.")
             action = 0
+            reason = ""
         else:
             try:
-                action = from_nat_lang(answer["action"])
+                action = from_nat_lang(answer[self.action_str])
             except Exception as e:
                 warnings.warn(f"{str(e)} in answer: {answer}. Returning 'Defect' action as 0.")
                 action = 0
+            try:
+                reason = answer[self.reason_str]
+            except Exception as e:
+                warnings.warn(f"{str(e)} in answer: {answer}. Reason not found.")
+                reason = ""
+        action_answer[self.action_str] = action
+        action_answer[self.reason_str] = reason
+        self.action_answers.append(action_answer)
+        return int(action)
+
+    def save_action_answers(self, infix=None):
+        actions_per_round = {}
+        for idx, action_answer in enumerate(self.action_answers):
+            actions_per_round[idx] = action_answer
+        json_action_answers = json.dumps(actions_per_round, indent=4)
+        if infix is None:
+            out_file_path = out_path / f"{self.player_name}_action_answers.json"
+        else:
+            out_file_path = out_path / f"{self.player_name}_action_answers_{infix}.json"
+        with open(out_file_path, "w") as file:
+            file.write(json_action_answers)
+            log.info(f"{self.player_name} action answers saved.")
+
+    def ask_questions(self, checkers, game, verbose=False):
         if checkers is not None:
             for checker in checkers:
                 try:
                     checker.set_inference_client(self.client)
-                    checker.ask_questions(self.game, self.player_name, verbose=verbose)
+                    checker.ask_questions(game, self.player_name, verbose=verbose)
                 except Exception as e:
                     warnings.warn(
                         f"Error {str(e)}. Checker {checker.get_name()} of type {type(checker)} failed to ask questions to the inference client.")
-        return action

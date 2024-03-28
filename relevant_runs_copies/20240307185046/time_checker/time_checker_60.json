@@ -1,0 +1,56 @@
+{
+    "time_checker": {
+        "checker": "time_checker",
+        "label": "time_checker",
+        "sample_mean": 0.7277777777777777,
+        "sample_variance": 0.19804924997971377,
+        "total": 7380.0,
+        "positives": 5371.0,
+        "squared_diffs_sum": 1461.4054156003078
+    },
+    "Which is the current round of the game?": {
+        "checker": "time_checker",
+        "label": "current_round",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 60.0,
+        "positives": 60.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which action did player A play in round {}?": {
+        "checker": "time_checker",
+        "label": "own_action",
+        "sample_mean": 0.7087431693989071,
+        "sample_variance": 0.20609559171414224,
+        "total": 1830.0,
+        "positives": 1297.0,
+        "squared_diffs_sum": 376.94883724516615
+    },
+    "Which action did player B play in round {}?": {
+        "checker": "time_checker",
+        "label": "opponent_action",
+        "sample_mean": 0.7644808743169399,
+        "sample_variance": 0.1798610060376938,
+        "total": 1830.0,
+        "positives": 1399.0,
+        "squared_diffs_sum": 328.96578004294196
+    },
+    "How many points did player A collect in round {}?": {
+        "checker": "time_checker",
+        "label": "own_points",
+        "sample_mean": 0.8120218579234972,
+        "sample_variance": 0.15250542166803324,
+        "total": 1830.0,
+        "positives": 1486.0,
+        "squared_diffs_sum": 278.9324162308328
+    },
+    "How many points did player B collect in round {}?": {
+        "checker": "time_checker",
+        "label": "opponent_points",
+        "sample_mean": 0.6169398907103825,
+        "sample_variance": 0.23591357108944386,
+        "total": 1830.0,
+        "positives": 1129.0,
+        "squared_diffs_sum": 431.48592152259283
+    }
+}

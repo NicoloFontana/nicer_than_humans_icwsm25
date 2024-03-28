@@ -1,0 +1,2 @@
+Put the history of each player into a single list.
+Wrt v0.3 where the list was [action_A, action_B], now it is A: [action_1, action_2, ...], B: [action_1, action_2, ...].

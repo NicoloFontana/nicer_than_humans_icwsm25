@@ -1,0 +1,2 @@
+This is the first (verbose) version of the prompt.
+It contains all the info useful to the LLM to answer the questions.

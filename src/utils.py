@@ -1,15 +1,26 @@
+import datetime as dt
 import json
+import logging
+import os
 import re
+import time
 import warnings
+from pathlib import Path
 
-HF_API_TOKEN = "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"
-CHECKS_OUT_BASE_PATH = "C:\\Users\\fonta\\PycharmProjects\\masters_thesis_PoliMi_ITU\\out\\llm_checks\\"
-MODEL = "meta-llama/Llama-2-70b-chat-hf"
-MAX_NEW_TOKENS = 200
-TEMPERATURE = 0.7
+dt_start_time = dt.datetime.now()
+start_time = time.mktime(dt_start_time.timetuple())
+timestamp = dt_start_time.strftime("%Y%m%d%H%M%S")
+OUT_BASE_PATH = Path("out")
+out_path = OUT_BASE_PATH / str(timestamp)
+os.makedirs(out_path, exist_ok=True)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", filename=out_path / f"{timestamp}.log")
+log = logging.getLogger()
 
 
 def find_json_object(string):
+    string = re.sub(r"([a-zA-Z])'([a-zA-Z])", r'\1,\2', string)
+    string = re.sub(r"'", '"', string)
+    # string = str(string).replace("'", '"')
     if not isinstance(string, str):
         warnings.warn(f"Input string is not of type str: {type(string)}. Returning None.")
         return None

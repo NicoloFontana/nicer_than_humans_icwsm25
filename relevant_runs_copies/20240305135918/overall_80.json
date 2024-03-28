@@ -1,0 +1,173 @@
+{
+    "time_checker": {
+        "checker": "time_checker",
+        "label": "time_checker",
+        "sample_mean": 0.9266104294478528,
+        "sample_variance": 0.06799298865734935,
+        "total": 13040.0,
+        "positives": 12083.0,
+        "squared_diffs_sum": 886.560579103178
+    },
+    "Say which is the current round of the game.": {
+        "checker": "time_checker",
+        "label": "current_round",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which action did you play in round {}.": {
+        "checker": "time_checker",
+        "label": "own_action",
+        "sample_mean": 0.9867283950617284,
+        "sample_variance": 0.013081071426748482,
+        "total": 3240.0,
+        "positives": 3197.0,
+        "squared_diffs_sum": 42.36959035123833
+    },
+    "Say which action did your opponent play in round {}.": {
+        "checker": "time_checker",
+        "label": "opponent_action",
+        "sample_mean": 0.9441358024691358,
+        "sample_variance": 0.052706620759186966,
+        "total": 3240.0,
+        "positives": 3059.0,
+        "squared_diffs_sum": 170.71674463900658
+    },
+    "Say how many points did you collect in round {}.": {
+        "checker": "time_checker",
+        "label": "own_points",
+        "sample_mean": 0.899074074074074,
+        "sample_variance": 0.09068386526782453,
+        "total": 3240.0,
+        "positives": 2913.0,
+        "squared_diffs_sum": 293.72503960248366
+    },
+    "Say how many points did your opponent collect in round {}.": {
+        "checker": "time_checker",
+        "label": "opponent_points",
+        "sample_mean": 0.8746913580246913,
+        "sample_variance": 0.10954168932339475,
+        "total": 3240.0,
+        "positives": 2834.0,
+        "squared_diffs_sum": 354.8055317184756
+    },
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.7494565217391305,
+        "sample_variance": 0.1873910448090681,
+        "total": 1840.0,
+        "positives": 1379.0,
+        "squared_diffs_sum": 344.6121314038762
+    },
+    "Say what is the highest payoff you can get in a single round.": {
+        "checker": "rule_checker",
+        "label": "max_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say what is the lowest payoff you can get in a single round.": {
+        "checker": "rule_checker",
+        "label": "min_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which actions are you allowed to play.": {
+        "checker": "rule_checker",
+        "label": "allowed_actions",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say which is your payoff in a single round if you play {} and your opponent plays {}.": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 0.9875,
+        "sample_variance": 0.012342772853698645,
+        "total": 320.0,
+        "positives": 316.0,
+        "squared_diffs_sum": 3.937344540329868
+    },
+    "Say which is your opponent's payoff in a single round if he plays {} and you play {}.": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.75,
+        "sample_variance": 0.18641526401497413,
+        "total": 320.0,
+        "positives": 240.0,
+        "squared_diffs_sum": 59.46646922077675
+    },
+    "Say if does exists a combination of actions that gives you a payoff of {} in a single round.": {
+        "checker": "rule_checker",
+        "label": "exists_combo",
+        "sample_mean": 0.7395833333333334,
+        "sample_variance": 0.1913110629261852,
+        "total": 480.0,
+        "positives": 355.0,
+        "squared_diffs_sum": 91.63799914164271
+    },
+    "Say which is a combination of actions that gives you a payoff of {} in a single round.": {
+        "checker": "rule_checker",
+        "label": "combo_for_payoff",
+        "sample_mean": 0.475,
+        "sample_variance": 0.246659208910755,
+        "total": 480.0,
+        "positives": 228.0,
+        "squared_diffs_sum": 118.14976106825164
+    },
+    "aggregation_checker": {
+        "checker": "aggregation_checker",
+        "label": "aggregation_checker",
+        "sample_mean": 0.9916666666666667,
+        "sample_variance": 0.007873623872644127,
+        "total": 480.0,
+        "positives": 476.0,
+        "squared_diffs_sum": 3.7714658349965364
+    },
+    "Say how many times did you choose {}.": {
+        "checker": "aggregation_checker",
+        "label": "#actions",
+        "sample_mean": 0.98125,
+        "sample_variance": 0.01641197186801866,
+        "total": 160.0,
+        "positives": 157.0,
+        "squared_diffs_sum": 2.609503527014967
+    },
+    "Say how many times did your opponent choose {}.": {
+        "checker": "aggregation_checker",
+        "label": "#opponent_actions",
+        "sample_mean": 0.99375,
+        "sample_variance": 0.005515135253171354,
+        "total": 160.0,
+        "positives": 159.0,
+        "squared_diffs_sum": 0.8769065052542453
+    },
+    "Say what is your current total payoff.": {
+        "checker": "aggregation_checker",
+        "label": "total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Say what is your opponent's current total payoff.": {
+        "checker": "aggregation_checker",
+        "label": "opponent_total_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    }
+}
