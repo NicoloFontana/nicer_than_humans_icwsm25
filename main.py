@@ -55,8 +55,8 @@ for n_game in range(n_games):
     strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
     for iteration in range(n_iterations):
         curr_round = iteration + 1
-        log.info(f"Round {curr_round}")
-        print(f"Round {curr_round}")
+        log.info(f"Round {curr_round}") if curr_round % 10 == 0 else None
+        print(f"Round {curr_round}") if curr_round % 10 == 0 else None
         if not game.is_ended:
             for player in game.players.values():
                 # own_history = game.get_history().get_actions_by_player(player.get_name())
