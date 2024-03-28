@@ -226,7 +226,6 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
             for key in python_object.keys():
                 python_objects[key] = python_object[key]
 
-    # Dump all the Python objects into a single JSON file.
     if infix is None:
         out_file_path = out_path / f"{OVERALL}.json"
     else:
