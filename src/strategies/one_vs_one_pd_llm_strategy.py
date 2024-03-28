@@ -91,7 +91,10 @@ class OneVsOnePDLlmStrategy(Strategy):
         return int(action)
 
     def save_action_answers(self, infix=None):
-        json_action_answers = json.dumps(self.action_answers, indent=4)
+        actions_per_round = {}
+        for idx, action_answer in enumerate(self.action_answers):
+            actions_per_round[idx] = action_answer
+        json_action_answers = json.dumps(actions_per_round, indent=4)
         if infix is None:
             out_file_path = out_path / f"{self.player_name}_action_answers.json"
         else:

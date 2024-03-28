@@ -54,7 +54,7 @@ def two_players_pd_payoff(own_action: int, other_action: int) -> int:
 
 def plot_history_analysis(timestamp, infix=None):
     run_dir_path = OUT_BASE_PATH / str(timestamp)
-    history_file_path = run_dir_path / "game_history.json"
+    history_file_path = run_dir_path / f"game_history_{infix}.json"
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
 

@@ -80,7 +80,7 @@ class GameHistory:
             iteration_history[player] = self.history[player][iteration]
         return iteration_history
 
-    def save(self, timestamp):
+    def save(self, timestamp, infix=None):
         # From https://stackoverflow.com/questions/38155039/what-is-the-difference-between-native-int-type-and-the-numpy-int-types
         # " [...] python uses fixed-sized integers behind-the-scenes when the number is small enough,
         # only switching to the slower, flexible-sized integers when the number gets too large."
@@ -92,7 +92,10 @@ class GameHistory:
                 history[player].append(int(action))
         dir_path = OUT_BASE_PATH / str(timestamp)
         os.makedirs(dir_path, exist_ok=True)
-        out_file_path = dir_path / f"game_history.json"
+        if infix is None:
+            out_file_path = dir_path / f"game_history.json"
+        else:
+            out_file_path = dir_path / f"game_history_{infix}.json"
         with open(out_file_path, "w") as out_file:
             json_out = json.dumps(history, indent=4)
             out_file.write(json_out)
