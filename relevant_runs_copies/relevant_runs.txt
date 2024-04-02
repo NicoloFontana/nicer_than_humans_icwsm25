@@ -69,3 +69,18 @@ Test variation of prompt to check robustness
 >> 20240320130437:
     Use "neutral" identifiers for the actions
     Gives low accuracy for some questions, in particular for action of B at round X (and it also changes the format of the answer giving also a reason, while for player A that wasn't the case)
+
+Run without questions to analyze emergent behavior
+>> 20240328173931:
+    More cooperate than defect (~75-25)
+    "streaks" of coop/defect are more common than alternating (see transitions)
+    In the first iterations defect is preferred, while later on, it goes full cooperate
+>> 20240328194009:
+    same as before
+>> 20240328214059:
+    same
+>> 20240328234126:
+    same
+>> 20240329014202:
+    much more leaned towards coop (95-5)
+    But still visible that the defect are concentrated in the first iterations

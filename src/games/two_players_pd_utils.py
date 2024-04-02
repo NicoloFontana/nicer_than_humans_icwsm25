@@ -52,7 +52,7 @@ def two_players_pd_payoff(own_action: int, other_action: int) -> int:
         raise ValueError("Invalid actions")
 
 
-def plot_occurrences_histogram(timestamp, history, infix=None):
+def plot_occurrences_histogram(timestamp, history, infix=None, show=True):
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
@@ -82,7 +82,7 @@ def plot_occurrences_histogram(timestamp, history, infix=None):
     else:
         plt.savefig(out_path / f"occurrences_{infix}.svg")
         plt.savefig(out_path / f"occurrences_{infix}.png")
-    plt.show()
+    plt.show() if show else plt.close()
 
 
 def compute_transition_matrix(history, transition_matrix=None):
@@ -93,14 +93,14 @@ def compute_transition_matrix(history, transition_matrix=None):
     return transition_matrix
 
 
-def plot_transition_matrix(timestamp, transition_matrix, infix=None):
+def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=True):
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
 
     ax = sns.heatmap(transition_matrix, annot=True, xticklabels=[0, 1], yticklabels=[0, 1], cmap="Blues", fmt='d')
     if infix is None:
-        plt.title(f'Transition matrix" - {timestamp}')
+        plt.title(f'Transition matrix - {timestamp}')
     else:
         plt.title(f'Transition matrix - {timestamp} - Game {infix}')
     plt.xlabel('Next action')
@@ -112,7 +112,7 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None):
     else:
         plt.savefig(out_path / f"transition_matrix_{infix}.svg")
         plt.savefig(out_path / f"transition_matrix_{infix}.png")
-    plt.show()
+    plt.show() if show else plt.close()
 
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
@@ -127,7 +127,7 @@ def compute_second_order_transition_matrix(history, second_order_transition_matr
     return second_order_transition_matrix
 
 
-def plot_second_order_transition_matrix(timestamp, second_order_transition_matrix, infix=None):
+def plot_second_order_transition_matrix(timestamp, second_order_transition_matrix, infix=None, show=True):
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
@@ -148,10 +148,17 @@ def plot_second_order_transition_matrix(timestamp, second_order_transition_matri
     else:
         plt.savefig(out_path / f"second_order_transition_matrix_{infix}.svg")
         plt.savefig(out_path / f"second_order_transition_matrix_{infix}.png")
-    plt.show()
+    plt.show() if show else plt.close()
 
 
-def plot_history_analysis(timestamp, infix=None):
+def plot_history_analysis(timestamp, infix=None, show=True):
+    """
+    Plots the occurrences histogram, the transition matrix and the second-order transition matrix for the game histories of run `timestamp`.
+    Adding an infix allows to plot the analysis for a specific game of the same run.
+
+    :param timestamp: timestamp of the run to be analyzed
+    :param infix: infix of the specific game to be analyzed
+    """
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     if infix is None:
         history_file_path = run_dir_path / "game_history.json"
@@ -163,14 +170,27 @@ def plot_history_analysis(timestamp, infix=None):
 
     A_history = history[player_1_]
 
-    plot_occurrences_histogram(timestamp, A_history, infix)
+    plot_occurrences_histogram(timestamp, A_history, infix=infix, show=show)
     transition_matrix = compute_transition_matrix(A_history)
-    plot_transition_matrix(timestamp, transition_matrix, infix)
+    plot_transition_matrix(timestamp, transition_matrix, infix=infix, show=show)
     second_order_transition_matrix = compute_second_order_transition_matrix(A_history)
-    plot_second_order_transition_matrix(timestamp, second_order_transition_matrix, infix)
+    plot_second_order_transition_matrix(timestamp, second_order_transition_matrix, infix=infix, show=show)
 
 
-def plot_aggregated_histories_analysis(timestamp, infixes):
+def plot_aggregated_histories_analysis(timestamp, infixes, show=True):
+    """
+    Plots the occurrences histogram, the transition matrix and the second-order transition matrix for the aggregated game histories of run `timestamp`.
+    Adding some infixes allows to aggregate only the games with the specified infixes.
+    The histories are NOT concatenated, instead their single metrics are aggregated.
+
+    Example:
+    - history 1: [0, 1]
+    - history 2: [1, 0]
+    The number of transitions from 1 to 1 is 0 and remains 0 in the aggregated analysis.
+
+    :param timestamp: timestamp of the run to be analyzed
+    :param infixes: infixes of the specific games to be aggregated
+    """
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
@@ -184,20 +204,27 @@ def plot_aggregated_histories_analysis(timestamp, infixes):
             histories.append(history)
         aggregated_history.extend(history[player_1_])
 
-    plot_occurrences_histogram(timestamp, aggregated_history)
+    plot_occurrences_histogram(timestamp, aggregated_history, show=show)
 
     transition_matrix = None
     for hist in histories:
         transition_matrix = compute_transition_matrix(hist[player_1_], transition_matrix)
-    plot_transition_matrix(timestamp, transition_matrix)
+    plot_transition_matrix(timestamp, transition_matrix, show=show)
 
     second_order_transition_matrix = None
     for hist in histories:
         second_order_transition_matrix = compute_second_order_transition_matrix(hist[player_1_], second_order_transition_matrix)
-    plot_second_order_transition_matrix(timestamp, second_order_transition_matrix)
+    plot_second_order_transition_matrix(timestamp, second_order_transition_matrix, show=show)
 
 
-def plot_actions_ts(timestamp, infixes):
+def plot_actions_ts(timestamp, infixes, show=True):
+    """
+    Plots the average action per round for the games of run `timestamp`.
+    Adding some infixes allows to plot only the games with the specified infixes.
+
+    :param timestamp: timestamp of the run to be analyzed
+    :param infixes: infixes of the specific games to be analyzed
+    """
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots"
     out_path.mkdir(exist_ok=True)
@@ -220,6 +247,10 @@ def plot_actions_ts(timestamp, infixes):
 
     plt.figure(figsize=(10, 6))
     plt.plot([i for i in range(n_iterations)], averaged_history, linestyle='-', marker='o', color='b')
+
+    plt.axhline(y=1.0, color='black', linestyle='-.', lw=0.01)
+    plt.axhline(y=0.0, color='black', linestyle='-.', lw=0.01)
+
     plt.title(f'Average action per round - {timestamp} - {n_games} games')
     plt.xlabel('Iteration')
     plt.ylabel('Avg action')
@@ -227,4 +258,4 @@ def plot_actions_ts(timestamp, infixes):
     plt.tight_layout()
     plt.savefig(out_path / f"average_action_per_round.svg")
     plt.savefig(out_path / f"average_action_per_round.png")
-    plt.show()
+    plt.show() if show else plt.close()
