@@ -12,7 +12,7 @@ from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
 from src.player import Player
-from src.strategies.basic_pd_strategies import RndStrategy
+from src.strategies.blind_pd_strategies import RndStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
