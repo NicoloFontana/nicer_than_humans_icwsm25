@@ -15,6 +15,16 @@ class GameHistory:
     def __init__(self):
         self.history = {}
 
+    def add_history(self, history: dict):
+        """
+        Add a history to the current history.\n
+        :param history: history to be added
+        """
+        for player in history.keys():
+            if player not in self.history.keys():
+                self.history[player] = []
+            self.history[player].extend(history[player])
+
     def add_player(self, player_name: str):
         """
         Add a player to the history.\n
@@ -90,8 +100,8 @@ class GameHistory:
             history[player] = []
             for action in self.history[player]:
                 history[player].append(int(action))
-        dir_path = OUT_BASE_PATH / str(timestamp)
-        os.makedirs(dir_path, exist_ok=True)
+        dir_path = OUT_BASE_PATH / str(timestamp) / "game_histories"
+        dir_path.mkdir(parents=True, exist_ok=True)
         if infix is None:
             out_file_path = dir_path / f"game_history.json"
         else:
@@ -100,6 +110,17 @@ class GameHistory:
             json_out = json.dumps(history, indent=4)
             out_file.write(json_out)
             log.info("History saved.")
+
+    def load_from_file(self, file_path):
+        with open(file_path, "r") as history_file:
+            self.history = json.load(history_file)
+
+    def get_players_names(self) -> list:
+        """
+        Get the names of the players in the history.\n
+        :return: list of the players' names
+        """
+        return list(self.history.keys())
 
     def __str__(self):
         to_str = ""
