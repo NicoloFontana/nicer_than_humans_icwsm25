@@ -63,3 +63,38 @@ def find_first_substring(string, substrings):
         if insensitive_string.find(sub.casefold()) != -1:
             return sub
     return ""
+
+
+def compute_average_vector(vectors):
+    n_vectors = len(vectors)
+    if n_vectors == 0:
+        return []
+    n_elements = len(vectors[0])
+    average_vector = [sum([vectors[i][j] for i in range(n_vectors)]) / n_vectors for j in range(n_elements)]
+    return average_vector
+
+
+def compute_estimators_of_ts(ts):
+    sample_means = []
+    sample_variances = []
+    sample_std_devs = []
+    for i in range(len(ts)):  # i is already (#samples - 1) => i + 1 is #samples
+        sample_mean = sum(ts[:i + 1]) / (i + 1)  # sample mean of #samples
+        sample_means.append(sample_mean)
+        sum_squared_diffs = sum([(el - sample_mean) ** 2 for el in ts[:i + 1]])  # sum of squared differences between last #samples and current mean
+        sample_variance = sum_squared_diffs / i if i > 0 else 0  # unbiased sample variance of #samples
+        sample_variances.append(sample_variance)
+        sample_std_devs.append(sample_variance ** 0.5)  # unbiased sample standard deviation of #samples
+    return sample_means, sample_variances, sample_std_devs
+
+
+def extract_infixes(extraction_timestamp, file_name, subdir=None):
+    dir_path = OUT_BASE_PATH / str(extraction_timestamp)
+    if subdir is not None:
+        dir_path = dir_path / subdir
+    infixes = []
+    for file_path in dir_path.iterdir():
+        if file_path.is_file() and file_name in file_path.name:
+            infix = file_path.name.split("_")[-1].split(".")[0]
+            infixes.append(infix)
+    return infixes
