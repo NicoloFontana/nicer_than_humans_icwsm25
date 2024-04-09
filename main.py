@@ -12,17 +12,17 @@ from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
 from src.player import Player
-from src.strategies.blind_pd_strategies import RndStrategy
+from src.strategies.blind_pd_strategies import RndStrategy, AlwaysCoopStrategy
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 10
+n_games = 50
 n_iterations = 100
 checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = ""
+msg = "Run LLM against Always-Cooperate strategy."
 
 if msg == "":
     log.info("Set a message.")
@@ -65,7 +65,7 @@ for n_game in range(n_games):
                 if player.get_name() == player_1_:
                     player.set_strategy(strategy, verbose)
                 else:
-                    player.set_strategy(RndStrategy())
+                    player.set_strategy(AlwaysCoopStrategy())
             game.play_round()
             game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, verbose)
             if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
