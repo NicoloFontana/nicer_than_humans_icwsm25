@@ -1,11 +1,14 @@
 import datetime as dt
 import json
 import logging
+import math
 import os
 import re
 import time
 import warnings
 from pathlib import Path
+
+import numpy as np
 
 dt_start_time = dt.datetime.now()
 start_time = time.mktime(dt_start_time.timetuple())
@@ -98,3 +101,34 @@ def extract_infixes(extraction_timestamp, file_name, subdir=None):
             infix = file_path.name.split("_")[-1].split(".")[0]
             infixes.append(infix)
     return infixes
+
+
+def convert_matrix_to_percentage(matrix):
+    """
+    Converts the specified matrix to a percentage matrix.
+    :param matrix: matrix to be converted
+    :return: percentage matrix
+    """
+    percentage_matrix = np.zeros(matrix.shape)
+    total_sum = sum([sum(row) for row in matrix])
+    for i in range(matrix.shape[0]):
+        for j in range(matrix.shape[1]):
+            percentage_matrix[i, j] = matrix[i, j] / total_sum if total_sum != 0 else 0
+    return percentage_matrix
+
+
+def split_interval(interval_length, window_size, backward=False):
+    """
+    Splits the interval of specified length into sub-intervals of the specified size.
+    :param interval_length: length of the interval to be split
+    :param window_size: size of the sub-intervals
+    :param backward: if True, the sub-intervals are created from the end of the interval
+    :return: list of sub-intervals
+    """
+    if interval_length <= 0 or window_size <= 0:
+        raise ValueError("The interval length and window size must be both greater than 0")
+    n_ranges = math.ceil(interval_length / window_size)
+    rest = interval_length % window_size
+    if rest == 0 or not backward:
+        return [range(window_size * i, min(window_size * (i + 1), interval_length)) for i in range(n_ranges)]
+    return [range(max(0, rest + window_size * (i - 1)), (rest + window_size * i)) for i in range(n_ranges)]
