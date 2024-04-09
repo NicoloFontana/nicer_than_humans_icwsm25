@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.game_history import GameHistory
-from src.utils import OUT_BASE_PATH, compute_estimators_of_ts, extract_infixes, compute_average_vector
+from src.utils import OUT_BASE_PATH, compute_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage
 
 action_0_ = "Defect"
 action_1_ = "Cooperate"
@@ -87,7 +87,7 @@ def plot_histogram(height, out_file_path=None, show=False, title=None, xlabel=No
     return plt.gcf().number
 
 
-def plot_occurrences_histogram(timestamp, history, infix=None, show=False, plt_figure=None):
+def plot_occurrences_histogram(timestamp, history, infix=None, show=False, plt_figure=None, plotting_rounds=None):
     """
     Plots the occurrences of "Cooperate" and "Defect" in the specified history.
     :param timestamp: run to be analyzed
@@ -97,6 +97,8 @@ def plot_occurrences_histogram(timestamp, history, infix=None, show=False, plt_f
     :param plt_figure: number of the figure to eventually plot on
     :return: number of the figure used
     """
+    rounds_infix = f"{min(plotting_rounds)}-{max(plotting_rounds)}" if plotting_rounds is not None else ""
+
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots" / "occurrences"
     out_path.mkdir(parents=True, exist_ok=True)
@@ -109,10 +111,15 @@ def plot_occurrences_histogram(timestamp, history, infix=None, show=False, plt_f
     A_defect_perc = A_n_defect / len(history)
 
     height = [A_n_coop, A_n_defect]
-    title = f'Occurrences of "Cooperate" and "Defect" - {timestamp}'
+    title = f'# of "Cooperate" and "Defect" - {timestamp}'
+    title += f' - G{infix}' if infix is not None else ''
+    title += f" [{rounds_infix}]" if rounds_infix != "" else ""
+
     xlabel = 'Actions'
     ylabel = 'Occurrences'
-    out_file_path = out_path / f"occurrences" if infix is None else out_path / f"occurrences_{infix}"
+    out_file_path = out_path / f"occurrences"
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_{infix}") if infix is not None else out_file_path
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_{rounds_infix}") if rounds_infix != "" else out_file_path
     axhlines = [0.0 * n_iterations, 0.25 * n_iterations, 0.5 * n_iterations, 0.75 * n_iterations, 1.0 * n_iterations]
     xticklabels = [f"Cooperate - {(A_coop_perc * 100):.2f}%", f"Defect - {(A_defect_perc * 100):.2f}%"]
 
@@ -195,7 +202,7 @@ def plot_matrix(matrix, out_file_path=None, show=False, title=None, xlabel=None,
     return plt.gcf().number
 
 
-def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False, is_reaction=False, is_second_order=False, plt_figure=None):
+def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False, is_reaction=False, is_second_order=False, plt_figure=None, plotting_rounds=None):
     """
     Plots the transition matrix for the specified history.
     :param timestamp: run to be analyzed
@@ -207,6 +214,8 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
     :param plt_figure: number of the figure to eventually plot on
     :return: number of the figure used
     """
+    rounds_infix = f"{min(plotting_rounds)}-{max(plotting_rounds)}" if plotting_rounds is not None else ""
+
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     if is_second_order:
         out_path = run_dir_path / "plots" / "second_order_transition_matrices"
@@ -216,26 +225,44 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
         out_path = run_dir_path / "plots" / "transition_matrices"
     out_path.mkdir(parents=True, exist_ok=True)
 
-    if infix is None:
-        if is_second_order:
-            title = f'Second-order transition matrix - {timestamp}'
-            out_file_path = out_path / f"second_order_transition_matrix"
-        elif is_reaction:
-            title = f'Reaction matrix - {timestamp}'
-            out_file_path = out_path / f"reaction_matrix"
-        else:
-            title = f'Transition matrix - {timestamp}'
-            out_file_path = out_path / f"transition_matrix"
+    if is_second_order:
+        title = f'Second-order transition matrix'
+        out_file_path = out_path / f"second_order_transition_matrix"
+    elif is_reaction:
+        title = f'Reaction matrix'
+        out_file_path = out_path / f"reaction_matrix"
     else:
-        if is_second_order:
-            title = f'Second-order transition matrix - {timestamp} - Game {infix}'
-            out_file_path = out_path / f"second_order_transition_matrix_{infix}"
-        elif is_reaction:
-            title = f'Reaction matrix - {timestamp} - Game {infix}'
-            out_file_path = out_path / f"reaction_matrix_{infix}"
-        else:
-            title = f'Transition matrix - {timestamp} - Game {infix}'
-            out_file_path = out_path / f"transition_matrix_{infix}"
+        title = f'Transition matrix'
+        out_file_path = out_path / f"transition_matrix"
+
+    title += f" - {timestamp}"
+    title += f" - G{infix}" if infix is not None else ""
+    title += f" [{rounds_infix}]" if rounds_infix != "" else ""
+
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_{infix}") if infix is not None else out_file_path
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_{rounds_infix}") if rounds_infix != "" else out_file_path
+
+
+    # if infix is None:
+    #     if is_second_order:
+    #         title = f'Second-order transition matrix - {timestamp}'
+    #         out_file_path = out_path / f"second_order_transition_matrix"
+    #     elif is_reaction:
+    #         title = f'Reaction matrix - {timestamp}'
+    #         out_file_path = out_path / f"reaction_matrix"
+    #     else:
+    #         title = f'Transition matrix - {timestamp}'
+    #         out_file_path = out_path / f"transition_matrix"
+    # else:
+    #     if is_second_order:
+    #         title = f'Second-order transition matrix - {timestamp} - Game {infix}'
+    #         out_file_path = out_path / f"second_order_transition_matrix_{infix}"
+    #     elif is_reaction:
+    #         title = f'Reaction matrix - {timestamp} - Game {infix}'
+    #         out_file_path = out_path / f"reaction_matrix_{infix}"
+    #     else:
+    #         title = f'Transition matrix - {timestamp} - Game {infix}'
+    #         out_file_path = out_path / f"transition_matrix_{infix}"
 
     xlabel = 'Next action' if not is_reaction else 'Own current action'
     if is_second_order:
@@ -281,20 +308,7 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
 #
 #
 
-def convert_matrix_to_percentage(matrix):
-    """
-    Converts the specified matrix to a percentage matrix.
-    :param matrix: matrix to be converted
-    :return: percentage matrix
-    """
-    percentage_matrix = np.zeros(matrix.shape)
-    total_sum = sum([sum(row) for row in matrix])
-    for i in range(matrix.shape[0]):
-        for j in range(matrix.shape[1]):
-            percentage_matrix[i, j] = matrix[i, j] / total_sum if total_sum != 0 else 0
-    return percentage_matrix
-
-def plot_histories_analysis(timestamp, game_histories, show=False, main_player_name=player_1_, opponent_name=player_2_, opponent_label=player_2_, percentage_matrices=True):
+def plot_histories_analysis(timestamp, game_histories, show=False, main_player_name=player_1_, opponent_name=player_2_, opponent_label=player_2_, percentage_matrices=True, plotting_rounds=None):
     """
     Plots the occurrences histogram, the transition matrix, the second-order transition matrix and the average action played at each turn for the aggregated game histories of run `timestamp`.
     The histories are NOT concatenated, instead their single metrics are aggregated.
@@ -310,38 +324,55 @@ def plot_histories_analysis(timestamp, game_histories, show=False, main_player_n
     :param main_player_name: name of the main player to be analyzed
     :param opponent_name: name of the opponent player to be considered
     """
-
     aggregated_history = []
     for game_history in game_histories:
-        aggregated_history.extend(game_history.get_actions_by_player(main_player_name))
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        if plotting_rounds is None:
+            aggregated_history.extend(main_actions)
+        else:
+            aggregated_history.extend([main_actions[i] for i in plotting_rounds])
 
-    plot_occurrences_histogram(timestamp, aggregated_history, show=show)
+    plot_occurrences_histogram(timestamp, aggregated_history, show=show, plotting_rounds=plotting_rounds)
 
     transition_matrix = None
     for game_history in game_histories:
-        transition_matrix = compute_transition_matrix(game_history.get_actions_by_player(main_player_name), transition_matrix)
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        if plotting_rounds is None:
+            transition_matrix = compute_transition_matrix(main_actions, transition_matrix)
+        else:
+            transition_matrix = compute_transition_matrix([main_actions[i] for i in plotting_rounds], transition_matrix)
     if percentage_matrices:
         transition_matrix = convert_matrix_to_percentage(transition_matrix)
-    plot_transition_matrix(timestamp, transition_matrix, show=show)
+    plot_transition_matrix(timestamp, transition_matrix, show=show, plotting_rounds=plotting_rounds)
 
     second_order_transition_matrix = None
     for game_history in game_histories:
-        second_order_transition_matrix = compute_second_order_transition_matrix(game_history.get_actions_by_player(main_player_name), second_order_transition_matrix)
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        if plotting_rounds is None:
+            second_order_transition_matrix = compute_second_order_transition_matrix(main_actions, second_order_transition_matrix)
+        else:
+            second_order_transition_matrix = compute_second_order_transition_matrix([main_actions[i] for i in plotting_rounds], second_order_transition_matrix)
     if percentage_matrices:
         second_order_transition_matrix = convert_matrix_to_percentage(second_order_transition_matrix)
-    plot_transition_matrix(timestamp, second_order_transition_matrix, show=show, is_second_order=True)
+    plot_transition_matrix(timestamp, second_order_transition_matrix, show=show, is_second_order=True, plotting_rounds=plotting_rounds)
 
     reaction_matrix = None
     for game_history in game_histories:
-        reaction_matrix = compute_reaction_matrix(game_history.get_actions_by_player(main_player_name), game_history.get_actions_by_player(opponent_name), reaction_matrix)
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        opponent_actions = game_history.get_actions_by_player(opponent_name)
+        if plotting_rounds is None:
+            reaction_matrix = compute_reaction_matrix(main_actions, opponent_actions, reaction_matrix)
+        else:
+            reaction_matrix = compute_reaction_matrix([main_actions[i] for i in plotting_rounds], [opponent_actions[i] for i in plotting_rounds], reaction_matrix)
     if percentage_matrices:
         reaction_matrix = convert_matrix_to_percentage(reaction_matrix)
-    plot_transition_matrix(timestamp, reaction_matrix, show=show, is_reaction=True)
+    plot_transition_matrix(timestamp, reaction_matrix, show=show, is_reaction=True, plotting_rounds=plotting_rounds)
 
-    plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=show, opponent_name=opponent_name, opponent_label=opponent_label, fill=True)
+    plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=show, opponent_name=opponent_name, opponent_label=opponent_label, fill=True, plotting_rounds=plotting_rounds)
 
 
-def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, xlabel=None, ylabel=None, loc="best", axhlines=None, lw=1.0, mean_color=None, fill=False, plt_figure=None):
+def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, xlabel=None, ylabel=None, loc="best", axhlines=None, lw=1.0, mean_color=None, fill=False,
+            plt_figure=None):
     """
     Plots the time series `ts` with the specified parameters.
     :param ts: time series to be plotted
@@ -365,7 +396,7 @@ def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, 
     plt.figure(plt_figure)
     plt.plot([i for i in range(n_iterations)], ts, linestyle='-', marker=',', color=ts_color, label=ts_label, lw=lw)
     if mean_color is not None:
-        plt.plot([i for i in range(n_iterations)], sample_means, linestyle='-', marker=',', color=mean_color, lw=lw*0.5, alpha=0.5, label=f"{ts_label} mean")
+        plt.plot([i for i in range(n_iterations)], sample_means, linestyle='-', marker=',', color=mean_color, lw=lw * 0.5, alpha=0.5, label=f"{ts_label} mean")
 
     if axhlines is not None:
         for axhline in axhlines:
@@ -375,10 +406,10 @@ def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, 
         np_sample_std_devs = np.array(sample_std_devs)
         if mean_color is not None:
             np_sample_means = np.array(sample_means)
-            plt.fill_between([i for i in range(n_iterations)], np_sample_means + np_sample_std_devs, np_sample_means - np_sample_std_devs, color=mean_color, alpha=lw*0.2)
+            plt.fill_between([i for i in range(n_iterations)], np_sample_means + np_sample_std_devs, np_sample_means - np_sample_std_devs, color=mean_color, alpha=lw * 0.2)
         else:
             np_ts = np.array(ts)
-            plt.fill_between([i for i in range(n_iterations)], np_ts + np_sample_std_devs, np_ts - np_sample_std_devs, color=ts_color, alpha=lw*0.2)
+            plt.fill_between([i for i in range(n_iterations)], np_ts + np_sample_std_devs, np_ts - np_sample_std_devs, color=ts_color, alpha=lw * 0.2)
 
     plt.title(title) if title is not None else None
     plt.xlabel(xlabel) if xlabel is not None else None
@@ -392,31 +423,39 @@ def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, 
     return plt.gcf().number
 
 
-def plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=True, opponent_name=None, opponent_label=None, fill=False, plt_figure=None):
+def plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=True, opponent_name=None, opponent_label=None, fill=False, plt_figure=None, plotting_rounds=None):
     run_dir_path = OUT_BASE_PATH / str(timestamp)
     out_path = run_dir_path / "plots" / "average_history"
     out_path.mkdir(parents=True, exist_ok=True)
+
+    rounds_infix = f"{min(plotting_rounds)}-{max(plotting_rounds)}" if plotting_rounds is not None else ""
 
     n_games = len(game_histories)
 
     main_histories = []
     for game_history in game_histories:
-        main_histories.append(game_history.get_actions_by_player(main_player_name))
-
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        if plotting_rounds is None:
+            main_histories.append(main_actions)
+        else:
+            main_histories.append([main_actions[i] for i in plotting_rounds])
     main_average_history = compute_average_vector(main_histories)
 
-    title = f'Average action per round - {timestamp} - {n_games} games'
+    title = f'Average action - {timestamp} - {n_games} games'
+    title += f" [{rounds_infix}]" if rounds_infix != "" else ""
     xlabel = 'Iteration'
     ylabel = 'Avg action'
-    plot_infix = "_fill" if fill else ""
-    out_file_path = out_path / f"average_action_per_round{plot_infix}"
+    out_file_path = out_path / f"average_action"
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_fill") if fill else out_file_path
+    out_file_path = out_file_path.parent / (out_file_path.name + f"_{rounds_infix}") if rounds_infix != "" else out_file_path
     loc = 'lower right'
 
     if opponent_name is None:
         mean_color = 'r'
     else:
         mean_color = 'b'
-    main_figure = plot_ts(main_average_history, "LLM", 'b', out_file_path, mean_color=mean_color, show=show, title=title, xlabel=xlabel, ylabel=ylabel, loc=loc, fill=fill, plt_figure=plt_figure)
+    main_figure = plot_ts(main_average_history, "LLM", 'b', out_file_path, mean_color=mean_color, show=show, title=title, xlabel=xlabel, ylabel=ylabel, loc=loc, fill=fill,
+                          plt_figure=plt_figure)
 
     opponent_figure = None
     if opponent_name is not None:
@@ -429,7 +468,8 @@ def plot_average_history_with_comparison(timestamp, game_histories, main_player_
 
         plot_infix = f"_{opponent_label}" if opponent_label is not None else ""
         plot_infix += "_fill" if fill else ""
-        out_file_path = out_path / f"average_action_per_round{plot_infix}"
+        plot_infix += f"_{min(plotting_rounds)}-{max(plotting_rounds)}" if plotting_rounds is not None else ""
+        out_file_path = out_path / f"average_action{plot_infix}"
 
         opponent_figure = plot_ts(opponent_average_history, opponent_label, 'r', out_file_path, lw=0.5, mean_color='r', show=show, fill=fill, plt_figure=main_figure)
 
@@ -442,19 +482,19 @@ def compute_similarity_between_single_histories(main_history, opponent_history, 
         similarity = [sum([(1 - abs(main_history[j + 1] - opponent_history[j])) for j in range(i + 1)]) / (i + 1) for i in range(n_iterations - 1)]
     else:
         similarity = [sum([(1 - abs(main_history[j + 1] - opponent_history[j])) for j in range(max(i + 1 - sliding_window, 0), i + 1)]) / min(i + 1, sliding_window) for i in
-                      range(n_iterations - 1)]
+                      range(n_iterations - 1)]  # TODO check!!
     return similarity
 
 
-def plot_similarity_between_single_histories(main_history, opponent_history):
-    similarity = compute_similarity_between_single_histories(main_history, opponent_history)
-
-    title = "Similarity between LLM and opponent"
-    xlabel = "Iteration"
-    ylabel = "Similarity"
-    axhlines = [0.0, 0.5, 1.0]
-
-    plot_ts(similarity, "Similarity", 'b', show=True, title=title, xlabel=xlabel, ylabel=ylabel, axhlines=axhlines, fill=True)
+# def plot_similarity_between_single_histories(main_history, opponent_history):
+#     similarity = compute_similarity_between_single_histories(main_history, opponent_history)
+#
+#     title = "Similarity between LLM and opponent"
+#     xlabel = "Iteration"
+#     ylabel = "Similarity"
+#     axhlines = [0.0, 0.5, 1.0]
+#
+#     plot_ts(similarity, "Similarity", 'b', show=True, title=title, xlabel=xlabel, ylabel=ylabel, axhlines=axhlines, fill=True)
 
 
 def plot_similarity_between_histories(timestamp, game_histories, main_player_name, opponent_name, sliding_window=None):
