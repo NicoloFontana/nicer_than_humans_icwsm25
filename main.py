@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import InferenceClient
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, plot_confusion_matrix_for_question
+from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, plot_confusion_matrix_for_question, history_window_size
 from src.games.two_players_pd_utils import player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
@@ -67,7 +67,7 @@ for n_game in range(n_games):
                 else:
                     player.set_strategy(AlwaysDefectStrategy())
             game.play_round()
-            game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, verbose)
+            game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, history_window_size=history_window_size, verbose=verbose)
             if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
                 if save:
                     for checker in checkers:

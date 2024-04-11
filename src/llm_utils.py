@@ -15,6 +15,7 @@ HF_API_TOKEN = "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"
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
+history_window_size = None
 
 OVERALL = "overall"
 
@@ -241,7 +242,6 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     payoff_prompt = ""
 
-    ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
     for action in action_space:
         for opponent_action in action_space:
             payoff_prompt += (f"If {player_1_} plays {to_nat_lang(action)} and {player_2_} plays {to_nat_lang(opponent_action)}, "
@@ -258,28 +258,25 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     return game_rules_prompt
 
 
-def generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=False):
-    history_prompt = ""
+def generate_history_prompt(own_history, opponent_history, payoff_function, window_size=None, is_ended=False):
+    if window_size is None:
+        window_size = len(own_history)
+    history_prompt = f"The history of the game in the last {window_size} rounds is the following:\n"
 
-    ### v0.6 - Natural language format, but with player-agnostic perspective for the LLM
-    own_coop = 0
-    own_defect = 0
-    opponent_coop = 0
-    opponent_defect = 0
-    own_total_payoff = 0
-    opponent_total_payoff = 0
-    for i in range(len(own_history)):
-        own_coop += 1 if own_history[i] else 0
-        own_defect += 1 if not own_history[i] else 0
-        opponent_coop += 1 if opponent_history[i] else 0
-        opponent_defect += 1 if not opponent_history[i] else 0
-        own_payoff = payoff_function(own_history[i], opponent_history[i])
-        opponent_payoff = payoff_function(opponent_history[i], own_history[i])
-        history_prompt += (
-            f"Round {i + 1}: {player_1_} played {to_nat_lang(own_history[i])} and {player_2_} played {to_nat_lang(opponent_history[i])}. "
-            f"{player_1_} collected {own_payoff} points and {player_2_} collected {opponent_payoff} points.\n")
-        own_total_payoff += own_payoff
-        opponent_total_payoff += opponent_payoff
+    start = max(0, len(own_history) - window_size)
+    end = len(own_history)
+    own_coop = sum(own_history[start:end])
+    own_defect = sum([1 for action in own_history[start:end] if not action])
+    opponent_coop = sum(opponent_history[start:end])
+    opponent_defect = sum([1 for action in opponent_history[start:end] if not action])
+    own_total_payoff = sum([payoff_function(own_history[i], opponent_history[i]) for i in range(start, end)])
+    opponent_total_payoff = sum([payoff_function(opponent_history[i], own_history[i]) for i in range(start, end)])
+    single_round_prompt = ("Round {}: {} played {} and {} played {} "  # Round 1: A played "Cooperate" and B played "Defect"
+                           "{} collected {} points and {} collected {} points.\n")  # A collected 0 points and B collected 5 points.
+    rounds_prompt = "".join([single_round_prompt.format(i, player_1_, to_nat_lang(own_history[i]), player_2_, to_nat_lang(opponent_history[i]),
+                                                        player_1_, payoff_function(own_history[i], opponent_history[i]), player_2_,
+                                                        payoff_function(opponent_history[i], own_history[i])) for i in range(start, end)])
+    history_prompt += rounds_prompt
     history_prompt += (f'In total, {player_1_} chose {to_nat_lang(1)} {own_coop} times and chose {to_nat_lang(0)} {own_defect} times, '
                        f'{player_2_} chose {to_nat_lang(1)} {opponent_coop} times and chose {to_nat_lang(0)} {opponent_defect} times.\n')
     history_prompt += f"In total, {player_1_} collected {own_total_payoff} points and {player_2_} collected {opponent_total_payoff} points.\n"
@@ -291,11 +288,11 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
     return history_prompt
 
 
-def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", zero_shot=False):
+def generate_prompt(action_space, payoff_function, n_iterations, own_history, opponent_history, custom_prompt="", history_window_size=None, zero_shot=False):
     game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
 
     is_ended = len(own_history) >= n_iterations
-    history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, is_ended=is_ended)
+    history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, window_size=history_window_size, is_ended=is_ended)
 
     prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, custom_prompt], zero_shot=zero_shot)
 

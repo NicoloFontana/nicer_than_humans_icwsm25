@@ -49,7 +49,7 @@ class AggregationChecker(Checker):
         print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
-    def ask_questions(self, game, player_name="", verbose=False):
+    def ask_questions(self, game, player_name="", history_window_size=None, verbose=False):
         self.verbose = verbose
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
@@ -62,7 +62,7 @@ class AggregationChecker(Checker):
         payoff_function = game.get_payoff_function()
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(game.get_actions_by_player(player_name),
-                                                 game.get_actions_by_player(opponent_name), payoff_function, is_ended=is_ended)
+                                                 game.get_actions_by_player(opponent_name), payoff_function, window_size=history_window_size, is_ended=is_ended)
         self.system_prompt = game_rules_prompt + history_prompt
         own_history = game.get_actions_by_player(player_name)
         opponent_history = game.get_actions_by_player(game.get_opponent_name(player_name))
