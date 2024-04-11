@@ -84,3 +84,12 @@ Run without questions to analyze emergent behavior
 >> 20240329014202:
     much more leaned towards coop (95-5)
     But still visible that the defect are concentrated in the first iterations
+
+
+Run against hard-coded strategies
+>> 20240328173931-20240329014202:
+    Against RND
+>> 20240409113845:
+    Against AlwaysCooperate
+>> 20240409114154:
+    Against AlwaysDefect
