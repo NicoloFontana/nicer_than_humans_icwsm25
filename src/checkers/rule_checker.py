@@ -51,7 +51,7 @@ class RuleChecker(Checker):
             json_prompt = 'Remember to use the following JSON format: {"answer": <MIN_PAYOFF>}\n'
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
-        question_prompt = f"Answer to the following question: {question}"
+        question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
@@ -65,7 +65,7 @@ class RuleChecker(Checker):
         correct_answer = {to_nat_lang(action, string_of_string=False) for action in action_space}
         json_prompt = 'Remember to use the following JSON format: {"answer": [<LIST_OF_AVAILABLE_ACTIONS>]}\n'
         # The answer is requested as a list for simplicity when finding the JSON. It is then converted to a set.
-        question_prompt = f"Answer to the following question: {question}"
+        question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = set(self.get_answer_from_llm(prompt, label, need_str=False))
@@ -81,9 +81,9 @@ class RuleChecker(Checker):
         correct_answer = str(payoff_function(primary_action, secondary_action))
         json_prompt = 'Remember to use the following JSON format: {"answer": <PAYOFF>}\n'
         if is_inverse:
-            question_prompt = f"Answer to the following question: {question.format(to_nat_lang(secondary_action), to_nat_lang(primary_action))}"
+            question_prompt = f"Answer to the following question: {question.format(to_nat_lang(secondary_action), to_nat_lang(primary_action))}\n"
         else:
-            question_prompt = f"Answer to the following question: {question.format(to_nat_lang(primary_action), to_nat_lang(secondary_action))}"
+            question_prompt = f"Answer to the following question: {question.format(to_nat_lang(primary_action), to_nat_lang(secondary_action))}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
@@ -98,7 +98,7 @@ class RuleChecker(Checker):
             payoff_function(primary_action, secondary_action) == given_payoff for primary_action in action_space for
             secondary_action in action_space) else "No"
         json_prompt = 'Remember to use the following JSON format: {"answer": "Yes"} or {"answer": "No"}\n'
-        question_prompt = f"Answer to the following question: {question.format(given_payoff)}"
+        question_prompt = f"Answer to the following question: {question.format(given_payoff)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), {"Yes", "No"})
@@ -122,7 +122,7 @@ class RuleChecker(Checker):
         json_prompt = (
             'Remember to use the following JSON format: {"answer": ["<FIRST_PLAYER_ACTION>", "<SECOND_PLAYER_ACTION>"]}.\n'
             'If the required combination does not exist, answer with None\n')
-        question_prompt = f"Answer to the following question: {question.format(given_payoff)}"
+        question_prompt = f"Answer to the following question: {question.format(given_payoff)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         if correct_answer == "None":

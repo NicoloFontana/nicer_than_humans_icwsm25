@@ -123,9 +123,7 @@ class GameHistory:
         return list(self.history.keys())
 
     def __str__(self):
-        to_str = ""
-        for player in self.history.keys():
-            to_str += f"{player}: {self.history[player]}\n"
+        to_str = "".join([f"{player}: {self.history[player]}\n" for player in self.history.keys()])
         return to_str
 
     def __bool__(self):

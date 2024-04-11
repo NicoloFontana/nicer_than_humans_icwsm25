@@ -27,7 +27,7 @@ class AggregationChecker(Checker):
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <N_TIMES>}\n'
-        question_prompt = f"Answer to the following question: {question.format(to_nat_lang(action))}"
+        question_prompt = f"Answer to the following question: {question.format(to_nat_lang(action))}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
@@ -41,7 +41,7 @@ class AggregationChecker(Checker):
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <TOTAL_PAYOFF>}\n'
-        question_prompt = f"Answer to the following question: {question}"
+        question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None

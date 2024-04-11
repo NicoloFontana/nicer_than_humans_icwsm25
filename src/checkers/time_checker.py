@@ -28,7 +28,7 @@ class TimeChecker(Checker):
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <CURRENT_ROUND>}\n'
-        question_prompt = f"Answer to the following question: {question}"
+        question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(current_round)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
@@ -42,7 +42,7 @@ class TimeChecker(Checker):
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <ACTION_PLAYED>}\n'
-        question_prompt = f"Answer to the following question: {question.format(inspected_round)}"
+        question_prompt = f"Answer to the following question: {question.format(inspected_round)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = to_nat_lang(action_played, string_of_string=False)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
@@ -57,7 +57,7 @@ class TimeChecker(Checker):
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
         json_prompt = 'Remember to use the following JSON format: {"answer": <POINTS_COLLECTED>}\n'
-        question_prompt = f"Answer to the following question: {question.format(inspected_round)}"
+        question_prompt = f"Answer to the following question: {question.format(inspected_round)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(points_collected)
         print(f"Correct: {correct_answer}", end=" ") if self.verbose else None

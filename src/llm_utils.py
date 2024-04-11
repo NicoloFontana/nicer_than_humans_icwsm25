@@ -240,12 +240,9 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 # PROMPT UTILS
 
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
-    payoff_prompt = ""
-
-    for action in action_space:
-        for opponent_action in action_space:
-            payoff_prompt += (f"If {player_1_} plays {to_nat_lang(action)} and {player_2_} plays {to_nat_lang(opponent_action)}, "
-                              f"{player_1_} collects {payoff_function(action, opponent_action)} points and {player_2_} collects {payoff_function(opponent_action, action)} points.\n")
+    single_payoff_prompt = ("If {} plays {} and {} plays {}, "  # If A plays "Cooperate" and B plays "Defect",
+                            "{} collects {} points and {} collects {} points.\n")  # A collects 0 points and B collects 5 points.
+    payoff_prompt = "".join([single_payoff_prompt.format(player_1_, to_nat_lang(own_action), player_2_, to_nat_lang(opponent_action), player_1_, payoff_function(own_action, opponent_action), player_2_, payoff_function(opponent_action, own_action)) for own_action in action_space for opponent_action in action_space])
 
     game_rules_prompt = (f"<<SYS>>\n"
                          f"Context: Player {player_1_} and player {player_2_} are playing a multi-round game.\n"
@@ -261,7 +258,7 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
 def generate_history_prompt(own_history, opponent_history, payoff_function, window_size=None, is_ended=False):
     if window_size is None:
         window_size = len(own_history)
-    history_prompt = f"The history of the game in the last {window_size} rounds is the following:\n"
+    history_prompt_parts = [f"The history of the game in the last {window_size} rounds is the following:\n"]
 
     start = max(0, len(own_history) - window_size)
     end = len(own_history)
@@ -276,15 +273,16 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, wind
     rounds_prompt = "".join([single_round_prompt.format(i, player_1_, to_nat_lang(own_history[i]), player_2_, to_nat_lang(opponent_history[i]),
                                                         player_1_, payoff_function(own_history[i], opponent_history[i]), player_2_,
                                                         payoff_function(opponent_history[i], own_history[i])) for i in range(start, end)])
-    history_prompt += rounds_prompt
-    history_prompt += (f'In total, {player_1_} chose {to_nat_lang(1)} {own_coop} times and chose {to_nat_lang(0)} {own_defect} times, '
+    history_prompt_parts.append(rounds_prompt)
+    history_prompt_parts.append(f'In total, {player_1_} chose {to_nat_lang(1)} {own_coop} times and chose {to_nat_lang(0)} {own_defect} times, '
                        f'{player_2_} chose {to_nat_lang(1)} {opponent_coop} times and chose {to_nat_lang(0)} {opponent_defect} times.\n')
-    history_prompt += f"In total, {player_1_} collected {own_total_payoff} points and {player_2_} collected {opponent_total_payoff} points.\n"
+    history_prompt_parts.append(f"In total, {player_1_} collected {own_total_payoff} points and {player_2_} collected {opponent_total_payoff} points.\n")
     if not is_ended:
-        history_prompt += f"Current round: {len(own_history) + 1}.\n"
+        history_prompt_parts.append(f"Current round: {len(own_history) + 1}.\n")
     else:
-        history_prompt += f"The game has ended.\n"
+        history_prompt_parts.append(f"The game has ended.\n")
 
+    history_prompt = "".join(history_prompt_parts)
     return history_prompt
 
 
@@ -300,16 +298,13 @@ def generate_prompt(action_space, payoff_function, n_iterations, own_history, op
 
 
 def generate_prompt_from_sub_prompts(sub_prompts, zero_shot=False):
-    start_prompt = "<s>[INST] "
-
-    body_prompt = "".join(sub_prompts)
-
-    end_prompt = "\nRemember to answer using the right format.[/INST]"
+    prompt_parts = ["<s>[INST] ", "".join(sub_prompts), "Remember to answer using the right format.[/INST]\n"]
 
     if zero_shot:
-        end_prompt += f"\nLet's work this out in a step-by-step way to be sure we have the right answer in the right format"
+        prompt_parts.append(f"Let's work this out in a step-by-step way to be sure we have the right answer in the right format\n")
 
-    return start_prompt + body_prompt + end_prompt
+    prompt = "".join(prompt_parts)
+    return prompt
 
 
 def save_prompt(version, description=None):
