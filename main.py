@@ -22,7 +22,7 @@ checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = "Run LLM against Always-Defect strategy with sliding window of 20."
+msg = "Run LLM against Always-Defect strategy with sliding window of 15."
 
 if msg == "":
     log.info("Set a message.")
@@ -35,7 +35,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 # Sleeping routine # TODO remove
 print("Going to sleep")
-time.sleep(20)
+time.sleep(30000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
