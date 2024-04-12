@@ -66,6 +66,7 @@ class OneVsOnePDLlmStrategy(Strategy):
         prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])
         generated_text = generate_text(prompt, self.client, max_new_tokens=self.max_new_tokens, temperature=self.temperature)
         action_answer = {
+            "prompt": prompt,
             "generated_text": generated_text,
         }
         answer = find_json_object(generated_text)
@@ -103,12 +104,12 @@ class OneVsOnePDLlmStrategy(Strategy):
             file.write(json_action_answers)
             log.info(f"{self.player_name} action answers saved.")
 
-    def ask_questions(self, checkers, game, verbose=False):
+    def ask_questions(self, checkers, game, history_window_size=None, verbose=False):
         if checkers is not None:
             for checker in checkers:
                 try:
                     checker.set_inference_client(self.client)
-                    checker.ask_questions(game, self.player_name, verbose=verbose)
+                    checker.ask_questions(game, self.player_name, history_window_size=history_window_size, verbose=verbose)
                 except Exception as e:
                     warnings.warn(
                         f"Error {str(e)}. Checker {checker.get_name()} of type {type(checker)} failed to ask questions to the inference client.")

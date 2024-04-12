@@ -22,7 +22,7 @@ checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = "Run LLM against Always-Defect strategy."
+msg = "Run LLM against Always-Defect strategy with sliding window of 10."
 
 if msg == "":
     log.info("Set a message.")
