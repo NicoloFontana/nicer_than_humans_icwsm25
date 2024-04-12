@@ -115,20 +115,3 @@ def convert_matrix_to_percentage(matrix):
         for j in range(matrix.shape[1]):
             percentage_matrix[i, j] = matrix[i, j] / total_sum if total_sum != 0 else 0
     return percentage_matrix
-
-
-def split_interval(interval_length, window_size, backward=False):
-    """
-    Splits the interval of specified length into sub-intervals of the specified size.
-    :param interval_length: length of the interval to be split
-    :param window_size: size of the sub-intervals
-    :param backward: if True, the sub-intervals are created from the end of the interval
-    :return: list of sub-intervals
-    """
-    if interval_length <= 0 or window_size <= 0:
-        raise ValueError("The interval length and window size must be both greater than 0")
-    n_ranges = math.ceil(interval_length / window_size)
-    rest = interval_length % window_size
-    if rest == 0 or not backward:
-        return [range(window_size * i, min(window_size * (i + 1), interval_length)) for i in range(n_ranges)]
-    return [range(max(0, rest + window_size * (i - 1)), (rest + window_size * i)) for i in range(n_ranges)]

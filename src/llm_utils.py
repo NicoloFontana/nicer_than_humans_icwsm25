@@ -13,6 +13,7 @@ from src.utils import OUT_BASE_PATH
 
 HF_API_TOKEN = "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"
 MODEL = "meta-llama/Llama-2-70b-chat-hf"
+# MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
 history_window_size = 5
