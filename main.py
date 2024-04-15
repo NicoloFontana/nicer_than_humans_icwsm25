@@ -23,7 +23,7 @@ checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = ""
+msg = "Run LLM against TitForTat strategy with sliding window of 10."
 
 if msg == "":
     log.info("Set a message.")
@@ -75,7 +75,7 @@ for n_game in range(n_games):
                 if player.get_name() == player_1_:
                     player.set_strategy(strategy, verbose)
                 else:
-                    player.set_strategy(AlwaysDefectStrategy())
+                    player.set_strategy(TitForTat())
             game.play_round()
             game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, history_window_size=history_window_size, verbose=verbose)
             if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
