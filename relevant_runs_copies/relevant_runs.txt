@@ -93,3 +93,13 @@ Run against hard-coded strategies
     Against AlwaysCooperate
 >> 20240409114154:
     Against AlwaysDefect
+
+Run with history sliding window:
+>> 20240412100726:
+    window size 10
+>> 20240412103555:
+    window size 15
+>> 20240412104155:
+    window size 20
+>> 20240412104455:
+    window size 5

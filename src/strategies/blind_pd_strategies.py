@@ -3,7 +3,7 @@ import numpy as np
 from src.strategies.strategy import Strategy
 
 
-class AlwaysCoopStrategy(Strategy):
+class AlwaysCooperate(Strategy):
     def __init__(self):
         super().__init__("AlwaysCoop")
 
@@ -15,7 +15,7 @@ class AlwaysCoopStrategy(Strategy):
         return [1] * current_round
 
 
-class AlwaysDefectStrategy(Strategy):
+class AlwaysDefect(Strategy):
     def __init__(self):
         super().__init__("AlwaysDefect")
 
@@ -27,7 +27,7 @@ class AlwaysDefectStrategy(Strategy):
         return [0] * current_round
 
 
-class RndStrategy(Strategy):
+class RandomStrategy(Strategy):
     def __init__(self):
         self.rng = np.random.default_rng()
         super().__init__("Rnd")

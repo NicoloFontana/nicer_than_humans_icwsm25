@@ -97,9 +97,9 @@ class OneVsOnePDLlmStrategy(Strategy):
             actions_per_round[idx] = action_answer
         json_action_answers = json.dumps(actions_per_round, indent=4)
         if infix is None:
-            out_file_path = out_path / f"{self.player_name}_action_answers.json"
+            out_file_path = out_path / "action_answers" / f"{self.player_name}_action_answers.json"
         else:
-            out_file_path = out_path / f"{self.player_name}_action_answers_{infix}.json"
+            out_file_path = out_path / "action_answers" / f"{self.player_name}_action_answers_{infix}.json"
         with open(out_file_path, "w") as file:
             file.write(json_action_answers)
             log.info(f"{self.player_name} action answers saved.")
