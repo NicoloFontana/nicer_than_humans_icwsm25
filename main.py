@@ -23,7 +23,7 @@ checkpoint = 0
 verbose = False
 checkers = False
 save = True
-msg = "Run LLM against TitForTat strategy with sliding window of 10."
+msg = "Run LLM against another LLM with sliding window of 10."
 
 if msg == "":
     log.info("Set a message.")
@@ -34,14 +34,14 @@ print(msg)
 log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-# # Sleeping routine # TODO remove
-# log.info("Going to sleep")
-# print("Going to sleep")
-# time.sleep(90000)
-# new_dt_start_time = dt.datetime.now()
-# new_start_time = time.mktime(dt_start_time.timetuple())
-# log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-# print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+# Sleeping routine # TODO remove
+log.info("Going to sleep")
+print("Going to sleep")
+time.sleep(30000)
+new_dt_start_time = dt.datetime.now()
+new_start_time = time.mktime(dt_start_time.timetuple())
+log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 for n_game in range(n_games):
@@ -62,7 +62,8 @@ for n_game in range(n_games):
     # payoff_function = game.get_payoff_function()
     game.add_player(Player(player_1_))
     game.add_player(Player(player_2_))
-    strategy = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
+    llm1 = OneVsOnePDLlmStrategy(game, player_1_, game.get_opponent_name(player_1_), client)
+    llm2 = OneVsOnePDLlmStrategy(game, player_2_, game.get_opponent_name(player_2_), client)
     for iteration in range(n_iterations):
         curr_round = iteration + 1
         log.info(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
@@ -73,11 +74,12 @@ for n_game in range(n_games):
                 # opponent_history = game.get_history().get_actions_by_player(
                 #     [p for p in game.players if p != player.get_name()][0])
                 if player.get_name() == player_1_:
-                    player.set_strategy(strategy, verbose)
+                    player.set_strategy(llm1, verbose)
                 else:
-                    player.set_strategy(TitForTat())
+                    player.set_strategy(llm2, verbose)
             game.play_round()
             game.get_player_by_name(player_1_).get_strategy().ask_questions(checkers, game, history_window_size=history_window_size, verbose=verbose)
+            game.get_player_by_name(player_2_).get_strategy().ask_questions(checkers, game, history_window_size=history_window_size, verbose=verbose)
             if checkpoint != 0 and curr_round % checkpoint == 0 and curr_round < n_iterations:
                 if save:
                     for checker in checkers:
@@ -88,7 +90,8 @@ for n_game in range(n_games):
                         #     plot_confusion_matrix_for_question(checker.dir_path, label, infix=curr_round)
                     plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
                     infix = f"{n_game+1}_{curr_round}" if n_games > 1 else curr_round
-                    strategy.save_action_answers(infix=infix)
+                    llm1.save_action_answers(infix=infix)
+                    llm2.save_action_answers(infix=infix)
                 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
                 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
     if save:
@@ -101,10 +104,11 @@ for n_game in range(n_games):
         plot_checkers_results(checkers_names, timestamp, n_iterations)
         infix = n_game + 1 if n_games > 1 else None
         game.save_history(timestamp, infix=infix)
-        strategy.save_action_answers(infix=infix)
+        llm1.save_action_answers(infix=infix)
+        llm2.save_action_answers(infix=infix)
 
-    log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
-    print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 
-    # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
-    # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
+    log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
+    print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
