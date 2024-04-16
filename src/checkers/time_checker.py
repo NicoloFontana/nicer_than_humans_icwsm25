@@ -20,7 +20,6 @@ class TimeChecker(Checker):
             f"points_{player_1_}",
             f"points_{player_2_}",
         ]
-        self.verbose = None
         super().__init__("time_checker", questions, questions_labels)
 
     def check_current_round(self, current_round, question_idx, weight=1.0):
@@ -31,9 +30,7 @@ class TimeChecker(Checker):
         question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(current_round)
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
     def check_action_played(self, inspected_round, action_played, action_space, question_idx, weight=1.0):
@@ -45,10 +42,8 @@ class TimeChecker(Checker):
         question_prompt = f"Answer to the following question: {question.format(inspected_round)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = to_nat_lang(action_played, string_of_string=False)
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         nat_action_space = {to_nat_lang(action, string_of_string=False) for action in action_space}
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), nat_action_space)
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
     def check_points_collected(self, inspected_round, points_collected, question_idx, weight=1.0):
@@ -60,13 +55,10 @@ class TimeChecker(Checker):
         question_prompt = f"Answer to the following question: {question.format(inspected_round)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(points_collected)
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
-    def ask_questions(self, game, player_name="", history_window_size=None, verbose=False):
-        self.verbose = verbose
+    def ask_questions(self, game, player_name="", history_window_size=None):
         current_round = game.get_current_round()
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
@@ -84,23 +76,18 @@ class TimeChecker(Checker):
 
         if not is_ended:
             question_idx = 0
-            print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
             self.check_current_round(current_round, question_idx=question_idx)
         question_idx = 1
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_action_played(i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space(), question_idx=question_idx)
         question_idx = 2
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_action_played(i, game.get_actions_by_iteration(i - 1)[opponent_name], game.get_action_space(), question_idx=question_idx)
         question_idx = 3
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[player_name], game.get_actions_by_iteration(i - 1)[opponent_name]),
                                         question_idx=question_idx)
         question_idx = 4
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         for i in range(1, current_round):
             self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[opponent_name], game.get_actions_by_iteration(i - 1)[player_name]),
                                         question_idx=question_idx)

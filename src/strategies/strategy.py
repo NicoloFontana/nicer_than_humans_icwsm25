@@ -11,5 +11,8 @@ class Strategy:
     def play(self):
         pass
 
+    def wrap_up_round(self):
+        pass
+
     def generate_alternative_history_for_player(self, game_history, player_name):
         pass

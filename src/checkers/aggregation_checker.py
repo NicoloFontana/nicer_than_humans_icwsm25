@@ -18,7 +18,6 @@ class AggregationChecker(Checker):
             f"total_payoff_{player_1_}",
             f"total_payoff_{player_2_}",
         ]
-        self.verbose = None
         super().__init__("aggregation_checker", questions, questions_labels)
 
     def check_action_chosen(self, action, n_times, question_idx, weight=1.0):
@@ -30,9 +29,7 @@ class AggregationChecker(Checker):
         question_prompt = f"Answer to the following question: {question.format(to_nat_lang(action))}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
     def check_total_payoff(self, payoff, question_idx, weight=1.0):
@@ -44,13 +41,10 @@ class AggregationChecker(Checker):
         question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label, weight=weight)
 
-    def ask_questions(self, game, player_name="", history_window_size=None, verbose=False):
-        self.verbose = verbose
+    def ask_questions(self, game, player_name="", history_window_size=None):
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
         opponent_name = ""
@@ -70,16 +64,12 @@ class AggregationChecker(Checker):
         opponent_payoff = game.get_total_payoff_by_player(game.get_opponent_name(player_name))
         for action in action_space:
             question_idx = 0
-            print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
             n_times = own_history.count(action)
             self.check_action_chosen(action, n_times, question_idx=question_idx)
             question_idx = 1
-            print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
             n_times = opponent_history.count(action)
             self.check_action_chosen(action, n_times, question_idx=question_idx)
         question_idx = 2
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         self.check_total_payoff(own_payoff, question_idx=question_idx)
         question_idx = 3
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         self.check_total_payoff(opponent_payoff, question_idx=question_idx)

@@ -28,7 +28,6 @@ class RuleChecker(Checker):
             "exists_combo",
             f"combo_for_payoff_{player_1_}",
         ]
-        self.verbose = None
         super().__init__("rule_checker", questions, questions_labels)
 
     def check_payoff_bounds(self, is_max, action_space, payoff_function, question_idx):
@@ -53,9 +52,7 @@ class RuleChecker(Checker):
         label = self.questions_labels[question_idx]
         question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label)
 
     def check_allowed_actions(self, action_space, question_idx):
@@ -67,9 +64,7 @@ class RuleChecker(Checker):
         # The answer is requested as a list for simplicity when finding the JSON. It is then converted to a set.
         question_prompt = f"Answer to the following question: {question}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = set(self.get_answer_from_llm(prompt, label, need_str=False))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label)
 
     def check_payoff_of_combo(self, primary_action, secondary_action, payoff_function, is_inverse=False, question_idx=None):
@@ -85,9 +80,7 @@ class RuleChecker(Checker):
         else:
             question_prompt = f"Answer to the following question: {question.format(to_nat_lang(primary_action), to_nat_lang(secondary_action))}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label)
 
     def check_exists_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
@@ -100,9 +93,7 @@ class RuleChecker(Checker):
         json_prompt = 'Remember to use the following JSON format: {"answer": "Yes"} or {"answer": "No"}\n'
         question_prompt = f"Answer to the following question: {question.format(given_payoff)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), {"Yes", "No"})
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label)
 
     def check_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
@@ -124,16 +115,13 @@ class RuleChecker(Checker):
             'If the required combination does not exist, answer with None\n')
         question_prompt = f"Answer to the following question: {question.format(given_payoff)}\n"
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
-        print(f"Correct: {correct_answer}", end=" ") if self.verbose else None
         if correct_answer == "None":
             llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), {"None"})
         else:
             llm_answer = self.get_answer_from_llm(prompt, label, need_str=False)
-        print(f"LLM: {llm_answer}") if self.verbose else None
         self.check_answer(llm_answer, correct_answer, label)
 
-    def ask_questions(self, game, player_name="", history_window_size=None, verbose=False):
-        self.verbose = verbose
+    def ask_questions(self, game, player_name="", history_window_size=None):
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
         opponent_name = ""
@@ -148,33 +136,24 @@ class RuleChecker(Checker):
                                                  game.get_actions_by_player(opponent_name), payoff_function, window_size=history_window_size, is_ended=is_ended)
         self.system_prompt = game_rules_prompt + history_prompt
         question_idx = 0
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         self.check_payoff_bounds(True, action_space, payoff_function, question_idx=question_idx)
         question_idx = 1
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         self.check_payoff_bounds(False, action_space, payoff_function, question_idx=question_idx)
         question_idx = 2
-        print(f"Question {question_idx}: {self.questions[question_idx]}") if self.verbose else None
         self.check_allowed_actions(action_space, question_idx=question_idx)
         for primary_action in action_space:
             for secondary_action in action_space:
                 question_idx = 3
-                print(f"Question {question_idx}: {self.questions[question_idx].format(primary_action, secondary_action)}") if self.verbose else None
                 self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=question_idx)
                 question_idx = 4
-                print(f"Question {question_idx}: {self.questions[question_idx].format(primary_action, secondary_action)}") if self.verbose else None
                 self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, is_inverse=True, question_idx=question_idx)
         for payoff in {0, 1, 3, 5}:
             question_idx = 5
-            print(f"Question {question_idx}: {self.questions[question_idx].format(payoff)}") if self.verbose else None
             self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
             question_idx = 6
-            print(f"Question {question_idx}: {self.questions[question_idx].format(payoff)}") if self.verbose else None
             self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
         for payoff in range(0, 6):
             question_idx = 7
-            print(f"Question {question_idx}: {self.questions[question_idx].format(payoff)}") if self.verbose else None
             self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
             question_idx = 8
-            print(f"Question {question_idx}: {self.questions[question_idx].format(payoff)}") if self.verbose else None
             self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
