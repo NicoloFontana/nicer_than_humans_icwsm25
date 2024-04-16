@@ -17,8 +17,8 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 3
-n_iterations = 5
+n_games = 50
+n_iterations = 100
 checkpoint = 0
 checkers = False
 msg = "Run LLM against TitForTat with window size 10 and delay to avoid model overloading."
