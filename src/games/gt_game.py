@@ -59,6 +59,9 @@ class GTGame:
             return []
         return list(self.players.keys())
 
+    def get_opponents_names(self, player_name):
+        return [name for name in self.players.keys() if name != player_name]
+
     def get_player_by_name(self, name):
         return self.players[name]
 
