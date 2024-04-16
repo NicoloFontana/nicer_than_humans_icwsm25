@@ -17,11 +17,11 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 50
-n_iterations = 100
+n_games = 3
+n_iterations = 5
 checkpoint = 0
 checkers = False
-msg = ""
+msg = "Run LLM against TitForTat with window size 10 and delay to avoid model overloading."
 
 if msg == "":
     log.info("Set a message.")
@@ -32,14 +32,14 @@ print(msg)
 log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-# # Sleeping routine # TODO remove
-# log.info("Going to sleep")
-# print("Going to sleep")
-# time.sleep(50000)
-# new_dt_start_time = dt.datetime.now()
-# new_start_time = time.mktime(dt_start_time.timetuple())
-# log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-# print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+# Sleeping routine # TODO remove
+log.info("Going to sleep")
+print("Going to sleep")
+time.sleep(20000)
+new_dt_start_time = dt.datetime.now()
+new_start_time = time.mktime(dt_start_time.timetuple())
+log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 for n_game in range(n_games):
     log.info(f"Game {n_game + 1}") if n_games > 1 else None
@@ -76,8 +76,8 @@ for n_game in range(n_games):
     strat1.wrap_up_round(save=True, infix=infix)
     game.save_history(timestamp, infix=infix)
 
-    log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
-    print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+    # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 
-    # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
-    # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
+    log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
+    print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")  # TODO remove "new"
