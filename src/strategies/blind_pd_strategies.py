@@ -39,3 +39,18 @@ class RandomStrategy(Strategy):
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
         return self.rng.integers(2, size=current_round)
+
+
+class FixedSequence(Strategy):
+    def __init__(self, sequence):
+        self.sequence = sequence
+        super().__init__("FixedSeq")
+
+    def play(self):
+        return self.sequence.pop(0)
+
+    def generate_alternative_history_for_player(self, game_history, player_name):
+        current_round = len(game_history.get_actions_by_player(player_name))
+        if current_round > len(self.sequence):
+            return self.sequence[-1]
+        return self.sequence[:current_round]
