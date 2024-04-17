@@ -21,7 +21,7 @@ n_games = 50
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run LLM against AlwaysDefect with window size 2"
+msg = "Run LLM against AlwaysDefect with window size 3"
 
 if msg == "":
     log.info("Set a message.")
@@ -35,7 +35,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(45000)
+time.sleep(90000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
