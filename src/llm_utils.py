@@ -16,7 +16,7 @@ MODEL = "meta-llama/Llama-2-70b-chat-hf"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.7
-history_window_size = 1
+history_window_size = 2
 
 OVERALL = "overall"
 
@@ -261,8 +261,7 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, wind
         return "This is the first round of the game.\n"
     if window_size is None:
         window_size = len(own_history)
-    # history_prompt_parts = [f"The history of the game in the last {min(len(own_history), window_size)} rounds is the following:\n"]
-    history_prompt_parts = [f"The history of the game in the last round is the following:\n"]
+    history_prompt_parts = [f"The history of the game in the last {min(len(own_history), window_size)} rounds is the following:\n"]
 
     start = max(0, len(own_history) - window_size)
     end = len(own_history)
