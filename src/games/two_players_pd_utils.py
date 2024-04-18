@@ -253,58 +253,6 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
                        plt_figure=plt_figure, vmax=vmax)
 
 
-def plot_histories_analysis(timestamp, game_histories, show=False, main_player_name=player_1_, opponent_name=player_2_, opponent_label=player_2_, percentage_matrices=True):
-    """
-    Plots the occurrences histogram, the transition matrix, the second-order transition matrix and the average action played at each turn for the aggregated game histories of run `timestamp`.
-    The histories are NOT concatenated, instead their single metrics are aggregated.
-
-    Example:
-    - history 1: [0, 1]
-    - history 2: [1, 0]
-    The number of transitions from 1 to 1 is 0 and remains 0 in the aggregated analysis.
-
-    :param timestamp: timestamp of the run to be analyzed
-    :param game_histories: list of game histories to be analyzed
-    :param show: whether to show the plot or not
-    :param main_player_name: name of the main player to be analyzed
-    :param opponent_name: name of the opponent player to be considered
-    :param opponent_label: label of the opponent player to be shown in the plots
-    :param percentage_matrices: whether to convert the transition matrices to percentage matrices or not
-    """
-    aggregated_history = []
-    for game_history in game_histories:
-        main_actions = game_history.get_actions_by_player(main_player_name)
-        aggregated_history.extend(main_actions)
-    plot_occurrences_histogram(timestamp, aggregated_history, show=show)
-
-    transition_matrix = None
-    for game_history in game_histories:
-        main_actions = game_history.get_actions_by_player(main_player_name)
-        transition_matrix = compute_transition_matrix(main_actions, transition_matrix)
-    if percentage_matrices:
-        transition_matrix = convert_matrix_to_percentage(transition_matrix)
-    plot_transition_matrix(timestamp, transition_matrix, show=show)
-
-    second_order_transition_matrix = None
-    for game_history in game_histories:
-        main_actions = game_history.get_actions_by_player(main_player_name)
-        second_order_transition_matrix = compute_second_order_transition_matrix(main_actions, second_order_transition_matrix)
-    if percentage_matrices:
-        second_order_transition_matrix = convert_matrix_to_percentage(second_order_transition_matrix)
-    plot_transition_matrix(timestamp, second_order_transition_matrix, show=show, is_second_order=True)
-
-    reaction_matrix = None
-    for game_history in game_histories:
-        main_actions = game_history.get_actions_by_player(main_player_name)
-        opponent_actions = game_history.get_actions_by_player(opponent_name)
-        reaction_matrix = compute_reaction_matrix(main_actions, opponent_actions, reaction_matrix)
-    if percentage_matrices:
-        reaction_matrix = convert_matrix_to_percentage(reaction_matrix)
-    plot_transition_matrix(timestamp, reaction_matrix, show=show, is_reaction=True)
-
-    plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=show, opponent_name=opponent_name, opponent_label=opponent_label, fill=True)
-
-
 def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, xlabel=None, ylabel=None, loc="best", axhlines=None, lw=1.0, mean_color=None, fill=False,
             plt_figure=None):
     """
@@ -444,6 +392,60 @@ def plot_similarity_between_histories(timestamp, game_histories, main_player_nam
     # title = f'Similarity avgLLM-avgRND - {timestamp} - {n_games} games'
     #
     # plot_ts(similarity_average, "avgLLM-avgRND", 'r', out_file_path, show=True, title=title, xlabel="Iteration", ylabel="Similarity", axhlines=axhlines, fill=True)
+
+
+def plot_histories_analysis(timestamp, game_histories, show=False, main_player_name=player_1_, opponent_name=player_2_, opponent_label=player_2_, percentage_matrices=True):
+    """
+    Plots the occurrences histogram, the transition matrix, the second-order transition matrix and the average action played at each turn for the aggregated game histories of run `timestamp`.
+    The histories are NOT concatenated, instead their single metrics are aggregated.
+
+    Example:
+    - history 1: [0, 1]
+    - history 2: [1, 0]
+    The number of transitions from 1 to 1 is 0 and remains 0 in the aggregated analysis.
+
+    :param timestamp: timestamp of the run to be analyzed
+    :param game_histories: list of game histories to be analyzed
+    :param show: whether to show the plot or not
+    :param main_player_name: name of the main player to be analyzed
+    :param opponent_name: name of the opponent player to be considered
+    :param opponent_label: label of the opponent player to be shown in the plots
+    :param percentage_matrices: whether to convert the transition matrices to percentage matrices or not
+    """
+    aggregated_history = []
+    for game_history in game_histories:
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        aggregated_history.extend(main_actions)
+    plot_occurrences_histogram(timestamp, aggregated_history, show=show)
+
+    transition_matrix = None
+    for game_history in game_histories:
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        transition_matrix = compute_transition_matrix(main_actions, transition_matrix)
+    if percentage_matrices:
+        transition_matrix = convert_matrix_to_percentage(transition_matrix)
+    plot_transition_matrix(timestamp, transition_matrix, show=show)
+
+    second_order_transition_matrix = None
+    for game_history in game_histories:
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        second_order_transition_matrix = compute_second_order_transition_matrix(main_actions, second_order_transition_matrix)
+    if percentage_matrices:
+        second_order_transition_matrix = convert_matrix_to_percentage(second_order_transition_matrix)
+    plot_transition_matrix(timestamp, second_order_transition_matrix, show=show, is_second_order=True)
+
+    reaction_matrix = None
+    for game_history in game_histories:
+        main_actions = game_history.get_actions_by_player(main_player_name)
+        opponent_actions = game_history.get_actions_by_player(opponent_name)
+        reaction_matrix = compute_reaction_matrix(main_actions, opponent_actions, reaction_matrix)
+    if percentage_matrices:
+        reaction_matrix = convert_matrix_to_percentage(reaction_matrix)
+    plot_transition_matrix(timestamp, reaction_matrix, show=show, is_reaction=True)
+
+    plot_average_history_with_comparison(timestamp, game_histories, main_player_name, show=show, opponent_name=opponent_name, opponent_label=opponent_label, fill=True)
+
+    plot_similarity_between_histories(timestamp, game_histories, main_player_name, opponent_name, opponent_label=opponent_label)
 
 
 def extract_histories_from_files(timestamp, infixes=None):

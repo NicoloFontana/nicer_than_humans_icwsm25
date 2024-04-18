@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import re
+import shutil
 import time
 import warnings
 from pathlib import Path
@@ -115,3 +116,9 @@ def convert_matrix_to_percentage(matrix):
         for j in range(matrix.shape[1]):
             percentage_matrix[i, j] = matrix[i, j] / total_sum if total_sum != 0 else 0
     return percentage_matrix
+
+
+def shutdown_run():
+    # Remove empty directory
+    logging.shutdown()
+    shutil.rmtree(out_path)
