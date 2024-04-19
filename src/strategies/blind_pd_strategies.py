@@ -10,6 +10,9 @@ class AlwaysCooperate(Strategy):
     def play(self):
         return 1
 
+    def wrap_up_round(self):
+        pass
+
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
         return [1] * current_round
@@ -21,6 +24,9 @@ class AlwaysDefect(Strategy):
 
     def play(self):
         return 0
+
+    def wrap_up_round(self):
+        pass
 
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
@@ -36,6 +42,9 @@ class RandomStrategy(Strategy):
         choice = self.rng.choice(np.array(list({1, 0})))
         return choice
 
+    def wrap_up_round(self):
+        pass
+
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
         return self.rng.integers(2, size=current_round)
@@ -48,6 +57,9 @@ class FixedSequence(Strategy):
 
     def play(self):
         return self.sequence.pop(0)
+
+    def wrap_up_round(self):
+        pass
 
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
