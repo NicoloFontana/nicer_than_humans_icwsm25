@@ -69,16 +69,22 @@ def find_first_substring(string, substrings):
     return ""
 
 
-def compute_average_vector(vectors):
+def compute_average_vector(vectors, start=0, end=None):
     n_vectors = len(vectors)
     if n_vectors == 0:
         return []
-    n_elements = len(vectors[0])
-    average_vector = [sum([vectors[i][j] for i in range(n_vectors)]) / n_vectors for j in range(n_elements)]
+    if end is None:
+        end = len(vectors[0])
+    average_vector = [sum([vectors[i][j] for i in range(n_vectors)]) / n_vectors for j in range(start, end)]
     return average_vector
 
 
 def compute_estimators_of_ts(ts):
+    means, variances, std_devs = compute_cumulative_estimators_of_ts(ts)
+    return means[-1], variances[-1], std_devs[-1]
+
+
+def compute_cumulative_estimators_of_ts(ts):
     sample_means = []
     sample_variances = []
     sample_std_devs = []
