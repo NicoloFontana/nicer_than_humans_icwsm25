@@ -110,7 +110,7 @@ class GameHistory:
         with open(out_file_path, "w") as out_file:
             json_out = json.dumps(history, indent=4)
             out_file.write(json_out)
-            log.info("History saved.")
+            # log.info("History saved.")
 
     def load_from_file(self, file_path):
         with open(file_path, "r") as history_file:
