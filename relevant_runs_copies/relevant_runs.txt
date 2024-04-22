@@ -113,3 +113,6 @@ Run with history sliding window against AlwaysDefect:
 
 Behavioral profiles of hard-coded strategies against RND and themselves:
 >> 20240422133439
+    RND, AC, AD, TFT, susTFT, Pavlov, GRIM, WSLS
+>> 20240422175912:
+    UnfairRND
