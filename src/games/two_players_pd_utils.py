@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from src.games.game_history import GameHistory
 from src.strategies.blind_pd_strategies import RandomStrategy, AlwaysCooperate, AlwaysDefect
 from src.strategies.hard_coded_pd_strategies import TitForTat, SuspiciousTitForTat, Grim, Pavlov, WinStayLoseShift
-from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage, log, timestamp, \
+from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage, timestamp, \
     compute_estimators_of_ts
 
 action_0_ = "Defect"
@@ -456,6 +456,8 @@ def plot_histories_analysis(timestamp, game_histories, show=False, main_player_n
 
 def extract_histories_from_files(extraction_timestamp, subdir=None, file_name=None, numerical_infixes=None, max_infix=None):
     game_histories = []
+    if subdir is None:
+        subdir = "game_histories"
     if file_name is None:
         file_name = "game_history"
     if numerical_infixes is None:
@@ -466,6 +468,32 @@ def extract_histories_from_files(extraction_timestamp, subdir=None, file_name=No
         game_history.load_from_file(file_path)
         game_histories.append(game_history)
     return game_histories
+
+
+def extract_behavioral_profiles_from_files(extraction_timestamp, subdir=None, file_name=None, numerical_infixes=None, max_infix=None):
+    behavioral_profiles = []
+    if file_name is None:
+        file_name = "behavioral_profile"
+    if numerical_infixes is None:
+        numerical_infixes = extract_infixes(extraction_timestamp, file_name=file_name, subdir=subdir, max_infix=max_infix)
+    for infix in numerical_infixes:
+        behavioral_profile = {}
+        file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
+        with open(file_path, "r") as file:
+            behavioral_profile = json.load(file)
+        behavioral_profiles.append(behavioral_profile)
+    return behavioral_profiles
+
+    # game_histories = []
+    # if file_name is None:
+    #     file_name = "game_history"
+    # if numerical_infixes is None:
+    #     numerical_infixes = extract_infixes(extraction_timestamp, file_name=file_name, subdir=subdir, max_infix=max_infix)
+    # for infix in numerical_infixes:
+    #     game_history = GameHistory()
+    #     file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
+    #     game_history.load_from_file(file_path)
+    #     game_histories.append(game_history)
 
 
 def merge_runs(runs):
@@ -485,247 +513,6 @@ def merge_runs(runs):
 
 # BEHAVIORAL ANALYSIS
 
-
-def niceness(main_history, opponent_history):
-    """
-    Niceness is computed as binary value indicating whether the main player was the first to defect or not.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: whether the main player was nice or not
-    """
-    n = len(main_history)
-    is_nice = 1
-    for i in range(n):
-        if main_history[i] == 0:
-            is_nice = 0
-            break
-        if opponent_history[i] == 0 and main_history[i] == 1:
-            is_nice = 1
-            break
-    return is_nice
-
-
-def forgiveness1(main_history, opponent_history):
-    # TODO: preferred because it takes into account also how many times the opponent defected
-    """
-    Compute the forgiveness of the main player towards the opponent player.
-    Forgiveness is computed as opposite of unforgiveness and in the range [0, 1].
-    Unforgiveness is computed as the sum of the ratio between the waited rounds to forgive and the available rounds to forgive, over the occasions to forgive.
-    As pseudo-code:
-        f = 1 - u
-        u = sum((forgiving_round - start) / (n - start)) / opponent_defection
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of forgiveness of the main player
-    """
-    n = len(main_history)
-    total_unforgiveness = 0
-    opponent_defection = 0  # for each opponent's defection, there is a chance to forgive
-    for i in range(n - 1):
-        if opponent_history[i] == 0:  # opponent's defection
-            opponent_defection += 1
-            start = i + 1
-            forgiving_round = -1
-            for j in range(start, n):
-                if main_history[j] == 1:  # main cooperates after opponent's defection
-                    forgiving_round = j
-                    break
-            if forgiving_round == -1:
-                forgiving_round = n
-            total_unforgiveness += (forgiving_round - start) / (n - start) if n > start else 0  # ratio between waited rounds to cooperate and remaining rounds
-            # 0 if immediate cooperation, 1 if no cooperation
-    relative_unforgiveness = total_unforgiveness / opponent_defection if opponent_defection > 0 else 0  # ratio between total unforgiveness and occasions to forgive
-    # 0 if always forgives immediately, 1 if never forgives
-    return 1 - relative_unforgiveness
-
-
-def forgiveness2(main_history, opponent_history):
-    """
-    Compute the forgiveness of the main player towards the opponent player.
-    Forgiveness is computed as opposite of unforgiveness and in the range [0, 1].
-    Unforgiveness is computed as the ratio between the sum of the waited rounds to forgive and the sum of the rounds available to forgive.
-    As pseudo-code:
-        f = 1 - u
-        u = sum(waited) / sum(remaining)
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of forgiveness of the main player
-    """
-    n = len(main_history)
-    waited = 0  # how many rounds the main player waited to forgive in total
-    remaining = 0  # how many rounds the main player had to forgive in total
-    for i in range(n - 1):
-        if opponent_history[i] == 0:  # opponent's defection
-            start = i + 1
-            forgiving_round = -1
-            for j in range(start, n):
-                if main_history[j] == 1:  # main cooperates after opponent's defection
-                    forgiving_round = j
-                    break
-            if forgiving_round == -1:
-                forgiving_round = n
-            waited += forgiving_round - start
-            remaining += n - start
-    unforgiveness = waited / remaining if remaining > 0 else 0  # ratio between waited rounds to forgive and remaining rounds
-    # 0 if always forgives immediately, 1 if never forgives
-    return 1 - unforgiveness
-
-
-def provocability(main_history, opponent_history):
-    # TODO: preferred because simpler and more intuitive
-    """
-    Compute the provocability of the main player towards the opponent player.
-    Provocability is computed as the ratio between the reactions to the opponent's defection and the provocations.
-    A provocation is considered any opponent's defection following main's cooperation (i.e. uncalled).
-    A reaction is considered any main's defection following an opponent's provocation.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of provocability of the main player
-    """
-    n = len(main_history)
-    reactions = 0
-    provocations = 0
-    for i in range(n - 1):
-        if opponent_history[i] == 0:  # opponent defection
-            if i == 0:  # uncalled first defection
-                reactions += 1 if main_history[i + 1] == 0 else 0
-                provocations += 1
-            else:
-                if main_history[i - 1] == 1:  # uncalled defection
-                    reactions += 1 if main_history[i + 1] == 0 else 0
-                    provocations += 1
-    return reactions / provocations if provocations > 0 else 0
-
-
-def provocability2(main_history, opponent_history):
-    """
-    Compute the provocability of the main player towards the opponent player.
-    Provocability is computed as the ratio between the reactions to the opponent's defection and the provocations.
-    A provocation is considered any opponent's defection following main's cooperation (i.e. uncalled), weighted double to take into account possible streaks of mutual cooperation.
-    A reaction is considered any main's defection following an opponent's provocation with an additional term to take into account possible streaks of mutual cooperation.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of provocability of the main player
-    """
-    n = len(main_history)
-    reactions = 0
-    provocations = 0
-    for i in range(n - 1):
-        if opponent_history[i] == 0:  # opponent defection
-            if i == 0:  # uncalled first defection
-                reactions += 1 if main_history[i + 1] == 0 else 0
-                provocations += 1
-            else:
-                if main_history[i - 1] == 1:  # the defection was uncalled
-                    streak = 0  # length of mutual cooperation streak
-                    j = i - 1
-                    in_streak = True
-                    while in_streak and j > 0:
-                        if main_history[j - 1] == 1 and opponent_history[j] == 1:  # mutual cooperation
-                            streak += 1
-                        else:
-                            in_streak = False
-                        j -= 1
-                    uncalledness = streak / (i - 1) if i > 1 else 0
-                    reactions += 1 + uncalledness if main_history[i + 1] == 0 else 0
-                    provocations += 2
-    return reactions / provocations if provocations > 0 else 0
-
-
-def cooperativeness(main_history, opponent_history):
-    """
-    Compute the cooperativeness of the main player towards the opponent player.
-    Cooperativeness is computed as the ratio between the #cooperation and the total rounds.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of cooperativeness of the main player
-    """
-    n = len(main_history)
-    cooperation = sum(main_history)
-    return cooperation / n if n > 0 else 0
-
-
-def emulation(main_history, opponent_history):
-    """
-    Compute the emulation of the main player towards the opponent player.
-    Emulation is computed as the ratio between the #reactions equal to the opponent's previous action and the total possible reactions.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of emulation of the main player
-    """
-    n = len(main_history)
-    emulations = 0
-    for i in range(n - 1):
-        emulations += 1 if main_history[i + 1] == opponent_history[i] else 0
-    return emulations / (n - 1) if n > 1 else 0
-
-
-def troublemaking(main_history, opponent_history):
-    """
-    Compute the troublemaking of the main player towards the opponent player.
-    Trouble is computed as the ratio between the #uncalled defection and the #occasions for uncalled defection.
-    An uncalled defection is considered any main's defection following an opponent's cooperation.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of troublemaking of the main player
-    """
-    n = len(main_history)
-    uncalled_defection = 1 if main_history[0] == 0 else 0  # first defection was uncalled
-    occasions = 1
-    for i in range(n - 1):
-        if opponent_history[i] == 1:  # opponent's cooperation
-            occasions += 1
-            uncalled_defection += 1 if main_history[i + 1] == 0 else 0  # main's uncalled defection
-    return uncalled_defection / occasions
-
-
-def naivety(main_history, opponent_history):
-    """
-    Compute the naivety of the main player towards the opponent player.
-    Trouble is computed as the ratio between the #uncalled defection and the #occasions for uncalled defection.
-    An uncalled defection is considered any main's defection following an opponent's cooperation.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of troublemaking of the main player
-    """
-    n = len(main_history)
-    uncalled_cooperation = 1 if main_history[0] == 1 else 0  # first cooperation was uncalled
-    occasions = 1
-    for i in range(n - 1):
-        if opponent_history[i] == 0:  # opponent's defection
-            occasions += 1
-            uncalled_cooperation += 1 if main_history[i + 1] == 1 else 0  # main's uncalled cooperation
-    return uncalled_cooperation / occasions
-
-
-def consistency(main_history, opponent_history):
-    """
-    Compute the consistency of the main player towards the opponent player.
-    Consistency is computed as the opposite of inconsistency and in the range [0, 1].
-    Inconsistency is computed as the ratio between the #changes in the main's choice of action and the total possible changes.
-    :param main_history: history of the main player
-    :param opponent_history: history of the opponent player
-    :return: level of consistency of the main player
-    """
-    n = len(main_history)
-    changes = 0
-    for i in range(n - 1):
-        changes += 1 if main_history[i] != main_history[i + 1] else 0
-    return 1 - (changes / (n - 1)) if n > 1 else 0
-
-
-main_behavioral_features = {
-    "niceness": niceness,
-    "forgiveness1": forgiveness1,
-    "forgiveness2": forgiveness2,
-    "provocability": provocability,
-    # "provocability2": provocability2,
-    "cooperativeness": cooperativeness,
-    "emulation": emulation,
-    "troublemaking": troublemaking,
-    "naivety": naivety,
-    "consistency": consistency
-}
 
 main_blind_strategies = {
     "random_strategy": {

@@ -1,8 +1,8 @@
 import datetime as dt
 import sys
 import time
-from src.games.two_players_pd_utils import player_1_, player_2_, main_blind_strategies, main_hard_coded_strategies, get_main_strategies, compute_behavioral_profile, \
-    main_behavioral_features
+from src.games.two_players_pd_utils import player_1_, player_2_, main_blind_strategies, main_hard_coded_strategies, get_main_strategies, compute_behavioral_profile
+from src.behavioral_analysis.main_behavioral_features import main_behavioral_features
 from src.games.two_players_pd import TwoPlayersPD
 from src.player import Player
 from src.strategies.blind_pd_strategies import RandomStrategy
@@ -62,4 +62,4 @@ for strategy_name in main_strategies.keys():
             log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if checkpoint != 0 and (n_game + 1) % checkpoint == 0 else None
             print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if checkpoint != 0 and (n_game + 1) % checkpoint == 0 else None
 
-        behavioral_profile = compute_behavioral_profile(game_histories, main_behavioral_features, main_player_name=main_name, opponent_name=opponent_name)
+        # behavioral_profile = compute_behavioral_profile(game_histories, main_behavioral_features, main_player_name=main_name, opponent_name=opponent_name)
