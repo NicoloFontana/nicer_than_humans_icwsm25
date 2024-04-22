@@ -454,14 +454,15 @@ def plot_histories_analysis(timestamp, game_histories, show=False, main_player_n
     plot_similarity_between_histories(timestamp, game_histories, main_player_name, opponent_name, opponent_label=opponent_label)
 
 
-def extract_histories_from_files(timestamp, infixes=None):
+def extract_histories_from_files(extraction_timestamp, subdir=None, file_name=None, numerical_infixes=None, max_infix=None):
     game_histories = []
-    subdir = "game_histories"
-    if infixes is None:
-        infixes = extract_infixes(timestamp, "game_history", subdir=subdir)
-    for infix in infixes:
+    if file_name is None:
+        file_name = "game_history"
+    if numerical_infixes is None:
+        numerical_infixes = extract_infixes(extraction_timestamp, file_name=file_name, subdir=subdir, max_infix=max_infix)
+    for infix in numerical_infixes:
         game_history = GameHistory()
-        file_path = OUT_BASE_PATH / str(timestamp) / subdir / f"game_history_{infix}.json"
+        file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
         game_history.load_from_file(file_path)
         game_histories.append(game_history)
     return game_histories
@@ -570,7 +571,7 @@ def forgiveness2(main_history, opponent_history):
     return 1 - unforgiveness
 
 
-def provocability1(main_history, opponent_history):
+def provocability(main_history, opponent_history):
     # TODO: preferred because simpler and more intuitive
     """
     Compute the provocability of the main player towards the opponent player.
@@ -717,7 +718,7 @@ main_behavioral_features = {
     "niceness": niceness,
     "forgiveness1": forgiveness1,
     "forgiveness2": forgiveness2,
-    "provocability1": provocability1,
+    "provocability": provocability,
     # "provocability2": provocability2,
     "cooperativeness": cooperativeness,
     "emulation": emulation,

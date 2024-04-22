@@ -80,6 +80,8 @@ def compute_average_vector(vectors, start=0, end=None):
 
 
 def compute_estimators_of_ts(ts):
+    if not ts:
+        return 0, 0, 0
     means, variances, std_devs = compute_cumulative_estimators_of_ts(ts)
     return means[-1], variances[-1], std_devs[-1]
 
@@ -98,7 +100,7 @@ def compute_cumulative_estimators_of_ts(ts):
     return sample_means, sample_variances, sample_std_devs
 
 
-def extract_infixes(extraction_timestamp, file_name, subdir=None):
+def extract_infixes(extraction_timestamp, file_name, subdir=None, max_infix=None):
     dir_path = OUT_BASE_PATH / str(extraction_timestamp)
     if subdir is not None:
         dir_path = dir_path / subdir
@@ -106,7 +108,8 @@ def extract_infixes(extraction_timestamp, file_name, subdir=None):
     for file_path in dir_path.iterdir():
         if file_path.is_file() and file_name in file_path.name:
             infix = file_path.name.split("_")[-1].split(".")[0]
-            infixes.append(infix)
+            if max_infix is None or int(infix) <= max_infix:
+                infixes.append(infix)
     return infixes
 
 
