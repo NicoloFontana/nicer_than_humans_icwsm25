@@ -17,11 +17,11 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 50
+n_games = 100
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run LLM against AlwaysDefect with window size 4"
+msg = "Run LLM against RND with window size 10 - 1/10"
 
 if msg == "":
     log.info("Set a message.")
@@ -32,10 +32,10 @@ print(msg)
 log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-# Sleeping routine # TODO remove
-log.info("Going to sleep")
-print("Going to sleep")
-time.sleep(135000)
+# # Sleeping routine # TODO remove
+# log.info("Going to sleep")
+# print("Going to sleep")
+# time.sleep(135000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -55,7 +55,7 @@ for n_game in range(n_games):
     client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     client.headers["x-use-cache"] = "0"
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, checkers=checkers, history_window_size=history_window_size)
-    strat2 = AlwaysDefect()
+    strat2 = RandomStrategy()
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
