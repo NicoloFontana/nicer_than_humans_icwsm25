@@ -8,14 +8,14 @@ from src.player import Player
 from src.strategies.blind_pd_strategies import RandomStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 1000000
+n_games = 1000
 n_iterations = 100
-checkpoint = 10000
+checkpoint = 100
 main_strategies = get_main_strategies()
 
 msg = ("Run the main strategies against both RND and themselves, and compute the behavioral profile for each one in both cases."
        f"The main strategies are the following: {main_strategies.keys()}."
-       f"The behavioral features composing the behavioral profile are the following: {main_behavioral_features}.")
+       f"The behavioral features composing the behavioral profile are the following: {main_behavioral_features.keys()}.")
 
 if msg == "":
     log.info("Set a message.")
