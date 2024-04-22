@@ -94,7 +94,7 @@ Run against hard-coded strategies
 >> 20240409114154:
     Against AlwaysDefect
 
-Run with history sliding window:
+Run with history sliding window against AlwaysDefect:
 >> 20240412100726:
     window size 10
 >> 20240412103555:
@@ -111,5 +111,5 @@ Run with history sliding window:
     window size 4
 
 
-Behavioral profiles of hard-coded strategies:
+Behavioral profiles of hard-coded strategies against RND and themselves:
 >> 20240422133439
