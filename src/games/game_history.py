@@ -90,7 +90,7 @@ class GameHistory:
             iteration_history[player] = self.history[player][iteration]
         return iteration_history
 
-    def save(self, timestamp, infix=None, subdir=None):
+    def save_to_file(self, timestamp, infix=None, subdir=None):
         # From https://stackoverflow.com/questions/38155039/what-is-the-difference-between-native-int-type-and-the-numpy-int-types
         # " [...] python uses fixed-sized integers behind-the-scenes when the number is small enough,
         # only switching to the slower, flexible-sized integers when the number gets too large."
