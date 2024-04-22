@@ -103,3 +103,13 @@ Run with history sliding window:
     window size 20
 >> 20240412104455:
     window size 5
+>> 20240417174800:
+    window size 2
+>> 20240417175008:
+    window size 3
+>> 20240417175215:
+    window size 4
+
+
+Behavioral profiles of hard-coded strategies:
+>> 20240422133439
