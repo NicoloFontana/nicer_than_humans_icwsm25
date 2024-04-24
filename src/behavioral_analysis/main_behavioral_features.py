@@ -51,7 +51,10 @@ class Forgiveness1(BehavioralFeature):
                 # 0 if immediate cooperation, 1 if no cooperation
         relative_unforgiveness = total_unforgiveness / opponent_defection if opponent_defection > 0 else 0  # ratio between total unforgiveness and occasions to forgive
         # 0 if always forgives immediately, 1 if never forgives
-        return 1 - relative_unforgiveness
+        forgiveness = 1 - relative_unforgiveness
+        self.values.append(forgiveness)
+        self.update_aggregates()
+        return forgiveness
 
 
 class Forgiveness2(BehavioralFeature):
@@ -80,7 +83,10 @@ class Forgiveness2(BehavioralFeature):
                 remaining += n - start
         unforgiveness = waited / remaining if remaining > 0 else 0  # ratio between waited rounds to forgive and remaining rounds
         # 0 if always forgives immediately, 1 if never forgives
-        return 1 - unforgiveness
+        forgiveness = 1 - unforgiveness
+        self.values.append(forgiveness)
+        self.update_aggregates()
+        return forgiveness
 
 
 class Provocability(BehavioralFeature):
@@ -104,7 +110,10 @@ class Provocability(BehavioralFeature):
                     if main_history[i - 1] == 1:  # uncalled defection
                         reactions += 1 if main_history[i + 1] == 0 else 0
                         provocations += 1
-        return reactions / provocations if provocations > 0 else 0
+        provocability = reactions / provocations if provocations > 0 else 0
+        self.values.append(provocability)
+        self.update_aggregates()
+        return provocability
 
 
 class Cooperativeness(BehavioralFeature):
@@ -118,7 +127,10 @@ class Cooperativeness(BehavioralFeature):
     def compute_feature(self, main_history: list, opponent_history: list) -> float:
         n = len(main_history)
         cooperation = sum(main_history)
-        return cooperation / n if n > 0 else 0
+        cooperativeness = cooperation / n if n > 0 else 0
+        self.values.append(cooperativeness)
+        self.update_aggregates()
+        return cooperativeness
 
 
 
@@ -135,7 +147,10 @@ class Emulation(BehavioralFeature):
         emulations = 0
         for i in range(n - 1):
             emulations += 1 if main_history[i + 1] == opponent_history[i] else 0
-        return emulations / (n - 1) if n > 1 else 0
+        emulation = emulations / (n - 1) if n > 1 else 0
+        self.values.append(emulation)
+        self.update_aggregates()
+        return emulation
 
 
 class Troublemaking(BehavioralFeature):
@@ -154,7 +169,10 @@ class Troublemaking(BehavioralFeature):
             if opponent_history[i] == 1:  # opponent's cooperation
                 occasions += 1
                 uncalled_defection += 1 if main_history[i + 1] == 0 else 0  # main's uncalled defection
-        return uncalled_defection / occasions
+        troublemaking = uncalled_defection / occasions
+        self.values.append(troublemaking)
+        self.update_aggregates()
+        return troublemaking
 
 
 class Naivety(BehavioralFeature):
@@ -173,7 +191,10 @@ class Naivety(BehavioralFeature):
             if opponent_history[i] == 0:  # opponent's defection
                 occasions += 1
                 uncalled_cooperation += 1 if main_history[i + 1] == 1 else 0  # main's uncalled cooperation
-        return uncalled_cooperation / occasions
+        naivety = uncalled_cooperation / occasions
+        self.values.append(naivety)
+        self.update_aggregates()
+        return naivety
 
 
 class Consistency(BehavioralFeature):
@@ -189,7 +210,10 @@ class Consistency(BehavioralFeature):
         changes = 0
         for i in range(n - 1):
             changes += 1 if main_history[i] != main_history[i + 1] else 0
-        return 1 - (changes / (n - 1)) if n > 1 else 0
+        consistency = 1 - (changes / (n - 1)) if n > 1 else 0
+        self.values.append(consistency)
+        self.update_aggregates()
+        return consistency
 
 
 main_behavioral_features = {
