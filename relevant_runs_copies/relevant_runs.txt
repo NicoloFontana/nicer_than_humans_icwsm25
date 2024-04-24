@@ -86,7 +86,7 @@ Run without questions to analyze emergent behavior
     But still visible that the defect are concentrated in the first iterations
 
 
-Run against hard-coded strategies
+Run against hard-coded strategies with no sliding window for history
 >> 20240328173931-20240329014202:
     Against RND
 >> 20240409113845:
@@ -94,7 +94,7 @@ Run against hard-coded strategies
 >> 20240409114154:
     Against AlwaysDefect
 
-Run with history sliding window against AlwaysDefect:
+Run with history sliding window against AlwaysDefect for 50 games:
 >> 20240412100726:
     window size 10
 >> 20240412103555:
@@ -112,9 +112,9 @@ Run with history sliding window against AlwaysDefect:
 
 
 Behavioral profiles of hard-coded strategies against RND and themselves:
->> 20240422133439
+>> 20240422133439 (1000 games):
     RND, AC, AD, TFT, susTFT, Pavlov, GRIM, WSLS
->> 20240423094700:
+>> 20240423094700 (1000 games):
     URND06, URND07, URND08, URND09
->> 20240422164401:
+>> 20240422164401 (100 games):
     Llama2 (only against RND)
