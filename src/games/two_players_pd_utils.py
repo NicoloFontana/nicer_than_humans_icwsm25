@@ -7,10 +7,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.game_history import GameHistory
-from src.strategies.blind_pd_strategies import RandomStrategy, AlwaysCooperate, AlwaysDefect
-from src.strategies.hard_coded_pd_strategies import TitForTat, SuspiciousTitForTat, Grim, Pavlov, WinStayLoseShift
-from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage, timestamp, \
-    compute_estimators_of_ts
+from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage
 
 action_0_ = "Defect"
 action_1_ = "Cooperate"
@@ -470,32 +467,6 @@ def extract_histories_from_files(extraction_timestamp, subdir=None, file_name=No
     return game_histories
 
 
-def extract_behavioral_profiles_from_files(extraction_timestamp, subdir=None, file_name=None, numerical_infixes=None, max_infix=None):
-    behavioral_profiles = []
-    if file_name is None:
-        file_name = "behavioral_profile"
-    if numerical_infixes is None:
-        numerical_infixes = extract_infixes(extraction_timestamp, file_name=file_name, subdir=subdir, max_infix=max_infix)
-    for infix in numerical_infixes:
-        behavioral_profile = {}
-        file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
-        with open(file_path, "r") as file:
-            behavioral_profile = json.load(file)
-        behavioral_profiles.append(behavioral_profile)
-    return behavioral_profiles
-
-    # game_histories = []
-    # if file_name is None:
-    #     file_name = "game_history"
-    # if numerical_infixes is None:
-    #     numerical_infixes = extract_infixes(extraction_timestamp, file_name=file_name, subdir=subdir, max_infix=max_infix)
-    # for infix in numerical_infixes:
-    #     game_history = GameHistory()
-    #     file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
-    #     game_history.load_from_file(file_path)
-    #     game_histories.append(game_history)
-
-
 def merge_runs(runs):
     min_timestamp = str(min(runs.keys()))
     max_timestamp = str(max(runs.keys()))
@@ -507,81 +478,5 @@ def merge_runs(runs):
         infixes = runs[timestamp]
         game_histories = extract_histories_from_files(timestamp, infixes)
         for game_history in game_histories:
-            game_history.save(storing_timestamp, infix=idx)
+            game_history.save_to_file(storing_timestamp, infix=idx)
             idx += 1
-
-
-# BEHAVIORAL ANALYSIS
-
-
-main_blind_strategies = {
-    "random_strategy": {
-        "strategy": RandomStrategy,
-        "label": "RND",
-    },
-    "always_cooperate": {
-        "strategy": AlwaysCooperate,
-        "label": "ALLC",
-    },
-    "always_defect": {
-        "strategy": AlwaysDefect,
-        "label": "ALLD",
-    },
-}
-
-main_hard_coded_strategies = {
-    "tit_for_tat": {
-        "strategy": TitForTat,
-        "label": "TFT",
-    },
-    "suspicious_tit_for_tat": {
-        "strategy": SuspiciousTitForTat,
-        "label": "susTFT",
-    },
-    "grim": {
-        "strategy": Grim,
-        "label": "GRIM",
-    },
-    "pavlov": {
-        "strategy": Pavlov,
-        "label": "Pavlov",
-    },
-    "win_stay_lose_shift": {
-        "strategy": WinStayLoseShift,
-        "label": "WSLS",
-    },
-}
-
-
-def get_main_strategies():
-    main_strategies = {}
-    for strategy_name in main_blind_strategies:
-        main_strategies[strategy_name] = main_blind_strategies[strategy_name]
-    for strategy_name in main_hard_coded_strategies:
-        main_strategies[strategy_name] = main_hard_coded_strategies[strategy_name]
-    return main_strategies
-
-
-def compute_behavioral_profile(game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):
-    behavioral_profile = {feature: {
-        "values": [],
-        "mean": 0,
-        "variance": 0,
-        "std_dev": 0
-    } for feature in behavioral_features.keys()}
-    for game_history in game_histories:
-        main_history = game_history.get_actions_by_player(main_player_name)
-        opponent_history = game_history.get_actions_by_player(opponent_name)
-        for feature in behavioral_features.keys():
-            value = behavioral_features[feature](main_history, opponent_history)
-            behavioral_profile[feature]["values"].append(value)
-    for feature in behavioral_features.keys():
-        behavioral_profile[feature]["mean"], behavioral_profile[feature]["variance"], behavioral_profile[feature]["std_dev"] = compute_estimators_of_ts(
-            behavioral_profile[feature]["values"])
-    dir_path = OUT_BASE_PATH / str(timestamp) / f"behavioral_profiles"
-    dir_path.mkdir(parents=True, exist_ok=True)
-    out_file_path = dir_path / f"behavioral_profile_{main_player_name}-{opponent_name}.json"
-    with open(out_file_path, "w") as out_file:
-        json_out = json.dumps(behavioral_profile, indent=4)
-        out_file.write(json_out)
-    return behavioral_profile
