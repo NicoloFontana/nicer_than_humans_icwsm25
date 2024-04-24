@@ -17,7 +17,6 @@ class BehavioralFeature:
         self.mean = sum(self.values) / len(self.values)
         self.variance = sum((x - self.mean) ** 2 for x in self.values) / len(self.values)
         self.std_dev = self.variance ** 0.5
-        self.values = []
 
     def load_from_file(self, file_path, load_values=False):
         with open(file_path, "r") as profile_file:
@@ -28,3 +27,11 @@ class BehavioralFeature:
             self.mean = feature["mean"]
             self.variance = feature["variance"]
             self.std_dev = feature["std_dev"]
+
+    def to_json(self):
+        return {
+            "values": self.values,
+            "mean": self.mean,
+            "variance": self.variance,
+            "std_dev": self.std_dev
+        }
