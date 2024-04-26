@@ -21,8 +21,8 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 # checkers = False
-msg = "Run LLM against URND08 with window size 10"
-defection_prob = 0.8
+msg = "Run LLM against URND09 with window size 10"
+defection_prob = 0.9
 
 if msg == "":
     log.info("Set a message.")
@@ -36,7 +36,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(47000)
+time.sleep(148000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
