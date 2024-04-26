@@ -21,7 +21,8 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 # checkers = False
-msg = "Run LLM against URND07 with window size 10"
+msg = "Run LLM against URND08 with window size 10"
+defection_prob = 0.8
 
 if msg == "":
     log.info("Set a message.")
@@ -35,7 +36,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(110000)
+time.sleep(47000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -55,7 +56,7 @@ for n_game in range(n_games):
     client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     client.headers["x-use-cache"] = "0"
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)  # TODO checkers
-    strat2 = UnfairRandom(prob_defect=0.7)
+    strat2 = UnfairRandom(prob_defect=defection_prob)
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
