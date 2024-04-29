@@ -76,33 +76,7 @@ class Grim(Strategy):
         return alt_history
 
 
-class Pavlov(Strategy):
-    def __init__(self, game: GTGame, player_name: str):
-        super().__init__("Pavlov")
-        self.game = game
-        self.player_name = player_name
-        self.opponent_name = self.game.get_opponents_names(self.player_name)[0]
-
-    def play(self):
-        self_history = self.game.get_actions_by_player(self.player_name)
-        opponent_history = self.game.get_actions_by_player(self.opponent_name)
-        if self_history is None or len(self_history) == 0:
-            return 1
-        return self_history[-1] if self_history[-1] == opponent_history[-1] else not self_history[-1]
-
-    def wrap_up_round(self):
-        pass
-
-    def generate_alternative_history_for_player(self, game_history, player_name):
-        opponent_name = game_history.get_opponents_names(player_name)[0]
-        opponent_history = game_history.get_actions_by_player(opponent_name)
-        alt_history = [1]
-        for i in range(1, len(opponent_history) - 1):
-            alt_history.append(alt_history[i - 1] if alt_history[i - 1] == opponent_history[i - 1] else not alt_history[i - 1])
-        return alt_history
-
-
-class WinStayLoseShift(Strategy):
+class WinStayLoseShift(Strategy):  # Also known as Pavlov
     def __init__(self, game: GTGame, player_name: str):
         super().__init__("WinStayLoseShift")
         self.game = game
@@ -114,18 +88,18 @@ class WinStayLoseShift(Strategy):
         opponent_history = self.game.get_actions_by_player(self.opponent_name)
         if self_history is None or len(self_history) == 0:
             return 1
-        if (self_history[-1] == 1 and opponent_history[-1] == 1) or (self_history[-1] == 0 and opponent_history[-1] == 1):
-            return self_history[-1]
-        return not self_history[-1]
+        if self_history[-1] == opponent_history[-1]:
+            return 1  # Cooperate if both played the same action
+        return 0  # Defect if both played different actions
 
     def wrap_up_round(self):
         pass
 
     def generate_alternative_history_for_player(self, game_history, player_name):
-        opponent_name = game_history.get_opponents_names(player_name)[0]
+        opponent_name = self.game.get_opponents_names(player_name)[0]
         opponent_history = game_history.get_actions_by_player(opponent_name)
         alt_history = [1]
-        for i in range(1, len(opponent_history) - 1):
+        for i in range(1, len(opponent_history)):
             if (alt_history[i - 1] == 1 and opponent_history[i - 1] == 1) or (alt_history[i - 1] == 0 and opponent_history[i - 1] == 1):
                 alt_history.append(1)
             else:

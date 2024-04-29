@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
 from src.games.two_players_pd_utils import player_1_, player_2_
 from src.strategies.blind_pd_strategies import RandomStrategy, UnfairRandom, AlwaysCooperate, AlwaysDefect
-from src.strategies.hard_coded_pd_strategies import TitForTat, SuspiciousTitForTat, Grim, Pavlov, WinStayLoseShift
+from src.strategies.hard_coded_pd_strategies import TitForTat, SuspiciousTitForTat, Grim, WinStayLoseShift
 from src.utils import OUT_BASE_PATH
 
 main_blind_strategies = {
@@ -35,12 +35,8 @@ main_hard_coded_strategies = {
     },
     "grim": {
         "strategy": Grim,
-        "label": "GRIM",
+        "label": "Grim",
     },
-    # "pavlov": {
-    #     "strategy": Pavlov,
-    #     "label": "Pavlov",
-    # },
     "win_stay_lose_shift": {
         "strategy": WinStayLoseShift,
         "label": "WSLS",
