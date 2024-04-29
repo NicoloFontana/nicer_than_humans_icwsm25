@@ -51,13 +51,13 @@ class RandomStrategy(Strategy):
 
 
 class UnfairRandom(Strategy):
-    def __init__(self, defection_prob=0.5):
-        self.defection_prob = defection_prob
+    def __init__(self, cooperation_probability=0.5):
+        self.cooperation_probability = cooperation_probability
         self.rng = np.random.default_rng()
         super().__init__("UnfairRnd")
 
     def play(self):
-        choice = self.rng.choice(np.array(list({1, 0})), p=[self.defection_prob, 1 - self.defection_prob])
+        choice = self.rng.choice(np.array(list({1, 0})), p=[1 - self.cooperation_probability, self.cooperation_probability])
         return choice
 
     def wrap_up_round(self):
@@ -65,7 +65,7 @@ class UnfairRandom(Strategy):
 
     def generate_alternative_history_for_player(self, game_history, player_name):
         current_round = len(game_history.get_actions_by_player(player_name))
-        return self.rng.choice(np.array(list({1, 0})), p=[self.defection_prob, 1 - self.defection_prob], size=current_round)
+        return self.rng.choice(np.array(list({1, 0})), p=[1 - self.cooperation_probability, self.cooperation_probability], size=current_round)
 
 
 class FixedSequence(Strategy):
