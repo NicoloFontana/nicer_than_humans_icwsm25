@@ -30,15 +30,15 @@ for strategy_name in main_strategies.keys():
     print(f"Strategy: {strategy_name}")
     # args = strategy_name in main_hard_coded_strategies.keys()
     args = True
-    for defect_prob in range(6, 10):
-        defect_prob = defect_prob / 10
+    for coop_prob in range(1, 5):
+        coop_prob = coop_prob / 10
         for i in range(2):  # 0: against RND, 1: against self
             log.info(f"Opponent: RND") if i == 0 else log.info(f"Opponent: self")
             print(f"Opponent: RND") if i == 0 else print(f"Opponent: self")
             game_histories = []
             opponent_name = "rnd_baseline" if i == 0 else "self"
-            defect_prob_str = str(defect_prob).replace(".", "")
-            main_name = main_strategies[strategy_name]["label"] + f"{defect_prob_str}"
+            coop_prob_str = str(coop_prob).replace(".", "")
+            main_name = main_strategies[strategy_name]["label"] + f"{coop_prob_str}"
             for n_game in range(n_games):
                 log.info(f"Game {n_game + 1}") if checkpoint != 0 and (n_game + 1) % checkpoint == 0 else None
                 print(f"Game {n_game + 1}") if checkpoint != 0 and (n_game + 1) % checkpoint == 0 else None
@@ -48,9 +48,9 @@ for strategy_name in main_strategies.keys():
                 if i == 0:
                     strat1 = RandomStrategy()
                 else:
-                    strat1 = main_strategies[strategy_name]["strategy"](defect_prob) if args else main_strategies[strategy_name]["strategy"]()
+                    strat1 = main_strategies[strategy_name]["strategy"](coop_prob) if args else main_strategies[strategy_name]["strategy"]()
                 # strat2 = main_strategies[strategy_name]["strategy"](game, main_name) if args else main_strategies[strategy_name]["strategy"]()
-                strat2 = main_strategies[strategy_name]["strategy"](defect_prob) if args else main_strategies[strategy_name]["strategy"]()
+                strat2 = main_strategies[strategy_name]["strategy"](coop_prob) if args else main_strategies[strategy_name]["strategy"]()
                 for player in game.players.values():
                     if player.get_name() == opponent_name:
                         player.set_strategy(strat1)
