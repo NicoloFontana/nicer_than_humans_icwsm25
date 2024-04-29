@@ -113,8 +113,14 @@ Run with history sliding window against AlwaysDefect for 50 games:
 
 Behavioral profiles of hard-coded strategies against RND and themselves:
 >> 20240422133439 (1000 games):
-    RND, AC, AD, TFT, susTFT, Pavlov, GRIM, WSLS
+    RND, AC, AD, TFT, susTFT, Pavlov, Grim, WSLS
 >> 20240423094700 (1000 games):
-    URND06, URND07, URND08, URND09
+    URND06, URND07, URND08, URND09  # TODO change names
 >> 20240422164401 (100 games):
     Llama2 (only against RND)
+>> 20240424102314 (100 games):
+    Llama2 against URND06
+>> 20240426104728 (100 games):
+    Llama2 against URND04
+>> 20240426105448 (100 games):
+    Llama2 against URND03
