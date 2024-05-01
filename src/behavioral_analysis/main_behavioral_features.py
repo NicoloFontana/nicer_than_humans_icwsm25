@@ -25,6 +25,7 @@ class Niceness(BehavioralFeature):
 
 
 class Forgiveness1(BehavioralFeature):
+    # 1-\frac{\sum(\frac{\mathsf{\#waited\_rounds}}{\mathsf{\#remaining\_rounds}})}{\mathsf{\#opponent\_defections}}
     def __init__(self):
         super().__init__("forgiveness1")
         self.values = []
@@ -58,6 +59,7 @@ class Forgiveness1(BehavioralFeature):
 
 
 class Forgiveness2(BehavioralFeature):
+    # 1-\frac{\sum{\mathsf{\#waited\_rounds}}}{\sum{\mathsf{\#remaining\_rounds}}}
     def __init__(self):
         super().__init__("forgiveness2")
         self.values = []
