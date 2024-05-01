@@ -79,6 +79,23 @@ def compute_average_vector(vectors, start=0, end=None):
     return average_vector
 
 
+def compute_variance_vector(vectors, start=0, end=None):
+    n_vectors = len(vectors)
+    if n_vectors == 0:
+        return []
+    if end is None:
+        end = len(vectors[0])
+    average_vector = compute_average_vector(vectors, start, end)
+    variance_vector = [sum([(vectors[i][j] - average_vector[j]) ** 2 for i in range(n_vectors)]) / n_vectors for j in range(start, end)]
+    return variance_vector
+
+
+def compute_std_dev_vector(vectors, start=0, end=None):
+    variance_vector = compute_variance_vector(vectors, start, end)
+    std_dev_vector = [math.sqrt(variance_vector[j]) for j in range(len(variance_vector))]
+    return std_dev_vector
+
+
 def compute_estimators_of_ts(ts):
     if not ts:
         return 0, 0, 0
