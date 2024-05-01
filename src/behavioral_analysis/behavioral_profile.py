@@ -26,6 +26,7 @@ class BehavioralProfile:
                 feature.load_from_file(file_path, load_values=load_values)
                 self.features[feature_name] = feature
             self.n_games = max(feature.n_games for feature in self.features.values())
+            self.n_games = self.n_games if self.n_games != 0 else None
 
     def save_to_file(self, timestamp, subdir=None):
         behavioral_profiles_dir = OUT_BASE_PATH / str(timestamp) / "behavioral_profiles"
