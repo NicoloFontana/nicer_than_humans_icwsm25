@@ -257,7 +257,7 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
 
 
 def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, xlabel=None, ylabel=None, loc="best", axhlines=None, lw=1.0, mean_color=None, fill=False,
-            plt_figure=None):
+            plt_figure=None, std_dev_ts=None):
     """
     Plots the time series `ts` with the specified parameters.
     :param ts: time series to be plotted
@@ -286,6 +286,11 @@ def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, 
     if axhlines is not None:
         for axhline in axhlines:
             plt.axhline(y=axhline, color='red', linestyle='--', lw=0.15)
+
+    if std_dev_ts is not None:
+        ub = [ts[i] + std_dev_ts[i] for i in range(n_iterations)]
+        lb = [ts[i] - std_dev_ts[i] for i in range(n_iterations)]
+        plt.fill_between([i for i in range(n_iterations)], ub, lb, color=ts_color, alpha=lw * 0.2)
 
     if fill:
         np_sample_std_devs = np.array(sample_std_devs)
