@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from matplotlib import pyplot as plt
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
@@ -52,12 +54,31 @@ def get_strategy_by_name(strategy_name):
     return None
 
 
+def get_strategies_by_names(strategies_names):
+    strategies = get_strategies()
+    ret = {}
+    for sn in strategies_names:
+        if sn in strategies.keys():
+            ret[sn] = strategies[sn]
+    return ret
+
+
 def get_strategy_by_label(strategy_label):
     strategies = get_strategies()
     for strategy_name in strategies.keys():
         if strategies[strategy_name]["label"] == strategy_label:
             return {strategy_name: strategies[strategy_name]}
     return None
+
+
+def get_strategies_by_labels(strategies_labels):
+    strategies = get_strategies()
+    ret = {}
+    for sl in strategies_labels:
+        for sk in strategies.keys():
+            if strategies[sk]["label"] == sl:
+                ret[sk] = strategies[sk]
+    return ret
 
 
 def get_strategies():
@@ -80,29 +101,33 @@ def compute_behavioral_profile(timestamp, game_histories, behavioral_features, m
     return profile
 
 
-def plot_behavioral_profile(extraction_timestamp, main_name, opponent_name):
-    file_path = OUT_BASE_PATH / f"{extraction_timestamp}" / "behavioral_profiles" / f"behavioral_profile_{main_name}-{opponent_name}.json"
-    profile = BehavioralProfile(main_name, opponent_name)
-    profile.load_from_file(file_path)
-    n_games = profile.n_games
+def plot_behavioral_profile(profile, title=None, out_file_path=None, show=False, color=None, plt_figure=None, label=None):
+    # file_path = OUT_BASE_PATH / f"{extraction_timestamp}" / "behavioral_profiles" / f"behavioral_profile_{main_name}-{opponent_name}.json"
+    # profile = BehavioralProfile(main_name, opponent_name)
+    # profile.load_from_file(file_path)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-    for feature_name in profile.features.keys():
-        feature = profile.features[feature_name]
-        mean = feature.mean
-        std_dev = feature.std_dev
-        ax.plot([feature_name, feature_name], [mean - std_dev, mean + std_dev], label=feature_name)
-        plt.scatter(feature_name, mean, label=feature_name, s=100)
+    color = color if color is not None else 'blue'
+
+    plt.figure(plt_figure)
+
+    feature_names = list(profile.features.keys())
+    means = [profile.features[feature_name].mean for feature_name in feature_names]
+    std_devs = [profile.features[feature_name].std_dev for feature_name in feature_names]
+    plt.errorbar(feature_names, means, yerr=std_devs, fmt='o', color=color, label=label)
 
     plt.axhline(y=0, color='black', linestyle='--', alpha=0.1)
     plt.axhline(y=0.5, color='black', linestyle='--', alpha=0.1)
     plt.axhline(y=1, color='black', linestyle='--', alpha=0.1)
 
-    plt.title(f"{main_name} vs {opponent_name} - {n_games} games")
+    # plt.title(f"{main_name} vs {opponent_name} - {n_games} games") if n_games is not None else plt.title(" ")#f"{main_name} vs {opponent_name}")
+    plt.title(title) if title is not None else plt.title(" ")
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    out_path = OUT_BASE_PATH / f"{extraction_timestamp}" / "behavioral_profiles" / "plots"
-    out_path.mkdir(parents=True, exist_ok=True)
-    plt.savefig(out_path / f"{main_name}-{opponent_name}_{n_games}.png")
-    plt.savefig(out_path / f"{main_name}-{opponent_name}_{n_games}.svg")
-    plt.show()
+    # out_path = OUT_BASE_PATH / f"{extraction_timestamp}" / "behavioral_profiles" / "plots"
+    if out_file_path is not None:
+        out_parents = Path(out_file_path.parent)
+        out_parents.mkdir(parents=True, exist_ok=True)
+        plt.savefig(out_file_path.with_suffix('.png'))
+        plt.savefig(out_file_path.with_suffix('.svg'))
+    plt.show() if show else None
+    return plt.gcf().number
