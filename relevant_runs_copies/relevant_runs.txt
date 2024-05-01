@@ -126,7 +126,13 @@ Behavioral profiles of hard-coded strategies against RND and themselves:
     Llama2 (only against RND)
 >> 20240424102314 (100 games):
     Llama2 against URND06
+>> 20240424102614 (100 games):
+    Llama2 against URND07
 >> 20240426104728 (100 games):
     Llama2 against URND04
 >> 20240426105448 (100 games):
     Llama2 against URND03
+>> 20240429101310 (100 games):
+    Llama2 against URND02
+>> 20240429101810 (100 games):
+    Llama2 against URND01
