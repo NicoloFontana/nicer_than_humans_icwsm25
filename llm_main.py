@@ -21,8 +21,8 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 # checkers = False
-msg = "Run LLM against URND09 with window size 10"
-coop_prob = 0.9
+msg = "Run LLM against ALLC with window size 10"
+# coop_prob = 0.9
 
 if msg == "":
     log.info("Set a message.")
@@ -36,7 +36,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(86500)
+time.sleep(5500)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -56,7 +56,7 @@ for n_game in range(n_games):
     client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     client.headers["x-use-cache"] = "0"
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)  # TODO checkers
-    strat2 = UnfairRandom(cooperation_probability=coop_prob)
+    strat2 = AlwaysCooperate()
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
