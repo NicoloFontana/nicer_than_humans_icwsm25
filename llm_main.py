@@ -17,11 +17,11 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-n_games = 100
+n_games = 50
 n_iterations = 100
 checkpoint = 0
 # checkers = False
-msg = "Run LLM against ALLC with window size 10"
+msg = "Run LLM against ALLD with window size 10"
 # coop_prob = 0.9
 
 if msg == "":
@@ -56,7 +56,7 @@ for n_game in range(n_games):
     client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     client.headers["x-use-cache"] = "0"
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)  # TODO checkers
-    strat2 = AlwaysCooperate()
+    strat2 = AlwaysDefect()
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
