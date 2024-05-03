@@ -123,6 +123,9 @@ class GameHistory:
         """
         return list(self.history.keys())
 
+    def get_opponents_names(self, player_name):
+        return [name for name in self.history.keys() if name != player_name]
+
     def __str__(self):
         to_str = "".join([f"{player}: {self.history[player]}\n" for player in self.history.keys()])
         return to_str
