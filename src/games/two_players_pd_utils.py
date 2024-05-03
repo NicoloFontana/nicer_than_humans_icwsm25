@@ -7,7 +7,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.game_history import GameHistory
-from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage
+from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, extract_infixes, compute_average_vector, convert_matrix_to_percentage, extract_infixes_
 
 action_0_ = "Defect"
 action_1_ = "Cooperate"
@@ -256,6 +256,40 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
                        plt_figure=plt_figure, vmax=vmax)
 
 
+def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, plt_figure=None):
+    n_iterations = len(ts)
+    plt.figure(plt_figure)
+    plt.plot([i for i in range(n_iterations)], ts, linestyle='-', marker=',', color=ts_color, label=ts_label, lw=lw)
+
+    if axhlines is not None:
+        for axhline in axhlines:
+            plt.axhline(y=axhline, color='black', linestyle='--', lw=0.1)
+    plt.title(" ")
+    plt.xlabel(" ")
+    plt.ylabel(" ")
+    plt.tight_layout()
+    return plt.gcf().number
+
+
+def plot_fill(lower_bounds, upper_bounds, fill_color, plt_figure=None, alpha=0.3):
+    n_iterations = len(upper_bounds)
+    plt.figure(plt_figure)
+    plt.fill_between([i for i in range(n_iterations)], upper_bounds, lower_bounds, color=fill_color, alpha=alpha)
+    plt.title(" ")
+    plt.xlabel(" ")
+    plt.ylabel(" ")
+    plt.tight_layout()
+    return plt.gcf().number
+
+
+def save_plot(plt_figure, out_file_path, show=False):
+    plt.figure(plt_figure)
+    if out_file_path is not None:
+        plt.savefig(out_file_path.with_suffix('.svg'))
+        plt.savefig(out_file_path.with_suffix('.png'))
+    plt.show() if show else None
+
+
 def plot_ts(ts, ts_label, ts_color, out_file_path=None, show=False, title=None, xlabel=None, ylabel=None, loc="best", axhlines=None, lw=1.0, mean_color=None, fill=False,
             plt_figure=None, std_dev_ts=None):
     """
@@ -467,6 +501,20 @@ def extract_histories_from_files(extraction_timestamp, subdir=None, file_name=No
     for infix in numerical_infixes:
         game_history = GameHistory()
         file_path = OUT_BASE_PATH / str(extraction_timestamp) / subdir / f"{file_name}_{infix}.json"
+        game_history.load_from_file(file_path)
+        game_histories.append(game_history)
+    return game_histories
+
+
+def extract_histories_from_files_(dir_path, file_name=None, numerical_infixes=None, max_infix=None):
+    game_histories = []
+    if file_name is None:
+        file_name = "game_history"
+    if numerical_infixes is None:
+        numerical_infixes = extract_infixes_(dir_path, file_name=file_name, max_infix=max_infix)
+    for infix in numerical_infixes:
+        game_history = GameHistory()
+        file_path = dir_path / f"{file_name}_{infix}.json"
         game_history.load_from_file(file_path)
         game_histories.append(game_history)
     return game_histories
