@@ -37,7 +37,7 @@ for i in range(min_urnd_coop, max_urnd_coop):
     ci = st.norm.interval(confidence=confidence, loc=np.mean(mean_main_history_ends), scale=st.sem(mean_main_history_ends))
     cis.append(ci)
 plt_fig = plot_ts_(means, "blue", "mean cooperation", axhlines=[0.0, 0.5, 1.0])
-plt_fig = plot_fill([ci[0] for ci in cis], [ci[1] for ci in cis], "blue", plt_figure=plt_fig, alpha=0.3)
+plt_fig = plot_fill([ci[0] for ci in cis], [ci[1] for ci in cis], "blue", fig=plt_fig, alpha=0.3)
 plt.figure(plt_fig)
 plt.xticks(range(min_urnd_coop, max_urnd_coop), [str(i / 10) for i in range(min_urnd_coop, max_urnd_coop)])
 plt.xlabel("URND cooperation")
