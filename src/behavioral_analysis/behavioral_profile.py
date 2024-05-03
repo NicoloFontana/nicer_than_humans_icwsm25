@@ -28,9 +28,21 @@ class BehavioralProfile:
             self.n_games = max(feature.n_games for feature in self.features.values())
             self.n_games = self.n_games if self.n_games != 0 else None
 
-    def save_to_file(self, timestamp, subdir=None):
+    def save_to_file(self, timestamp, subdir=None):  # TODO remove
         behavioral_profiles_dir = OUT_BASE_PATH / str(timestamp) / "behavioral_profiles"
         dir_path = behavioral_profiles_dir if subdir is None else behavioral_profiles_dir / subdir
+        dir_path.mkdir(parents=True, exist_ok=True)
+        out_file_path = dir_path / f"behavioral_profile_{self.strategy_name}-{self.opponent_name}.json"
+        features_to_json = {}
+        for feature_name in self.features.keys():
+            feature = self.features[feature_name]
+            features_to_json[feature_name] = feature.to_json()
+        with open(out_file_path, "w") as out_file:
+            json_out = json.dumps(features_to_json, indent=4)
+            out_file.write(json_out)
+        return self.features
+
+    def save_to_file_(self, dir_path):
         dir_path.mkdir(parents=True, exist_ok=True)
         out_file_path = dir_path / f"behavioral_profile_{self.strategy_name}-{self.opponent_name}.json"
         features_to_json = {}
