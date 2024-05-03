@@ -4,7 +4,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import extract_histories_from_files, player_1_
+from src.games.two_players_pd_utils import extract_histories_from_files, player_1_, extract_histories_from_files_
 from src.player import Player
 from src.strategies.strategy_utils import get_strategies, main_hard_coded_strategies, main_blind_strategies, get_strategy_by_name, get_strategy_by_label, get_strategies_by_labels
 
@@ -47,10 +47,13 @@ def sfem_computation(game_histories, strategies, main_player_name):
             strategies_names.append(main_hard_coded_strategies[strategy_name]["label"])
             strategies_instances.append(main_hard_coded_strategies[strategy_name]["strategy"](game, None))
         elif strategy_name == "unfair_random":
-            for p in range(6, 10):
-                p = p / 10
-                strategies_names.append(f"URND{p}")
-                strategies_instances.append(main_blind_strategies["unfair_random"]["strategy"](p))
+            continue
+            # for p in range(1, 10):
+            #     if p == 5:
+            #         continue
+            #     p = p / 10
+            #     strategies_names.append(f"URND{p}")
+            #     strategies_instances.append(main_blind_strategies["unfair_random"]["strategy"](p))
         else:
             strategies_names.append(strategies[strategy_name]["label"])
             strategies_instances.append(strategies[strategy_name]["strategy"]())
@@ -64,8 +67,8 @@ def sfem_computation(game_histories, strategies, main_player_name):
         E = np.zeros(num_strategies)  # Number of periods in which play does not match
         for k in range(num_strategies):
             strategy_history = strategies_instances[k].generate_alternative_history_for_player(game_history, main_player_name)
-            delta_history = [0 if main_history[i] == strategy_history[i] else 1 for i in range(len(main_history))]
-            C[k] = np.sum(delta_history)
+            matched_history = [1 if main_history[i] == strategy_history[i] else 0 for i in range(len(main_history))]
+            C[k] = np.sum(matched_history)
             E[k] = len(main_history) - C[k]
 
         # Set up the boundaries and constraints
@@ -100,22 +103,32 @@ def sfem_computation(game_histories, strategies, main_player_name):
                 bestObjective = obj
                 bestX = x
 
-        scores[np.argmax(bestX[1:]) + 1] += 1
+        scores[np.argmax(bestX[1:])] += 1
 
+    for i in range(num_strategies):
+        print(f"{strategies_names[i]}: {scores[i]/n_games}")
     return [scores[i] / n_games for i in range(num_strategies)]
 
 
-# player_name = player_1_
-# extraction_timestamp = "20240422164401"
-# # subdir = Path("game_histories") / player_name
-# # file_name = f"game_history_{player_name}-rnd_baseline"
-# game_histories_analyzed = extract_histories_from_files(extraction_timestamp, max_infix=100)
-#
-# strategies_analyzed = get_strategies()
-# # strategies_analyzed = get_strategies_by_labels(["URND", "RND"])
-# scores = sfem_computation(game_histories_analyzed, strategies_analyzed, player_name)
-# for i in range(len(scores)):
-#     print(f"{list(strategies_analyzed.keys())[i]} frequency: {scores[i]}")
+base_path = Path("behavioral_profiles_analysis")
+strat_name = "llama2"
+history_main_name = player_1_
+strat_dir_path = base_path / strat_name
+
+available_strategies = get_strategies()
+
+for i in range(0,9):
+    p = i / 10
+    p_str = str(p).replace(".", "")
+    opponent_name = f"URND{p_str}"
+    print(opponent_name)
+    urnd_dir_path = strat_dir_path / opponent_name
+    game_histories_dir_path = urnd_dir_path / "game_histories"
+    # file_name = f"game_history_{strat_name}-{opponent_name}"
+    file_name = f"game_history"
+    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
+
+    scores = sfem_computation(game_histories, available_strategies, history_main_name)
 
 from src.utils import shutdown_run
 
