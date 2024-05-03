@@ -21,7 +21,7 @@ n_games = 50
 n_iterations = 100
 checkpoint = 0
 # checkers = False
-msg = "Run LLM against ALLD with window size 11"
+msg = "Run LLM against ALLD with window size 12"
 # coop_prob = 0.9
 
 if msg == "":
@@ -36,7 +36,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(135100)
+time.sleep(178300)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
