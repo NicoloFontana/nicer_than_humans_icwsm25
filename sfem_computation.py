@@ -1,12 +1,9 @@
-from pathlib import Path
-
 import numpy as np
 from scipy.optimize import minimize
 
 from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import extract_histories_from_files, player_1_, extract_histories_from_files_
 from src.player import Player
-from src.strategies.strategy_utils import get_strategies, main_hard_coded_strategies, main_blind_strategies, get_strategy_by_name, get_strategy_by_label, get_strategies_by_labels
+from src.strategies.strategy_utils import main_hard_coded_strategies, main_blind_strategies
 
 """
 Implementation of the SFEM algorithm to compute the behavioral profile of a player against a set of strategies.
@@ -35,7 +32,7 @@ def constraint(x):
     return x[1:].sum() - 1
 
 
-def sfem_computation(game_histories, strategies, main_player_name):
+def compute_sfem(game_histories, strategies, main_player_name):
     n_games = len(game_histories)
     opponent_name = game_histories[0].get_opponents_names(main_player_name)[0]
     game = GTGame(players={main_player_name: Player(main_player_name), opponent_name: Player(opponent_name)})
@@ -48,12 +45,6 @@ def sfem_computation(game_histories, strategies, main_player_name):
             strategies_instances.append(main_hard_coded_strategies[strategy_name]["strategy"](game, None))
         elif strategy_name == "unfair_random":
             continue
-            # for p in range(1, 10):
-            #     if p == 5:
-            #         continue
-            #     p = p / 10
-            #     strategies_names.append(f"URND{p}")
-            #     strategies_instances.append(main_blind_strategies["unfair_random"]["strategy"](p))
         else:
             strategies_names.append(strategies[strategy_name]["label"])
             strategies_instances.append(strategies[strategy_name]["strategy"]())
@@ -105,31 +96,6 @@ def sfem_computation(game_histories, strategies, main_player_name):
 
         scores[np.argmax(bestX[1:])] += 1
 
-    for i in range(num_strategies):
-        print(f"{strategies_names[i]}: {scores[i]/n_games}")
-    return [scores[i] / n_games for i in range(num_strategies)]
-
-
-base_path = Path("behavioral_profiles_analysis")
-strat_name = "llama2"
-history_main_name = player_1_
-strat_dir_path = base_path / strat_name
-
-available_strategies = get_strategies()
-
-for i in range(0,9):
-    p = i / 10
-    p_str = str(p).replace(".", "")
-    opponent_name = f"URND{p_str}"
-    print(opponent_name)
-    urnd_dir_path = strat_dir_path / opponent_name
-    game_histories_dir_path = urnd_dir_path / "game_histories"
-    # file_name = f"game_history_{strat_name}-{opponent_name}"
-    file_name = f"game_history"
-    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
-
-    scores = sfem_computation(game_histories, available_strategies, history_main_name)
-
-from src.utils import shutdown_run
-
-shutdown_run()
+    # TODO return raw scores
+    scores = scores / n_games
+    return scores, strategies_names
