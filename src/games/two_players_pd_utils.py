@@ -256,9 +256,10 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
                        plt_figure=plt_figure, vmax=vmax)
 
 
-def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, plt_figure=None):
+def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, fig=None, ax=None):
     n_iterations = len(ts)
-    plt.figure(plt_figure)
+    plt.figure(fig)
+    plt.sca(ax)
     plt.plot([i for i in range(n_iterations)], ts, linestyle='-', marker=',', color=ts_color, label=ts_label, lw=lw)
 
     if axhlines is not None:
@@ -271,9 +272,10 @@ def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, plt_figure=None):
     return plt.gcf().number
 
 
-def plot_fill(lower_bounds, upper_bounds, fill_color, plt_figure=None, alpha=0.3):
+def plot_fill(lower_bounds, upper_bounds, fill_color, fig=None, ax=None, alpha=0.3):
     n_iterations = len(upper_bounds)
-    plt.figure(plt_figure)
+    plt.figure(fig)
+    plt.sca(ax)
     plt.fill_between([i for i in range(n_iterations)], upper_bounds, lower_bounds, color=fill_color, alpha=alpha)
     plt.title(" ")
     plt.xlabel(" ")
