@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
+from src.games.two_players_pd_utils import plot_ts_, plot_fill
 from src.strategies.strategy_utils import plot_errorbar
-
 
 base_path = Path("behavioral_profiles_analysis")
 strat_name = "llama2"
@@ -23,54 +23,92 @@ features_analyzed = [
     "consistency",
 ]
 
-
-# features_analyzed = main_behavioral_features.keys()
-
-def fmt_map(idx):
-    fmts = ['.', 'o', '_', '2', 's',
-            'P', '^', '1', 'D', 'v', 'x', '*']
-    return fmts[idx % len(fmts)]
-
-
-plt_fig = plt.figure()
-idx = 0
-for i in range(1, 9):
-    coop_prob = i / 10
-    coop_prob_str = str(coop_prob).replace(".", "")
-    opponent_name = f"URND{coop_prob_str}"
-    urnd_dir_path = strat_dir_path / opponent_name
-    file_name = f"behavioral_profile_{strat_name}-{{}}.json"
-    file_path = urnd_dir_path / file_name.format(opponent_name)
-    profile = BehavioralProfile(strat_name, opponent_name)
-    profile.load_from_file(file_path, load_values=True)
-    means = []
-    cis = []
-    yerrs = []
-    for feature_name in features_analyzed:
-        if feature_name not in profile.features:
-            continue
+# plt_fig = plt.figure()
+sup_fig, axs = plt.subplots(len(features_analyzed), 1, figsize=(15, 15))
+plt_fig = sup_fig
+for feature_name in features_analyzed:
+    ax = axs[features_analyzed.index(feature_name)]
+    feature_mean_ts = []
+    feature_lb_ts = []
+    feature_ub_ts = []
+    feature_yerr_ts = []
+    idx = 0
+    for i in range(0, 9):
+        coop_prob = i / 10
+        coop_prob_str = str(coop_prob).replace(".", "")
+        opponent_name = f"URND{coop_prob_str}"
+        urnd_dir_path = strat_dir_path / opponent_name
+        file_name = f"behavioral_profile_{strat_name}-{{}}.json"
+        file_path = urnd_dir_path / file_name.format(opponent_name)
+        profile = BehavioralProfile(strat_name, opponent_name)
+        profile.load_from_file(file_path, load_values=True)
         feature = profile.features[feature_name]
-        means.append(feature.mean)
-        cis.append(st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values)))
-        yerrs.append((cis[-1][1] - cis[-1][0]) / 2)
+        feature_mean_ts.append(feature.mean)
+        cis = st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values))
+        feature_lb_ts.append(cis[0])
+        feature_ub_ts.append(cis[1])
+        yerr = (cis[1] - cis[0]) / 2
+        feature_yerr_ts.append(yerr)
     axhlines = [0.0, 0.5, 1.0]
-    label = f"vs {opponent_name}"
-    # plt_fig = plot_errorbar(means, cmap(idx), label, plt_figure=plt_fig, axhlines=axhlines, yerr=yerrs, fmt=fmt_map(idx))
-    plt_fig = plot_errorbar(means, cmap(idx), label, plt_figure=plt_fig, axhlines=axhlines, fmt=fmt_map(idx))
-    idx += 1
-
+    plt_fig = plot_ts_(feature_mean_ts, "blue", feature_name, axhlines=axhlines, fig=plt_fig, ax=ax)
+    plt_fig = plot_fill(feature_lb_ts, feature_ub_ts, "blue", fig=plt_fig, ax=ax)
+    plt.ylabel(feature_name)
+    # plt.xlabel("URND cooperation") if features_analyzed.index(feature_name) == len(features_analyzed) - 1 else None
+    plt.xticks([i for i in range(9)], [str(i / 10) for i in range(9)])
+    plt.tight_layout()
 plt.figure(plt_fig)
-plt.ylabel("Level")
-plt.xlabel("Behavioral features")
-plt.xticks(range(len(features_analyzed)), features_analyzed, rotation=45, ha='right')
-plt.title(f"{strat_name} behavioral profiles")
-plt.legend(bbox_to_anchor=(1, 0.75))
+plt.suptitle(f"{strat_name} behavioral features against different unfair RND")
+sup_fig.supxlabel("URND cooperation")
+sup_fig.supylabel("Behavioral features")
 plt.tight_layout()
-
-# out_file_path = OUT_BASE_PATH / "behavioral_profiles" / "plots" / f"Llama2-vs-URND_test"  # TODO
-# plt.savefig(out_file_path.with_suffix('.png'))
-# plt.savefig(out_file_path.with_suffix('.svg'))
 plt.show()
+
+#
+# def fmt_map(idx):
+#     fmts = ['.', 'o', '_', '2', 's',
+#             'P', '^', '1', 'D', 'v', 'x', '*']
+#     return fmts[idx % len(fmts)]
+#
+#
+# plt_fig = plt.figure()
+# idx = 0
+# for i in range(0, 9):
+#     coop_prob = i / 10
+#     coop_prob_str = str(coop_prob).replace(".", "")
+#     opponent_name = f"URND{coop_prob_str}"
+#     urnd_dir_path = strat_dir_path / opponent_name
+#     file_name = f"behavioral_profile_{strat_name}-{{}}.json"
+#     file_path = urnd_dir_path / file_name.format(opponent_name)
+#     profile = BehavioralProfile(strat_name, opponent_name)
+#     profile.load_from_file(file_path, load_values=True)
+#     means = []
+#     cis = []
+#     yerrs = []
+#     for feature_name in features_analyzed:
+#         if feature_name not in profile.features:
+#             continue
+#         feature = profile.features[feature_name]
+#         means.append(feature.mean)
+#         cis.append(st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values)))
+#         yerrs.append((cis[-1][1] - cis[-1][0]) / 2)
+#     axhlines = [0.0, 0.5, 1.0]
+#     label = f"vs {opponent_name}"
+#     # plt_fig = plot_errorbar(means, cmap(idx), label, fig=plt_fig, axhlines=axhlines, yerr=yerrs, fmt=fmt_map(idx))
+#     plt_fig = plot_errorbar(means, cmap(idx), label, fig=plt_fig, axhlines=axhlines, fmt=fmt_map(idx))
+#     idx += 1
+#
+# plt.figure(plt_fig)
+# plt.ylabel("Level")
+# plt.xlabel("Behavioral features")
+# plt.xticks(range(len(features_analyzed)), features_analyzed, rotation=45, ha='right')
+# plt.title(f"{strat_name} behavioral profiles")
+# plt.legend(title="Faced strategies", bbox_to_anchor=(1, 0.75))
+# plt.tight_layout()
+#
+# # out_file_path = OUT_BASE_PATH / "behavioral_profiles" / "plots" / f"Llama2-vs-URND_test"  # TODO
+# # plt.savefig(out_file_path.with_suffix('.png'))
+# # plt.savefig(out_file_path.with_suffix('.svg'))
+# plt.show()
 
 
 from src.utils import shutdown_run
