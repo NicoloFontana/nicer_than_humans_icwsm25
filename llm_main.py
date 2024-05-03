@@ -36,7 +36,7 @@ print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # Sleeping routine # TODO remove
 log.info("Going to sleep")
 print("Going to sleep")
-time.sleep(5500)
+time.sleep(91900)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
