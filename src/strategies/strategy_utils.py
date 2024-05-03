@@ -90,7 +90,7 @@ def get_strategies():
     return main_strategies
 
 
-def compute_behavioral_profile(timestamp, game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):
+def compute_behavioral_profile(timestamp, game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):  # TODO remove
     profile = BehavioralProfile(main_player_name, opponent_name)
     profile.add_features(behavioral_features)
     for game_history in game_histories:
@@ -98,6 +98,16 @@ def compute_behavioral_profile(timestamp, game_histories, behavioral_features, m
         opponent_history = game_history.get_actions_by_player(opponent_name)
         profile.compute_features(main_history, opponent_history)
     # profile.save_to_file(timestamp)
+    return profile
+
+
+def compute_behavioral_profile_(game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):
+    profile = BehavioralProfile(main_player_name, opponent_name)
+    profile.add_features(behavioral_features)
+    for game_history in game_histories:
+        main_history = game_history.get_actions_by_player(main_player_name)
+        opponent_history = game_history.get_actions_by_player(opponent_name)
+        profile.compute_features(main_history, opponent_history)
     return profile
 
 
@@ -130,4 +140,19 @@ def plot_behavioral_profile(profile, title=None, out_file_path=None, show=False,
         plt.savefig(out_file_path.with_suffix('.png'))
         plt.savefig(out_file_path.with_suffix('.svg'))
     plt.show() if show else None
+    return plt.gcf().number
+
+
+def plot_errorbar(values, values_color, values_label, yerr=None, axhlines=None, plt_figure=None, alpha=1.0, fmt='o'):
+    plt.figure(plt_figure)
+
+    plt.errorbar([i for i in range(len(values))], values, yerr=yerr, fmt=fmt, color=values_color, label=values_label, alpha=alpha)
+
+    if axhlines is not None:
+        for axhline in axhlines:
+            plt.axhline(y=axhline, color='black', linestyle='--', lw=0.5, alpha=0.05)
+
+    plt.title(" ")
+    plt.xlabel(" ")
+    plt.ylabel(" ")
     return plt.gcf().number
