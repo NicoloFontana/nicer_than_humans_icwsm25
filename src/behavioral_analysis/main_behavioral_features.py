@@ -91,6 +91,61 @@ class Forgiveness2(BehavioralFeature):
         return forgiveness
 
 
+class Forgiveness3(BehavioralFeature):
+    def __init__(self):
+        super().__init__("forgiveness3")
+        self.values = []
+        self.mean = None
+        self.variance = None
+        self.std_dev = None
+
+    def compute_feature(self, main_history: list, opponent_history: list) -> float:
+        n = len(main_history)
+        opponent_defection = 0  # for each opponent's defection, there is a chance to forgive
+        unforgiven = 0
+        for i in range(n):
+            if main_history[i] == 1:  # main cooperates
+                unforgiven = max(0, unforgiven - 1)
+            if opponent_history[i] == 0 and i < n - 1:  # opponent's defection
+                opponent_defection += 1
+                unforgiven += 1
+        unforgiveness = unforgiven / opponent_defection if opponent_defection > 0 else 0  # ratio between total unforgiveness and occasions to forgive
+        # 0 if always forgives immediately, 1 if never forgives
+        forgiveness = 1 - unforgiveness
+        self.values.append(forgiveness)
+        self.update_aggregates()
+        return forgiveness
+
+
+class Forgiveness4(BehavioralFeature):
+    def __init__(self):
+        super().__init__("forgiveness4")
+        self.values = []
+        self.mean = None
+        self.variance = None
+        self.std_dev = None
+
+    def compute_feature(self, main_history: list, opponent_history: list) -> float:
+        n = len(main_history)
+        opponent_defection = 0  # for each opponent's defection, there is a chance to forgive
+        penalties = 0
+        forgiven = 0
+        holding_grudge = False
+        for i in range(n):
+            if main_history[i] == 1 and holding_grudge:  # main's cooperation after defection
+                forgiven += 1
+                holding_grudge = False
+            if i < n - 1 and opponent_history[i] == 1 and holding_grudge and main_history[i + 1] == 0:
+                penalties += 1
+            if opponent_history[i] == 0 and not holding_grudge:  # opponent's defection
+                opponent_defection += 1
+                holding_grudge = True
+        forgiveness = forgiven / (opponent_defection + penalties) if opponent_defection + penalties > 0 else 0
+        self.values.append(forgiveness)
+        self.update_aggregates()
+        return forgiveness
+
+
 class Provocability(BehavioralFeature):
     def __init__(self):
         super().__init__("provocability")
@@ -133,7 +188,6 @@ class Cooperativeness(BehavioralFeature):
         self.values.append(cooperativeness)
         self.update_aggregates()
         return cooperativeness
-
 
 
 class Emulation(BehavioralFeature):
@@ -222,8 +276,9 @@ main_behavioral_features = {
     "niceness": Niceness,
     "forgiveness1": Forgiveness1,
     "forgiveness2": Forgiveness2,
+    "forgiveness3": Forgiveness3,
+    "forgiveness4": Forgiveness4,
     "provocability": Provocability,
-    # "provocability2": provocability2,
     "cooperativeness": Cooperativeness,
     "emulation": Emulation,
     "troublemaking": Troublemaking,
