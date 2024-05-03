@@ -8,6 +8,7 @@ import shutil
 import time
 import warnings
 from pathlib import Path
+import scipy.stats as st
 
 import numpy as np
 
@@ -90,6 +91,26 @@ def compute_variance_vector(vectors, start=0, end=None):
     return variance_vector
 
 
+def compute_confidence_interval_vectors(vectors, start=0, end=None, confidence=0.95):
+    n_vectors = len(vectors)
+    is_normal = n_vectors > 30
+    if n_vectors == 0:
+        return []
+    if end is None:
+        end = len(vectors[0])
+    confidence_interval_vector = []
+    for iteration in range(start, end):
+        iteration_data = [vectors[i][iteration] for i in range(n_vectors)]
+        if is_normal:
+            ci = st.norm.interval(confidence=confidence, loc=np.mean(iteration_data), scale=st.sem(iteration_data))
+        else:
+            ci = st.t.interval(confidence=confidence, df=len(iteration_data) - 1, loc=np.mean(iteration_data), scale=st.sem(iteration_data))
+        confidence_interval_vector.append(ci)
+    lower_bounds = [ci[0] for ci in confidence_interval_vector]
+    upper_bounds = [ci[1] for ci in confidence_interval_vector]
+    return lower_bounds, upper_bounds
+
+
 def compute_std_dev_vector(vectors, start=0, end=None):
     variance_vector = compute_variance_vector(vectors, start, end)
     std_dev_vector = [math.sqrt(variance_vector[j]) for j in range(len(variance_vector))]
@@ -121,6 +142,16 @@ def extract_infixes(extraction_timestamp, file_name, subdir=None, max_infix=None
     dir_path = OUT_BASE_PATH / str(extraction_timestamp)
     if subdir is not None:
         dir_path = dir_path / subdir
+    infixes = []
+    for file_path in dir_path.iterdir():
+        if file_path.is_file() and file_name in file_path.name:
+            infix = file_path.name.split("_")[-1].split(".")[0]
+            if max_infix is None or int(infix) <= max_infix:
+                infixes.append(infix)
+    return infixes
+
+
+def extract_infixes_(dir_path, file_name, max_infix=None):
     infixes = []
     for file_path in dir_path.iterdir():
         if file_path.is_file() and file_name in file_path.name:
