@@ -7,51 +7,12 @@ import pandas as pd
 import scipy.stats as st
 
 from src.utils import OUT_BASE_PATH
-#
-# aggregation_complete_answers_1 = {}
-# rule_complete_answers_1 = {}
-# time_complete_answers_1 = {}
-#
-#
-# aggregation_complete_answers_2 = {}
-# rule_complete_answers_2 = {}
-# time_complete_answers_2 = {}
-#
-#
-# aggregation_complete_answers_3 = {}
-# rule_complete_answers_3 = {}
-# time_complete_answers_3 = {}
-#
+
 timestamps = ["20240315190502", "20240318120135", "20240318120155"]
 checkers = ["aggregation", "rule", "time"]
 confidence = 0.95
-#
-# for extraction_timestamp in timestamps:
-#     base_path = OUT_BASE_PATH / extraction_timestamp
-#     for checker_name in checkers:
-#         checker_path = base_path / checker_name
-#         file_name = f"{checker_name}_checker_complete_answers.json"
-#         complete_answers = json.load(checker_path / file_name)
-#         for label in complete_answers.keys():
-#             if checker_name == "aggregation":
-#                 pass
-#                 # aggregation_complete_answers
-#                 # TODO does it make sense to merge all answers for a question?
-#                 # for "which action played at X" I have 3 answers from the first round and 300 from the last round
-
-# for each run:
-    # load X_checker_complete_answers.json
-    # merge by questions
-    # save to X_checker_complete_answers.json
-# for each question:
-    # get results
-    # compute mean
-    # compute CI
-# store results in .csv as questionX: text, label, accuracy, lb, ub
 
 
-# create tmp .csv
-# extraction_timestamp = "20240315190502"
 csv_dir_path = Path("csv_files_for_plots") / "accuracy-question"
 csv_dir_path.mkdir(parents=True, exist_ok=True)
 for checker_name in checkers:
