@@ -13,7 +13,7 @@ cmap = plt.get_cmap('Dark2')
 confidence = 0.95
 
 min_urnd_coop = 0
-max_urnd_coop = 9
+max_urnd_coop = 11
 
 means = []
 cis = []
@@ -30,7 +30,7 @@ for i in range(min_urnd_coop, max_urnd_coop):
     file_name = f"game_history"
     game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
 
-    main_history_ends = [game_history.get_actions_by_player(history_main_name)[10:] for game_history in game_histories]
+    main_history_ends = [game_history.get_actions_by_player(history_main_name)[history_window_size:] for game_history in game_histories]
     mean_main_history_ends = [sum(main_history_end) / len(main_history_end) for main_history_end in main_history_ends]
     mean = sum(mean_main_history_ends) / len(mean_main_history_ends)
     means.append(mean)

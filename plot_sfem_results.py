@@ -22,7 +22,7 @@ plt_fig = plt.figure()
 
 available_strategies = get_strategies()
 strategies_names = list(available_strategies.keys())
-for i in range(0, 9):
+for i in range(0, 11):
     p = i / 10
     p_str = str(p).replace(".", "")
     opponent_name = f"URND{p_str}"
