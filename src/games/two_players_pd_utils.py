@@ -258,8 +258,8 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
 
 def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, fig=None, ax=None):
     n_iterations = len(ts)
-    plt.figure(fig)
-    plt.sca(ax)
+    plt.figure(fig) if fig is not None else None
+    plt.sca(ax) if ax is not None else None
     plt.plot([i for i in range(n_iterations)], ts, linestyle='-', marker=',', color=ts_color, label=ts_label, lw=lw)
 
     if axhlines is not None:
@@ -274,8 +274,8 @@ def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, fig=None, ax=None):
 
 def plot_fill(lower_bounds, upper_bounds, fill_color, fig=None, ax=None, alpha=0.3):
     n_iterations = len(upper_bounds)
-    plt.figure(fig)
-    plt.sca(ax)
+    plt.figure(fig) if fig is not None else None
+    plt.sca(ax) if ax is not None else None
     plt.fill_between([i for i in range(n_iterations)], upper_bounds, lower_bounds, color=fill_color, alpha=alpha)
     plt.title(" ")
     plt.xlabel(" ")
