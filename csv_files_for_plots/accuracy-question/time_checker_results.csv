@@ -1,0 +1,6 @@
+,full_question,label,accuracy,ci_lb,ci_ub
+0,Which is the current round of the game?,current_round,1.0,1.0,1.0
+1,Which action did player A play in round {}?,action_A,0.9345874587458746,0.9306501760920015,0.9385247413997476
+2,Which action did player B play in round {}?,action_B,0.8406600660066007,0.8348319440174613,0.8464881879957401
+3,How many points did player A collect in round {}?,points_A,0.8762376237623762,0.8709936395407081,0.8814816079840444
+4,How many points did player B collect in round {}?,points_B,0.8040924092409241,0.7977721524889481,0.8104126659929001
