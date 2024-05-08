@@ -11,7 +11,7 @@ strats = {"llama2": None}
 
 for strat_name in strats.keys():
     strat_dir_path = base_path / strat_name
-    for i in range(0, 1):
+    for i in range(0, 11):
         p = i / 10
         p_str = str(p).replace(".", "")
         opponent_name = f"URND{p_str}"
