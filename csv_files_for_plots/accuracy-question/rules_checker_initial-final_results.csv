@@ -2,5 +2,3 @@
 0,What is the lowest/highest payoff player A can get in a single round?,min_max,0.895,0.8524080307735533,0.9375919692264467,1.0,1.0,1.0
 1,Which actions is player A allowed to play?,actions,1.0,1.0,1.0,1.0,1.0,1.0
 2,Which is player X's payoff in a single round if X plays p and Y plays q?,payoff,0.78375,0.7552042448486173,0.8122957551513826,0.84375,0.82922052664137,0.85827947335863
-3,Does exist a combination of actions that gives a player a payoff of K in a single round?,exist_combo,0.8,0.7679672170400589,0.8320327829599412,0.8238888888888889,0.8062869620775441,0.8414908157002337
-4,Which combination of actions gives a payoff of K to A in a single round?,combo,0.5033333333333333,0.4632932444428204,0.5433734222238462,0.4388888888888889,0.41595729527326764,0.46182048250451013
