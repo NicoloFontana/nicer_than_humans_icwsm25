@@ -1,5 +1,0 @@
-,full_question,label,accuracy,ci_lb,ci_ub
-0,How many times did player A choose {}?,#actions_A,0.9766666666666667,0.9645775030539586,0.9887558302793747
-1,How many times did player B choose {}?,#actions_B,0.9833333333333333,0.9730813135572853,0.9935853531093812
-2,What is player A's current total payoff?,total_payoff_A,1.0,1.0,1.0
-3,What is player B's current total payoff?,total_payoff_B,1.0,1.0,1.0
