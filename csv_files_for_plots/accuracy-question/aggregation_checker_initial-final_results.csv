@@ -1,0 +1,3 @@
+,full_question,label,initial_accuracy,initial_ci_lb,initial_ci_ub,final_accuracy,final_ci_lb,final_ci_ub
+0,How many times did player X choose p?,#actions,0.1325,0.09923371345710819,0.16576628654289183,0.98,0.9720755973388557,0.9879244026611442
+1,What is player X's current total payoff?,#points,0.015,-0.001888275210235709,0.03188827521023571,1.0,1.0,1.0
