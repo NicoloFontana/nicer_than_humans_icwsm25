@@ -3,12 +3,13 @@ import time
 import warnings
 
 from huggingface_hub import InferenceClient
+from openai import OpenAI
 
 from src.games.gt_game import GTGame
 from src.games.two_players_pd_utils import from_nat_lang, player_1_
 from src.strategies.strategy import Strategy
 from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, \
-    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text, history_window_size
+    HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text, history_window_size, OPENAI_API_KEY
 from src.utils import find_json_object, log, out_path, timestamp
 
 
@@ -18,8 +19,13 @@ class OneVsOnePDLlmStrategy(Strategy):
         super().__init__("OneVsOnePDLlmStrategy")
         try:
             if client is None:
-                self.client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-                self.client.headers["x-use-cache"] = "0"
+
+                ### HuggingFace API ###
+                # self.client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+                # self.client.headers["x-use-cache"] = "0"
+
+                ### OpenAI API ###
+                self.client = OpenAI(api_key=OPENAI_API_KEY)
             else:
                 self.client = client
             # Check if the client is valid
@@ -53,7 +59,7 @@ class OneVsOnePDLlmStrategy(Strategy):
 
         game_rules_prompt = generate_game_rules_prompt(action_space, payoff_function, n_iterations)
         history_prompt = generate_history_prompt(own_history, opponent_history, payoff_function, window_size=self.history_window_size, is_ended=is_ended)
-        json_prompt = f'Remember to use only the following JSON format: {{"{self.action_str}": <ACTION_of_{player_1_}>, "{self.reason_str}": <YOUR_REASON>}}<<SYS>>\n'
+        json_prompt = f'Remember to use only the following JSON format: {{"{self.action_str}": <ACTION_of_{player_1_}>}}\n'  #, "{self.reason_str}": <YOUR_REASON>}}\n'
         next_action_prompt = f"Answer saying which action player {player_1_} should play."
         prompt = generate_prompt_from_sub_prompts([game_rules_prompt, history_prompt, json_prompt, next_action_prompt])
         generated_text = generate_text(prompt, self.client, max_new_tokens=self.max_new_tokens, temperature=self.temperature)
@@ -76,7 +82,7 @@ class OneVsOnePDLlmStrategy(Strategy):
             try:
                 reason = answer[self.reason_str]
             except Exception as e:
-                warnings.warn(f"{str(e)} in answer: {answer}. Reason not found.")
+                # warnings.warn(f"{str(e)} in answer: {answer}. Reason not found.")
                 reason = ""
         action_answer[self.action_str] = action
         action_answer[self.reason_str] = reason
