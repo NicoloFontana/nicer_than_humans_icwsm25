@@ -121,6 +121,19 @@ Run with history sliding window against AlwaysDefect for 50 games:
     window size 13
 >> 20240506101103:
     window size 14
+>> 20240510104016:
+    window size 16
+>> 20240510104201:
+    window size 19
+>> 20240510104526:
+    window size 17
+>> 20240510105136:
+    window size 18
+>> 20240510105405:
+    window size 50
+>> 20240510105526:
+    window size 75
+
 
 
 
@@ -159,3 +172,15 @@ Behavioral profiles runs:
     Llama2 against URND01
 >> 20240503171043 (50 games):
     Llama2 against AD
+
+
+
+Prompts re-runs
+>> 20240403094750:
+    v0.0
+>> 20240403095508:
+    v0.1
+>> 20240404161538:
+    v0.2
+>> 20240404183141:
+    v0.2.1
