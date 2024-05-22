@@ -256,11 +256,11 @@ def plot_transition_matrix(timestamp, transition_matrix, infix=None, show=False,
                        plt_figure=plt_figure, vmax=vmax)
 
 
-def plot_ts_(ts, ts_color, ts_label, lw=1.0, axhlines=None, fig=None, ax=None):
+def plot_ts_(ts, ts_color, ts_label, lw=1.0, linestyle='-', marker=',', axhlines=None, fig=None, ax=None):
     n_iterations = len(ts)
     plt.figure(fig) if fig is not None else None
     plt.sca(ax) if ax is not None else None
-    plt.plot([i for i in range(n_iterations)], ts, linestyle='-', marker=',', color=ts_color, label=ts_label, lw=lw)
+    plt.plot([i for i in range(n_iterations)], ts, linestyle=linestyle, marker=marker, color=ts_color, label=ts_label, lw=lw)
 
     if axhlines is not None:
         for axhline in axhlines:
