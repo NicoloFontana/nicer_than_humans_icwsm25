@@ -13,16 +13,18 @@ def fmt_map(idx):
     return fmts[idx % len(fmts)]
 
 
-base_path = Path("behavioral_profiles_analysis")
+base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
 history_main_name = player_1_
 strat_dir_path = base_path / strat_name
 cmap = plt.get_cmap('Dark2')
 plt_fig = plt.figure()
 
-available_strategies = get_strategies()
+all_strategies = get_strategies()
+available_strategies = {k: v for k, v in all_strategies.items() if v["label"] == "ALLC" or v["label"] == "GRIM" or v["label"] == "TFT"}
+print(available_strategies)
 strategies_names = list(available_strategies.keys())
-for i in range(0, 11):
+for i in range(1, 10):
     p = i / 10
     p_str = str(p).replace(".", "")
     opponent_name = f"URND{p_str}"
@@ -37,7 +39,7 @@ for i in range(0, 11):
 
     for score, strategy_name in zip(scores, strategies_names):
         print(f"{strategy_name}: {score}")
-    plt_fig = plot_errorbar(scores, cmap(i), opponent_name, plt_figure=plt_fig, fmt=fmt_map(i))
+    plt_fig = plot_errorbar(scores, cmap(i % 7), opponent_name, plt_figure=plt_fig, fmt=fmt_map(i), axhlines=[0.0, 0.5, 1.0])
 plt.xticks(range(len(strategies_names)), strategies_names)
 plt.title(f"SFEM scores for {strat_name}")
 plt.xlabel("Estimated strategies")

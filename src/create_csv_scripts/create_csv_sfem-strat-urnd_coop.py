@@ -9,14 +9,14 @@ from src.strategies.strategy_utils import get_strategies, plot_errorbar
 
 
 
-base_path = Path("behavioral_profiles_analysis")
+base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
 history_main_name = player_1_
 strat_dir_path = base_path / strat_name
 cmap = plt.get_cmap('Dark2')
 plt_fig = plt.figure()
 
-csv_dir_path = Path("csv_files_for_plots") / "sfem-urnd_coop"
+csv_dir_path = Path("../../csv_files_for_plots") / "sfem-urnd_coop"
 csv_dir_path.mkdir(parents=True, exist_ok=True)
 
 available_strategies = get_strategies()

@@ -1,30 +1,64 @@
 from pathlib import Path
 
+import numpy as np
 from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.games.two_players_pd_utils import plot_ts_, plot_fill
-from src.strategies.strategy_utils import plot_errorbar
+from src.behavioral_analysis.main_behavioral_features import main_behavioral_features
+from src.games.two_players_pd_utils import plot_ts_, plot_fill, extract_histories_from_files_, player_1_, player_2_
+from src.strategies.strategy_utils import plot_errorbar, compute_behavioral_profile_
 
-base_path = Path("behavioral_profiles_analysis")
+base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
 strat_dir_path = base_path / strat_name
+rnd_name = "RND"
+rnd_dir_path = base_path / rnd_name
+
+
+features_analyzed = [
+    "niceness",
+    "forgiveness",
+    "provocability",
+    # "cooperativeness",
+    "troublemaking",
+    "emulation",
+    # "consistency",
+]
+
+
+min_urnd_coop = 0
+max_urnd_coop = 11
+
+for i in range(min_urnd_coop, max_urnd_coop):
+    p = i / 10
+    p_str = str(p).replace(".", "")
+    opponent_name = f"URND{p_str}"
+    urnd_dir_path = strat_dir_path / opponent_name
+    game_histories_dir_path = urnd_dir_path / "game_histories"
+    # file_name = f"game_history_{strat_name}-{opponent_name}"
+    file_name = f"game_history"
+    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
+
+    for game_history in game_histories:
+        rng = np.random.default_rng()
+        new_rnd_history = {rnd_name: list(rng.integers(2, size=len(game_history.get_actions_by_player(player_1_))))}
+        game_history.add_history(new_rnd_history)
+
+    history_opponent_name = player_2_
+    profile = compute_behavioral_profile_(game_histories, main_behavioral_features, rnd_name, history_opponent_name)
+    profile.strategy_name = rnd_name
+    profile.opponent_name = opponent_name
+    out_profile_dir = rnd_dir_path / opponent_name
+    out_profile_dir.mkdir(parents=True, exist_ok=True)
+    # out_profile_path = out_profile_dir / f"behavioral_profile_{profile.strategy_name}-{profile.opponent_name}.json"
+    profile.save_to_file_(out_profile_dir)
 
 cmap = plt.get_cmap('Dark2')
 confidence = 0.95
-features_analyzed = [
-    "niceness",
-    "forgiveness4",
-    "provocability",
-    "cooperativeness",
-    "troublemaking",
-    "emulation",
-    "consistency",
-]
 
-# plt_fig = plt.figure()
-sup_fig, axs = plt.subplots(len(features_analyzed), 1, figsize=(15, 15))
+plt_fig = plt.figure()
+sup_fig, axs = plt.subplots(len(features_analyzed), 1, figsize=(12, 15))
 plt_fig = sup_fig
 for feature_name in features_analyzed:
     ax = axs[features_analyzed.index(feature_name)]
@@ -33,12 +67,12 @@ for feature_name in features_analyzed:
     feature_ub_ts = []
     feature_yerr_ts = []
     idx = 0
-    for i in range(0, 9):
+    for i in range(1, 10):
         coop_prob = i / 10
         coop_prob_str = str(coop_prob).replace(".", "")
         opponent_name = f"URND{coop_prob_str}"
-        urnd_dir_path = strat_dir_path / opponent_name
-        file_name = f"behavioral_profile_{strat_name}-{{}}.json"
+        urnd_dir_path = rnd_dir_path / opponent_name
+        file_name = f"behavioral_profile_{rnd_name}-{{}}.json"
         file_path = urnd_dir_path / file_name.format(opponent_name)
         profile = BehavioralProfile(strat_name, opponent_name)
         profile.load_from_file(file_path, load_values=True)
@@ -57,7 +91,7 @@ for feature_name in features_analyzed:
     plt.xticks([i for i in range(9)], [str(i / 10) for i in range(9)])
     plt.tight_layout()
 plt.figure(plt_fig)
-plt.suptitle(f"{strat_name} behavioral features against different unfair RND")
+plt.suptitle(f"{rnd_name} behavioral features against different unfair RND")
 sup_fig.supxlabel("URND cooperation")
 sup_fig.supylabel("Behavioral features")
 plt.tight_layout()
