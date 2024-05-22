@@ -50,7 +50,7 @@ def compute_sfem(game_histories, strategies, main_player_name):
             strategies_instances.append(strategies[strategy_name]["strategy"]())
     num_strategies = len(strategies_instances)
 
-    scores = np.zeros(num_strategies)
+    sfem_scores = np.zeros(num_strategies)
     for game_history in game_histories:
         main_history = game_history.get_actions_by_player(main_player_name)
         # For each strategy k compare LLM's actual play with how strategy k would have played.
@@ -94,8 +94,7 @@ def compute_sfem(game_histories, strategies, main_player_name):
                 bestObjective = obj
                 bestX = x
 
-        scores[np.argmax(bestX[1:])] += 1
+        sfem_scores += bestX[1:]
 
-    # TODO return raw scores
-    scores = scores / n_games
-    return scores, strategies_names
+    sfem_scores = sfem_scores / n_games
+    return sfem_scores, strategies_names
