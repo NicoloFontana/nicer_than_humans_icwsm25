@@ -33,11 +33,11 @@ main_hard_coded_strategies = {
     },
     "suspicious_tit_for_tat": {
         "strategy": SuspiciousTitForTat,
-        "label": "susTFT",
+        "label": "STFT",
     },
     "grim": {
         "strategy": Grim,
-        "label": "Grim",
+        "label": "GRIM",
     },
     "win_stay_lose_shift": {
         "strategy": WinStayLoseShift,
@@ -150,7 +150,7 @@ def plot_errorbar(values, values_color, values_label, yerr=None, axhlines=None, 
 
     if axhlines is not None:
         for axhline in axhlines:
-            plt.axhline(y=axhline, color='black', linestyle='--', lw=0.5, alpha=0.05)
+            plt.axhline(y=axhline, color='black', linestyle='--', lw=0.5, alpha=0.3)
 
     plt.title(" ")
     plt.xlabel(" ")
