@@ -78,16 +78,17 @@ class TimeChecker(Checker):
             question_idx = 0
             self.check_current_round(current_round, question_idx=question_idx)
         question_idx = 1
-        for i in range(1, current_round):
-            self.check_action_played(i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space(), question_idx=question_idx)
-        question_idx = 2
-        for i in range(1, current_round):
-            self.check_action_played(i, game.get_actions_by_iteration(i - 1)[opponent_name], game.get_action_space(), question_idx=question_idx)
-        question_idx = 3
-        for i in range(1, current_round):
-            self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[player_name], game.get_actions_by_iteration(i - 1)[opponent_name]),
-                                        question_idx=question_idx)
-        question_idx = 4
-        for i in range(1, current_round):
-            self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[opponent_name], game.get_actions_by_iteration(i - 1)[player_name]),
+        if current_round % 10 == 0:
+            for i in range(1, current_round):
+                self.check_action_played(i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space(), question_idx=question_idx)
+            question_idx = 2
+            for i in range(1, current_round):
+                self.check_action_played(i, game.get_actions_by_iteration(i - 1)[opponent_name], game.get_action_space(), question_idx=question_idx)
+            question_idx = 3
+            for i in range(1, current_round):
+                self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[player_name], game.get_actions_by_iteration(i - 1)[opponent_name]),
+                                            question_idx=question_idx)
+            question_idx = 4
+            for i in range(1, current_round):
+                self.check_points_collected(i, game.get_payoff_function()(game.get_actions_by_iteration(i - 1)[opponent_name], game.get_actions_by_iteration(i - 1)[player_name]),
                                         question_idx=question_idx)
