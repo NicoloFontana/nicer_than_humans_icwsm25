@@ -2,3 +2,4 @@
 venv
 out
 *.pyc
+/behavioral_profiles_analysis/
