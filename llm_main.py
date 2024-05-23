@@ -23,7 +23,7 @@ n_games = 30
 n_iterations = 100
 checkpoint = 0
 checkers = False#True
-msg = "Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations."
+msg = "Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
 # coop_prob = 0.9
 
 if msg == "":

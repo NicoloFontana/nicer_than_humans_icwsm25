@@ -20,12 +20,15 @@ MODEL = "gpt-3.5-turbo"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
-history_window_size = 100
+history_window_size = 10
 
-n_requests = 0
+daily_requests = 0
+minute_requests = 0
 first_request_time = time.time()
-delta = 0
-requests_limit = 3500
+daily_delta = 0
+minute_delta = 0
+daily_requests_limit = 10000
+minute_requests_limit = 3500
 
 OVERALL = "overall"
 
@@ -53,34 +56,48 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
 
     ### OpenAI API ###
     # HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
-    global n_requests
+    global minute_requests
+    global minute_requests_limit
+    global daily_requests
+    global daily_requests_limit
     global first_request_time
-    global delta
-    if delta < 60 and n_requests >= requests_limit:
-        # sleep for delta time
-        time.sleep(delta)
-        log.info(f"Sleeping for {delta} seconds.")
+    global minute_delta
+    global daily_delta
+    if daily_requests >= daily_requests_limit and daily_delta > 0:
+        # sleep for daily_delta time
+        time.sleep(daily_delta)
+        log.info(f"Sleeping for {daily_delta} seconds.")
         # reset number of requests and time since first request
-        n_requests = 0
-    if delta > 60:
+        daily_requests = 0
+        minute_requests = 0
+    if minute_delta < 60 and minute_requests >= minute_requests_limit:
+        # sleep for minute_delta time
+        time.sleep(minute_delta + 5)
+        log.info(f"Sleeping for {minute_delta} seconds.")
         # reset number of requests and time since first request
-        n_requests = 0
-    completion = inference_client.chat.completions.create(
-        model= MODEL,
+        minute_requests = 0
+    if minute_delta > 60:
+        # reset number of requests and time since first request
+        minute_requests = 0
+    response = inference_client.chat.completions.with_raw_response.create(
+        model=MODEL,
         messages=[
             {"role": "user", "content": prompt}
         ],
         temperature=temperature,
         max_tokens=max_new_tokens
     )
+    daily_delta = response.headers.get('x-ratelimit-reset-requests')
+    completion = response.parse()
     generated_text = completion.choices[0].message.content
     # mark time of first request
-    if n_requests == 0:
+    if minute_requests == 0:
         first_request_time = time.time()
     # calculate time since first request
-    delta = time.time() - first_request_time
+    minute_delta = time.time() - first_request_time
     # count number of requests
-    n_requests += 1
+    minute_requests += 1
+    daily_requests += 1
 
     return generated_text
 
@@ -287,7 +304,9 @@ def merge_checkers_results(checkers_names, timestamp, infix=None):
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
     single_payoff_prompt = ("If {} plays {} and {} plays {}, "  # If A plays "Cooperate" and B plays "Defect",
                             "{} collects {} points and {} collects {} points.\n")  # A collects 0 points and B collects 5 points.
-    payoff_prompt = "".join([single_payoff_prompt.format(player_1_, to_nat_lang(own_action), player_2_, to_nat_lang(opponent_action), player_1_, payoff_function(own_action, opponent_action), player_2_, payoff_function(opponent_action, own_action)) for own_action in action_space for opponent_action in action_space])
+    payoff_prompt = "".join([single_payoff_prompt.format(player_1_, to_nat_lang(own_action), player_2_, to_nat_lang(opponent_action), player_1_,
+                                                         payoff_function(own_action, opponent_action), player_2_, payoff_function(opponent_action, own_action)) for own_action in
+                             action_space for opponent_action in action_space])
 
     game_rules_prompt = (f"<<SYS>>\n"
                          f"Context: Player {player_1_} and player {player_2_} are playing a multi-round game.\n"
@@ -317,12 +336,12 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, wind
     opponent_total_payoff = sum([payoff_function(opponent_history[i], own_history[i]) for i in range(start, end)])
     single_round_prompt = ("Round {}: {} played {} and {} played {} "  # Round 1: A played "Cooperate" and B played "Defect"
                            "{} collected {} points and {} collected {} points.\n")  # A collected 0 points and B collected 5 points.
-    rounds_prompt = "".join([single_round_prompt.format(i+1, player_1_, to_nat_lang(own_history[i]), player_2_, to_nat_lang(opponent_history[i]),
+    rounds_prompt = "".join([single_round_prompt.format(i + 1, player_1_, to_nat_lang(own_history[i]), player_2_, to_nat_lang(opponent_history[i]),
                                                         player_1_, payoff_function(own_history[i], opponent_history[i]), player_2_,
                                                         payoff_function(opponent_history[i], own_history[i])) for i in range(start, end)])
     history_prompt_parts.append(rounds_prompt)
     history_prompt_parts.append(f'In total, {player_1_} chose {to_nat_lang(1)} {own_coop} times and chose {to_nat_lang(0)} {own_defect} times, '
-                       f'{player_2_} chose {to_nat_lang(1)} {opponent_coop} times and chose {to_nat_lang(0)} {opponent_defect} times.\n')
+                                f'{player_2_} chose {to_nat_lang(1)} {opponent_coop} times and chose {to_nat_lang(0)} {opponent_defect} times.\n')
     history_prompt_parts.append(f"In total, {player_1_} collected {own_total_payoff} points and {player_2_} collected {opponent_total_payoff} points.\n")
     if not is_ended:
         history_prompt_parts.append(f"Current round: {len(own_history) + 1}.\n")
@@ -360,7 +379,7 @@ def save_prompt(version, description=None):
         return
     out_path = Path("prompts") / f"v{version}"
     out_path.mkdir(parents=True, exist_ok=True)
-    custom_prompt = ('Remember to use only the following JSON format: {"action": <ACTION_of_A>}\n'  #, "reason": <YOUR_REASON>}\n'
+    custom_prompt = ('Remember to use only the following JSON format: {"action": <ACTION_of_A>}\n'  # , "reason": <YOUR_REASON>}\n'
                      f'Answer saying which action player {player_1_} should play.')
     with open(out_path / "prompt.txt", "w") as f:
         f.write(generate_prompt({1, 0}, two_players_pd_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
