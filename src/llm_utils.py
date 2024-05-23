@@ -13,8 +13,10 @@ from src.utils import OUT_BASE_PATH
 
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
-# MODEL = "meta-llama/Llama-2-70b-chat-hf"
-MODEL = "gpt-3.5-turbo"
+
+# TODO 1: check model, max_new_tokens, temperature, history_window_size
+MODEL = "meta-llama/Llama-2-70b-chat-hf"
+# MODEL = "gpt-3.5-turbo"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
@@ -26,34 +28,35 @@ OVERALL = "overall"
 def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
     generated_text = ""
 
+    # TODO 2
     ### HuggingFace API ###
-    # generated = False
-    # while not generated:
-    #     try:
-    #         generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
-    #                                                           temperature=temperature)
-    #         generated = True
-    #     except Exception as e:
-    #         if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-    #             warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
-    #             time.sleep(2)
-    #         else:
-    #             warnings.warn(
-    #                 f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-    #             generated_text = ""
-    #             generated = True
+    generated = False
+    while not generated:
+        try:
+            generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
+                                                              temperature=temperature)
+            generated = True
+        except Exception as e:
+            if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
+                warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
+                time.sleep(2)
+            else:
+                warnings.warn(
+                    f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
+                generated_text = ""
+                generated = True
 
     ### OpenAI API ###
-    completion = inference_client.chat.completions.create(
-        model= MODEL,
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=temperature,
-        max_tokens=max_new_tokens
-    )
+    # completion = inference_client.chat.completions.create(
+    #     model= MODEL,
+    #     messages=[
+    #         {"role": "user", "content": prompt}
+    #     ],
+    #     temperature=temperature,
+    #     max_tokens=max_new_tokens
+    # )
+    # generated_text = completion.choices[0].message.content
 
-    generated_text = completion.choices[0].message.content
     return generated_text
 
 
