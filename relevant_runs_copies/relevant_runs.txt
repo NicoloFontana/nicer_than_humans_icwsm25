@@ -173,6 +173,9 @@ Behavioral profiles runs:
 >> 20240503171043 (50 games):
     Llama2 against AD
 
+GPT-3.5 runs:
+>> 20240523095415:
+    v1.0 with questions
 
 
 Prompts re-runs
