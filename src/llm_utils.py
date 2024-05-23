@@ -9,18 +9,23 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff, player_1_, player_2_
-from src.utils import OUT_BASE_PATH
+from src.utils import OUT_BASE_PATH, log
 
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
 
 # TODO 1: check model, max_new_tokens, temperature, history_window_size
-MODEL = "meta-llama/Llama-2-70b-chat-hf"
-# MODEL = "gpt-3.5-turbo"
+# MODEL = "meta-llama/Llama-2-70b-chat-hf"
+MODEL = "gpt-3.5-turbo"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
 history_window_size = 100
+
+n_requests = 0
+first_request_time = time.time()
+delta = 0
+requests_limit = 3500
 
 OVERALL = "overall"
 
@@ -30,32 +35,52 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
 
     # TODO 2
     ### HuggingFace API ###
-    generated = False
-    while not generated:
-        try:
-            generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
-                                                              temperature=temperature)
-            generated = True
-        except Exception as e:
-            if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-                warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
-                time.sleep(2)
-            else:
-                warnings.warn(
-                    f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-                generated_text = ""
-                generated = True
+    # generated = False
+    # while not generated:
+    #     try:
+    #         generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
+    #                                                           temperature=temperature)
+    #         generated = True
+    #     except Exception as e:
+    #         if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
+    #             warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
+    #             time.sleep(2)
+    #         else:
+    #             warnings.warn(
+    #                 f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
+    #             generated_text = ""
+    #             generated = True
 
     ### OpenAI API ###
-    # completion = inference_client.chat.completions.create(
-    #     model= MODEL,
-    #     messages=[
-    #         {"role": "user", "content": prompt}
-    #     ],
-    #     temperature=temperature,
-    #     max_tokens=max_new_tokens
-    # )
-    # generated_text = completion.choices[0].message.content
+    # HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+    global n_requests
+    global first_request_time
+    global delta
+    if delta < 60 and n_requests >= requests_limit:
+        # sleep for delta time
+        time.sleep(delta)
+        log.info(f"Sleeping for {delta} seconds.")
+        # reset number of requests and time since first request
+        n_requests = 0
+    if delta > 60:
+        # reset number of requests and time since first request
+        n_requests = 0
+    completion = inference_client.chat.completions.create(
+        model= MODEL,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=temperature,
+        max_tokens=max_new_tokens
+    )
+    generated_text = completion.choices[0].message.content
+    # mark time of first request
+    if n_requests == 0:
+        first_request_time = time.time()
+    # calculate time since first request
+    delta = time.time() - first_request_time
+    # count number of requests
+    n_requests += 1
 
     return generated_text
 

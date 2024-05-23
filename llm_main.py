@@ -18,12 +18,12 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-# TODO 6: check n_games (50 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 100
+# TODO 6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
+n_games = 30
 n_iterations = 100
 checkpoint = 0
 checkers = False#True
-msg = "Run Llama2 against TitForTat for 100 games of 100 iterations."
+msg = "Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations."
 # coop_prob = 0.9
 
 if msg == "":
@@ -44,6 +44,7 @@ new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
+
 for n_game in range(n_games):
     log.info(f"Game {n_game + 1}") if n_games > 1 else None
     print(f"Game {n_game + 1}") if n_games > 1 else None
@@ -58,16 +59,16 @@ for n_game in range(n_games):
 
     # TODO 4
     ### HuggingFace client ###
-    client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-    client.headers["x-use-cache"] = "0"
+    # client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+    # client.headers["x-use-cache"] = "0"
 
     ### OpenAI client ###
-    # client = OpenAI(api_key=OPENAI_API_KEY)
+    client = OpenAI(api_key=OPENAI_API_KEY)
 
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)#, checkers=checkers)
 
     # TODO 5: check the opponent's strategy
-    strat2 = TitForTat(game, player_2_)
+    strat2 = AlwaysDefect()
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
