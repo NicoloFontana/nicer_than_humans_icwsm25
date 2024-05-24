@@ -19,11 +19,13 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
 # TODO 6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 30
-n_iterations = 100
+n_games = 1
+n_iterations = 3
 checkpoint = 0
 checkers = False#True
-msg = "Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
+# msg = ("Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
+#        "The game is now the IIPD because no info about the total number of iterations is given to the model.")
+msg="test"
 # coop_prob = 0.9
 
 if msg == "":

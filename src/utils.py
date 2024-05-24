@@ -175,6 +175,35 @@ def convert_matrix_to_percentage(matrix):
     return percentage_matrix
 
 
+def convert_time_string_to_seconds(time_str):
+    total_seconds = None
+    # Extract hours, minutes, and seconds using regular expressions
+    match_hour = re.match(r'(\d+)h(\d+)m(\d+\.\d+)s', time_str)
+    match_minute = re.match(r'(\d+)m(\d+\.\d+)s', time_str)
+    match_second = re.match(r'(\d+\.\d+)s', time_str)
+    if match_hour:
+        hours = int(match_hour.group(1))
+        minutes = int(match_hour.group(2))
+        seconds = float(match_hour.group(3))
+
+        # Convert all to seconds
+        total_seconds = hours * 3600 + minutes * 60 + seconds
+
+    elif match_minute:
+        minutes = int(match_minute.group(1))
+        seconds = float(match_minute.group(2))
+
+        # Convert all to seconds
+        total_seconds = minutes * 60 + seconds
+    elif match_second:
+        total_seconds = float(match_second.group(1))
+
+    if total_seconds is not None:
+        return total_seconds
+    else:
+        raise ValueError("Invalid time format")
+
+
 def shutdown_run():
     # Remove empty directory
     logging.shutdown()

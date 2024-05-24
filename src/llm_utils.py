@@ -9,7 +9,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff, player_1_, player_2_
-from src.utils import OUT_BASE_PATH, log
+from src.utils import OUT_BASE_PATH, log, convert_time_string_to_seconds
 
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
@@ -63,20 +63,19 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
     global first_request_time
     global minute_delta
     global daily_delta
-    if daily_requests >= daily_requests_limit and daily_delta > 0:
+    if daily_requests > (daily_requests_limit - 100):
         # sleep for daily_delta time
         time.sleep(daily_delta)
-        log.info(f"Sleeping for {daily_delta} seconds.")
+        log.info(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
+        print(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
         # reset number of requests and time since first request
         daily_requests = 0
         minute_requests = 0
-    if minute_delta < 60 and minute_requests >= minute_requests_limit:
+    if minute_requests > (minute_requests_limit - 100):
         # sleep for minute_delta time
-        time.sleep(minute_delta + 5)
-        log.info(f"Sleeping for {minute_delta} seconds.")
-        # reset number of requests and time since first request
-        minute_requests = 0
-    if minute_delta > 60:
+        time.sleep(minute_delta + 2)
+        log.info(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
+        print(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
         # reset number of requests and time since first request
         minute_requests = 0
     response = inference_client.chat.completions.with_raw_response.create(
@@ -87,7 +86,7 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
         temperature=temperature,
         max_tokens=max_new_tokens
     )
-    daily_delta = response.headers.get('x-ratelimit-reset-requests')
+    daily_delta = convert_time_string_to_seconds(response.headers.get('x-ratelimit-reset-requests'))
     completion = response.parse()
     generated_text = completion.choices[0].message.content
     # mark time of first request
@@ -313,7 +312,7 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
                          f"At each turn player {player_1_} and player {player_2_} simultaneously perform one of the following actions: {to_nat_lang(action_space)}\n"
                          f"The payoffs for each combination of chosen actions are the following:\n"
                          f"{payoff_prompt}"
-                         f"They will play a total of {n_iterations} rounds of this game.\n"
+                         # f"They will play a total of {n_iterations} rounds of this game.\n"  # INDEFINITELY vs DEFINITELY IPD
                          f"Remember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
 
     return game_rules_prompt
