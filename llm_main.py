@@ -18,14 +18,13 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-# TODO 6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 1
-n_iterations = 3
+# TODO 6/6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
+n_games = 30
+n_iterations = 100
 checkpoint = 0
 checkers = False#True
-# msg = ("Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
-#        "The game is now the IIPD because no info about the total number of iterations is given to the model.")
-msg="test"
+msg = ("Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
+       "The game is now the IIPD because no info about the total number of iterations is given to the model.")
 # coop_prob = 0.9
 
 if msg == "":
@@ -59,7 +58,7 @@ for n_game in range(n_games):
     game.add_player(Player(player_1_))
     game.add_player(Player(player_2_))
 
-    # TODO 4
+    # TODO 4/6
     ### HuggingFace client ###
     # client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     # client.headers["x-use-cache"] = "0"
@@ -69,7 +68,7 @@ for n_game in range(n_games):
 
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)#, checkers=checkers)
 
-    # TODO 5: check the opponent's strategy
+    # TODO 5/6: check the opponent's strategy
     strat2 = AlwaysDefect()
     for player in game.players.values():
         if player.get_name() == player_1_:

@@ -14,7 +14,7 @@ from src.utils import OUT_BASE_PATH, log, convert_time_string_to_seconds
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
 
-# TODO 1: check model, max_new_tokens, temperature, history_window_size
+# TODO 1/6: check model, max_new_tokens, temperature, history_window_size
 # MODEL = "meta-llama/Llama-2-70b-chat-hf"
 MODEL = "gpt-3.5-turbo"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
@@ -36,7 +36,7 @@ OVERALL = "overall"
 def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
     generated_text = ""
 
-    # TODO 2
+    # TODO 2/6 --> goto one_vs_one_pd_llm_strategy.py
     ### HuggingFace API ###
     # generated = False
     # while not generated:
