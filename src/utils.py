@@ -201,7 +201,8 @@ def convert_time_string_to_seconds(time_str):
     if total_seconds is not None:
         return total_seconds
     else:
-        raise ValueError("Invalid time format")
+        warnings.warn(f"Invalid time format: {time_str}. Returning 60 seconds.")
+        return 60
 
 
 def shutdown_run():
