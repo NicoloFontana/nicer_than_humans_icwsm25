@@ -22,9 +22,8 @@ from src.utils import timestamp, log, start_time, dt_start_time
 n_games = 30
 n_iterations = 100
 checkpoint = 0
-checkers = False#True
-msg = ("Run GPT-3.5-turbo against Always Defect for 30 games of 50 iterations with window size 10."
-       "The game is now the IIPD because no info about the total number of iterations is given to the model.")
+checkers = True
+msg = "Run Llama3 against Random for 30 games of 100 iterations asking the comprehension questions."
 # coop_prob = 0.9
 
 if msg == "":
@@ -60,16 +59,16 @@ for n_game in range(n_games):
 
     # TODO 4/6
     ### HuggingFace client ###
-    # client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-    # client.headers["x-use-cache"] = "0"
+    client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
+    client.headers["x-use-cache"] = "0"
 
     ### OpenAI client ###
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    # client = OpenAI(api_key=OPENAI_API_KEY)
 
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)#, checkers=checkers)
 
     # TODO 5/6: check the opponent's strategy
-    strat2 = AlwaysDefect()
+    strat2 = RandomStrategy()
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
