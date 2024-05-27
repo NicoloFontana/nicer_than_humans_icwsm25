@@ -19,7 +19,7 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
 # TODO 6/6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 30
+n_games = 1
 n_iterations = 100
 checkpoint = 0
 checkers = True
