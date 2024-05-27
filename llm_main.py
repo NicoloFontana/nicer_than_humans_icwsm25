@@ -23,7 +23,7 @@ n_games = 1
 n_iterations = 100
 checkpoint = 0
 checkers = True
-msg = "Run Llama3 against Random for 30 games of 100 iterations asking the comprehension questions."
+msg = "Run Llama3 against Random for 1 game of 100 iterations asking the comprehension questions."
 # coop_prob = 0.9
 
 if msg == "":
