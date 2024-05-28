@@ -21,7 +21,7 @@ from src.utils import timestamp, log, start_time, dt_start_time
 # TODO 6/6: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
 n_games = 1
 n_iterations = 100
-checkpoint = 0
+checkpoint = 10
 checkers = True
 msg = "Run Llama3 against Random for 1 game of 100 iterations asking the comprehension questions."
 # coop_prob = 0.9
@@ -65,9 +65,9 @@ for n_game in range(n_games):
     ### OpenAI client ###
     # client = OpenAI(api_key=OPENAI_API_KEY)
 
-    strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size)#, checkers=checkers)
+    # TODO 5/6: check the checkers and the opponent's strategy
+    strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size, checkers=checkers)
 
-    # TODO 5/6: check the opponent's strategy
     strat2 = RandomStrategy()
     for player in game.players.values():
         if player.get_name() == player_1_:
