@@ -6,8 +6,7 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.games.two_players_pd_utils import plot_ts_, plot_fill
-from src.strategies.strategy_utils import plot_errorbar
+from src.unused_functions import plot_errorbar, plot_ts_, plot_fill
 
 base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
@@ -63,7 +62,7 @@ for i in range(0, 11):
     profile.load_from_file(file_path, load_values=True)
     for feature_name in features_analyzed:
         new_dimension_name = old_to_new_dimension(feature_name)
-        feature = profile.features[feature_name]
+        feature = profile.dimensions[feature_name]
         cis = st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values))
         element[f"{new_dimension_name}_mean"] = feature.mean
         element[f"{new_dimension_name}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else feature.mean

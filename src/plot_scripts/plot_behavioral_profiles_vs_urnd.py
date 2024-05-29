@@ -4,8 +4,7 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.games.two_players_pd_utils import plot_ts_, plot_fill
-from src.strategies.strategy_utils import plot_errorbar
+from src.unused_functions import plot_errorbar, plot_ts_, plot_fill
 
 base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
@@ -45,7 +44,7 @@ for feature_name in features_analyzed:
         file_path = urnd_dir_path / file_name.format(opponent_name)
         profile = BehavioralProfile(strat_name, opponent_name)
         profile.load_from_file(file_path, load_values=True)
-        feature = profile.features[feature_name]
+        feature = profile.dimensions[feature_name]
         feature_mean_ts.append(feature.mean)
         cis = st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values))
         feature_lb_ts.append(cis[0])
@@ -60,9 +59,9 @@ for feature_name in features_analyzed:
     plt.xticks([i for i in range(max_urnd_coop-min_urnd_coop)], [str(i / 10) for i in range(min_urnd_coop, max_urnd_coop)])
     plt.tight_layout()
 plt.figure(plt_fig)
-plt.suptitle(f"{strat_name} behavioral features against different unfair RND")
+plt.suptitle(f"{strat_name} behavioral dimensions against different unfair RND")
 sup_fig.supxlabel("URND cooperation")
-sup_fig.supylabel("Behavioral features")
+sup_fig.supylabel("Behavioral dimensions")
 plt.tight_layout()
 plt.show()
 
@@ -88,9 +87,9 @@ plt.show()
 #     cis = []
 #     yerrs = []
 #     for feature_name in features_analyzed:
-#         if feature_name not in profile.features:
+#         if feature_name not in profile.dimensions:
 #             continue
-#         feature = profile.features[feature_name]
+#         feature = profile.dimensions[feature_name]
 #         means.append(feature.mean)
 #         cis.append(st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values)))
 #         yerrs.append((cis[-1][1] - cis[-1][0]) / 2)
@@ -102,7 +101,7 @@ plt.show()
 #
 # plt.figure(plt_fig)
 # plt.ylabel("Level")
-# plt.xlabel("Behavioral features")
+# plt.xlabel("Behavioral dimensions")
 # plt.xticks(range(len(features_analyzed)), features_analyzed, rotation=45, ha='right')
 # plt.title(f"{strat_name} behavioral profiles")
 # plt.legend(title="Faced strategies", bbox_to_anchor=(1, 0.75))

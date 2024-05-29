@@ -1,0 +1,173 @@
+{
+    "time_checker": {
+        "checker": "time_checker",
+        "question": "time_checker",
+        "sample_mean": 0.7646472392638037,
+        "sample_variance": 0.17988677731595745,
+        "total": 13040.0,
+        "positives": 9971.0,
+        "squared_diffs_sum": 2345.543689422769
+    },
+    "current_round": {
+        "checker": "time_checker",
+        "question": "Which is the current round of the game?",
+        "sample_mean": 0.925,
+        "sample_variance": 0.06531836536685125,
+        "total": 80.0,
+        "positives": 74.0,
+        "squared_diffs_sum": 5.160150863981248
+    },
+    "action_you_at_round": {
+        "checker": "time_checker",
+        "question": "Which action did you play in round {}?",
+        "sample_mean": 0.9237654320987654,
+        "sample_variance": 0.07032605922453725,
+        "total": 3240.0,
+        "positives": 2993.0,
+        "squared_diffs_sum": 227.78610582827613
+    },
+    "action_opponent_at_round": {
+        "checker": "time_checker",
+        "question": "Which action did your opponent play in round {}?",
+        "sample_mean": 0.8626543209876543,
+        "sample_variance": 0.11840131316963165,
+        "total": 3240.0,
+        "positives": 2795.0,
+        "squared_diffs_sum": 383.5018533564369
+    },
+    "points_you_at_round": {
+        "checker": "time_checker",
+        "question": "How many points did you collect in round {}?",
+        "sample_mean": 0.7089506172839506,
+        "sample_variance": 0.20597697763493963,
+        "total": 3240.0,
+        "positives": 2297.0,
+        "squared_diffs_sum": 667.1594305595695
+    },
+    "points_opponent_at_round": {
+        "checker": "time_checker",
+        "question": "How many points did your opponent collect in round {}?",
+        "sample_mean": 0.5592592592592592,
+        "sample_variance": 0.24599950796183773,
+        "total": 3240.0,
+        "positives": 1812.0,
+        "squared_diffs_sum": 796.7924062883924
+    },
+    "rules_checker": {
+        "checker": "rules_checker",
+        "question": "rules_checker",
+        "sample_mean": 0.7570652173913044,
+        "sample_variance": 0.183453240160722,
+        "total": 1840.0,
+        "positives": 1393.0,
+        "squared_diffs_sum": 337.3705086555678
+    },
+    "max_payoff": {
+        "checker": "rules_checker",
+        "question": "What is the highest payoff you can get in a single round?",
+        "sample_mean": 0.875,
+        "sample_variance": 0.10907114105975575,
+        "total": 80.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 8.616620143720704
+    },
+    "min_payoff": {
+        "checker": "rules_checker",
+        "question": "What is the lowest payoff you can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "allowed_actions": {
+        "checker": "rules_checker",
+        "question": "Which actions are you allowed to play?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 80.0,
+        "positives": 80.0,
+        "squared_diffs_sum": 0.0
+    },
+    "payoff_you_given_combo": {
+        "checker": "rules_checker",
+        "question": "Which is your payoff in a single round if you play {} and your opponent plays {}?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 320.0,
+        "positives": 320.0,
+        "squared_diffs_sum": 0.0
+    },
+    "payoff_opponent_given_combo": {
+        "checker": "rules_checker",
+        "question": "Which is your opponent's payoff in a single round if you play {} and your opponent plays {}?",
+        "sample_mean": 0.578125,
+        "sample_variance": 0.2405444312680015,
+        "total": 320.0,
+        "positives": 185.0,
+        "squared_diffs_sum": 76.73367357449249
+    },
+    "exists_combo_for_payoff_you": {
+        "checker": "rules_checker",
+        "question": "Does exist a combination of actions that gives you a payoff of {} in a single round?",
+        "sample_mean": 0.8520833333333333,
+        "sample_variance": 0.12470470439477285,
+        "total": 480.0,
+        "positives": 409.0,
+        "squared_diffs_sum": 59.733553405096195
+    },
+    "which_combo_for_payoff_you": {
+        "checker": "rules_checker",
+        "question": "Which combination of actions gives a payoff of {} to you in a single round?",
+        "sample_mean": 0.51875,
+        "sample_variance": 0.246954379941771,
+        "total": 480.0,
+        "positives": 249.0,
+        "squared_diffs_sum": 118.29114799210831
+    },
+    "aggregates_checker": {
+        "checker": "aggregates_checker",
+        "question": "aggregates_checker",
+        "sample_mean": 0.11458333333333333,
+        "sample_variance": 0.09910347425957652,
+        "total": 480.0,
+        "positives": 55.0,
+        "squared_diffs_sum": 47.470564170337155
+    },
+    "#actions_you": {
+        "checker": "aggregates_checker",
+        "question": "How many times did you choose {}?",
+        "sample_mean": 0.15,
+        "sample_variance": 0.12165174408619739,
+        "total": 160.0,
+        "positives": 24.0,
+        "squared_diffs_sum": 19.342627309705385
+    },
+    "#actions_opponent": {
+        "checker": "aggregates_checker",
+        "question": "How many times did your opponent choose {}?",
+        "sample_mean": 0.175,
+        "sample_variance": 0.13976265869811247,
+        "total": 160.0,
+        "positives": 28.0,
+        "squared_diffs_sum": 22.222262732999884
+    },
+    "total_payoff_you": {
+        "checker": "aggregates_checker",
+        "question": "What is your current total payoff?",
+        "sample_mean": 0.0125,
+        "sample_variance": 0.012004917249956504,
+        "total": 80.0,
+        "positives": 1.0,
+        "squared_diffs_sum": 0.9483884627465637
+    },
+    "total_payoff_opponent": {
+        "checker": "aggregates_checker",
+        "question": "What is your opponent's current total payoff?",
+        "sample_mean": 0.025,
+        "sample_variance": 0.01988848830796775,
+        "total": 80.0,
+        "positives": 2.0,
+        "squared_diffs_sum": 1.5711905763294522
+    }
+}

@@ -5,9 +5,10 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.behavioral_analysis.main_behavioral_features import main_behavioral_features
-from src.games.two_players_pd_utils import plot_ts_, plot_fill, extract_histories_from_files_, player_1_, player_2_
-from src.strategies.strategy_utils import plot_errorbar, compute_behavioral_profile_
+from src.behavioral_analysis.main_behavioral_dimensions import main_behavioral_dimensions
+from src.games.two_players_pd_utils import extract_histories_from_files, player_1_, player_2_
+from src.strategies.strategy_utils import compute_behavioral_profile_
+from src.unused_functions import plot_errorbar, plot_ts_, plot_fill
 
 base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
@@ -38,7 +39,7 @@ for i in range(min_urnd_coop, max_urnd_coop):
     game_histories_dir_path = urnd_dir_path / "game_histories"
     # file_name = f"game_history_{strat_name}-{opponent_name}"
     file_name = f"game_history"
-    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
+    game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
 
     for game_history in game_histories:
         rng = np.random.default_rng()
@@ -46,13 +47,13 @@ for i in range(min_urnd_coop, max_urnd_coop):
         game_history.add_history(new_rnd_history)
 
     history_opponent_name = player_2_
-    profile = compute_behavioral_profile_(game_histories, main_behavioral_features, rnd_name, history_opponent_name)
+    profile = compute_behavioral_profile_(game_histories, main_behavioral_dimensions, rnd_name, history_opponent_name)
     profile.strategy_name = rnd_name
     profile.opponent_name = opponent_name
     out_profile_dir = rnd_dir_path / opponent_name
     out_profile_dir.mkdir(parents=True, exist_ok=True)
     # out_profile_path = out_profile_dir / f"behavioral_profile_{profile.strategy_name}-{profile.opponent_name}.json"
-    profile.save_to_file_(out_profile_dir)
+    profile.save_to_file(out_profile_dir)
 
 cmap = plt.get_cmap('Dark2')
 confidence = 0.95
@@ -76,7 +77,7 @@ for feature_name in features_analyzed:
         file_path = urnd_dir_path / file_name.format(opponent_name)
         profile = BehavioralProfile(strat_name, opponent_name)
         profile.load_from_file(file_path, load_values=True)
-        feature = profile.features[feature_name]
+        feature = profile.dimensions[feature_name]
         feature_mean_ts.append(feature.mean)
         cis = st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values))
         feature_lb_ts.append(cis[0])
@@ -91,9 +92,9 @@ for feature_name in features_analyzed:
     plt.xticks([i for i in range(9)], [str(i / 10) for i in range(9)])
     plt.tight_layout()
 plt.figure(plt_fig)
-plt.suptitle(f"{rnd_name} behavioral features against different unfair RND")
+plt.suptitle(f"{rnd_name} behavioral dimensions against different unfair RND")
 sup_fig.supxlabel("URND cooperation")
-sup_fig.supylabel("Behavioral features")
+sup_fig.supylabel("Behavioral dimensions")
 plt.tight_layout()
 plt.show()
 
@@ -119,9 +120,9 @@ plt.show()
 #     cis = []
 #     yerrs = []
 #     for feature_name in features_analyzed:
-#         if feature_name not in profile.features:
+#         if feature_name not in profile.dimensions:
 #             continue
-#         feature = profile.features[feature_name]
+#         feature = profile.dimensions[feature_name]
 #         means.append(feature.mean)
 #         cis.append(st.norm.interval(confidence, loc=feature.mean, scale=st.sem(feature.values)))
 #         yerrs.append((cis[-1][1] - cis[-1][0]) / 2)
@@ -133,7 +134,7 @@ plt.show()
 #
 # plt.figure(plt_fig)
 # plt.ylabel("Level")
-# plt.xlabel("Behavioral features")
+# plt.xlabel("Behavioral dimensions")
 # plt.xticks(range(len(features_analyzed)), features_analyzed, rotation=45, ha='right')
 # plt.title(f"{strat_name} behavioral profiles")
 # plt.legend(title="Faced strategies", bbox_to_anchor=(1, 0.75))

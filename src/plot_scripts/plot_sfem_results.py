@@ -3,8 +3,9 @@ from pathlib import Path
 from matplotlib import pyplot as plt
 
 from sfem_computation import compute_sfem
-from src.games.two_players_pd_utils import player_1_, extract_histories_from_files_
-from src.strategies.strategy_utils import get_strategies, plot_errorbar
+from src.games.two_players_pd_utils import player_1_, extract_histories_from_files
+from src.strategies.strategy_utils import get_strategies
+from src.unused_functions import plot_errorbar
 
 
 def fmt_map(idx):
@@ -33,7 +34,7 @@ for i in range(1, 10):
     game_histories_dir_path = urnd_dir_path / "game_histories"
     # file_name = f"game_history_{strat_name}-{opponent_name}"
     file_name = f"game_history"
-    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
+    game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
 
     scores, strategies_names = compute_sfem(game_histories, available_strategies, history_main_name)
 

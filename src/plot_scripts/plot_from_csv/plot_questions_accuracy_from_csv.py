@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib import lines as lin
 from matplotlib import patches
 
-from src.strategies.strategy_utils import plot_errorbar
+from src.unused_functions import plot_errorbar
 
 dfs = []
 dfs.append(pd.read_csv("../../../csv_files_for_plots/accuracy-question/rules_checker_initial-final_results.csv"))

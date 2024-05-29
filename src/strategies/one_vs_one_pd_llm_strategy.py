@@ -90,11 +90,11 @@ class OneVsOnePDLlmStrategy(Strategy):
         self.action_answers.append(action_answer)
         return int(action)
 
-    def wrap_up_round(self, save=False, infix=None):
+    def wrap_up_round(self, out_dir=None, infix=None):
         self.ask_questions()
-        if save:
-            self.save_action_answers(infix=infix)
-            self.save_checkers_results(infix=infix)
+        if out_dir is not None:
+            self.save_action_answers(out_dir=out_dir, infix=infix)
+            self.save_checkers_results(out_dir=out_dir, infix=infix)
 
     def ask_questions(self):
         if self.checkers is not None:
@@ -106,8 +106,8 @@ class OneVsOnePDLlmStrategy(Strategy):
                     warnings.warn(
                         f"Error {str(e)}. Checker {checker.get_name()} of type {type(checker)} failed to ask questions to the inference client.")
 
-    def save_action_answers(self, infix=None):
-        out_dir_path = out_path / "action_answers"
+    def save_action_answers(self, out_dir, infix=None):
+        out_dir_path = out_dir / "action_answers"
         out_dir_path.mkdir(parents=True, exist_ok=True)
         actions_per_round = {}
         for idx, action_answer in enumerate(self.action_answers):
@@ -121,9 +121,8 @@ class OneVsOnePDLlmStrategy(Strategy):
             file.write(json_action_answers)
             log.info(f"{self.player_name} action answers saved.")
 
-    def save_checkers_results(self, infix=None):
+    def save_checkers_results(self, out_dir, infix=None):
         if self.checkers is not None:
             for checker in self.checkers:
-                checker.save_results(infix=infix)
-                checker.save_complete_answers(infix=infix)
-        # plot_checkers_results(checkers_names, timestamp, curr_round, infix=curr_round)
+                checker.save_results(out_dir, infix=infix)
+                checker.save_complete_answers(out_dir, infix=infix)

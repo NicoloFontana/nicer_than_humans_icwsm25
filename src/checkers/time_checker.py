@@ -78,7 +78,7 @@ class TimeChecker(Checker):
             question_idx = 0
             self.check_current_round(current_round, question_idx=question_idx)
         question_idx = 1
-        if current_round % 10 == 0:
+        if current_round % 10 == 0:  # Added to reduce the frequency of FAQs
             for i in range(1, current_round):
                 self.check_action_played(i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space(), question_idx=question_idx)
             question_idx = 2

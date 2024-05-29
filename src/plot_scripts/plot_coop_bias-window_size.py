@@ -2,7 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.stats as st
 
-from src.games.two_players_pd_utils import player_1_, extract_histories_from_files, plot_ts_, plot_fill, save_plot
+from src.games.two_players_pd_utils import player_1_, extract_histories_from_files
+from src.unused_functions import plot_ts_, plot_fill, save_plot
 from src.utils import OUT_BASE_PATH
 
 runs = {

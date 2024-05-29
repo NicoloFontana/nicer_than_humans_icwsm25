@@ -13,10 +13,6 @@ class Checker:
 
     def __init__(self, checker_name, questions, questions_labels):
         self.name = checker_name
-        self.dir_path = out_path / checker_name
-        os.makedirs(self.dir_path, exist_ok=True)
-        self.out_file_name = self.dir_path / checker_name
-        self.out_file_name = self.out_file_name.with_suffix(".json")
 
         self.checker_str = "checker"
         self.question_str = "question"
@@ -178,7 +174,7 @@ class Checker:
     def ask_questions(self, game):
         raise NotImplementedError
 
-    def save_results(self, infix=None):
+    def save_results(self, out_dir, infix=None):
         results = {self.name: {
             self.checker_str: self.name,
             self.question_str: self.name,
@@ -199,17 +195,19 @@ class Checker:
                 self.squared_diffs_sum_str: self.questions_results[label][self.squared_diffs_sum_str],
             }
         json_results = json.dumps(results, indent=4)
+        out_dir = out_dir / self.name
+        out_dir.mkdir(exist_ok=True, parents=True)
         if infix is None:
-            with open(self.out_file_name, "w") as out_file:
+            with open(out_dir / str(Path(self.name).with_suffix(".json")), "w") as out_file:
                 out_file.write(json_results)
                 log.info(f"{self.name} results saved.")
         else:
-            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_{infix}.json")
-            with open(tmp_out_file_name, "w") as out_file:
+            out_file_path = out_dir / (self.name + f"_{infix}.json")
+            with open(out_file_path, "w") as out_file:
                 out_file.write(json_results)
                 log.info(f"{self.name} results saved.")
 
-    def save_complete_answers(self, infix=None):
+    def save_complete_answers(self, out_dir, infix=None):
         complete_answers = {}
         for label in self.questions_results:
             complete_answers[label] = {}
@@ -222,10 +220,12 @@ class Checker:
                     self.answer_str: self.questions_results[label][self.answer_str][idx],
                 }
         json_complete_answers = json.dumps(complete_answers, indent=4)
+        out_dir = out_dir / self.name / "complete_answers"
+        out_dir.mkdir(exist_ok=True, parents=True)
         if infix is None:
-            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + "_complete_answers.json")
+            tmp_out_file_name = out_dir / (self.name + "_complete_answers.json")
         else:
-            tmp_out_file_name = Path(str(self.out_file_name.with_suffix("")) + f"_complete_answers_{infix}.json")
+            tmp_out_file_name = out_dir / (self.name + f"_complete_answers_{infix}.json")
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
             log.info(f"{self.name} answers saved.")

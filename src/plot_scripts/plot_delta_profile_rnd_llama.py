@@ -4,8 +4,7 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 
 from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.games.two_players_pd_utils import plot_ts_, plot_fill
-from src.strategies.strategy_utils import plot_errorbar
+from src.unused_functions import plot_errorbar, plot_ts_, plot_fill
 
 base_path = Path("../../behavioral_profiles_analysis")
 strat_name = "llama2"
@@ -44,13 +43,13 @@ for feature_name in features_analyzed:
         file_path = urnd_dir_path / file_name.format(opponent_name)
         profile = BehavioralProfile(strat_name, opponent_name)
         profile.load_from_file(file_path, load_values=True)
-        feature = profile.features[feature_name]
+        feature = profile.dimensions[feature_name]
 
         rnd_file_name = f"behavioral_profile_{rnd_name}-{opponent_name}.json"
         rnd_file_path = rnd_dir_path / opponent_name / rnd_file_name
         rnd_profile = BehavioralProfile(rnd_name, opponent_name)
         rnd_profile.load_from_file(rnd_file_path, load_values=True)
-        rnd_feature = rnd_profile.features[feature_name]
+        rnd_feature = rnd_profile.dimensions[feature_name]
 
         delta_values = [feature.values[i] - rnd_feature.values[i] for i in range(len(feature.values))]
         delta_feature_mean = sum(delta_values) / len(delta_values)
@@ -68,8 +67,8 @@ for feature_name in features_analyzed:
     plt.xticks([i for i in range(1, 10)], [str(i / 10) for i in range(1, 10)])
     plt.tight_layout()
 plt.figure(plt_fig)
-plt.suptitle(f"{strat_name} - {rnd_name} behavioral features against different unfair RND")
+plt.suptitle(f"{strat_name} - {rnd_name} behavioral dimensions against different unfair RND")
 sup_fig.supxlabel("URND cooperation")
-sup_fig.supylabel("Behavioral features")
+sup_fig.supylabel("Behavioral dimensions")
 plt.tight_layout()
 plt.show()

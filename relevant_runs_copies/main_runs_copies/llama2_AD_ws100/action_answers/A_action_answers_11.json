@@ -1,0 +1,502 @@
+{
+    "0": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"Since it's the first round, it's optimal for player A to start with a cooperative move to establish a pattern of cooperation and maximize the chances of getting a mutually beneficial outcome in the long run.\"}",
+        "action": 1,
+        "reason": "Since it,s the first round, it,s optimal for player A to start with a cooperative move to establish a pattern of cooperation and maximize the chances of getting a mutually beneficial outcome in the long run."
+    },
+    "1": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"Since B played Defect in the first round, it's likely that they will continue to play Defect in the future. By playing Defect, A can maximize their payoff in this round.\"}",
+        "action": 0,
+        "reason": "Since B played Defect in the first round, it,s likely that they will continue to play Defect in the future. By playing Defect, A can maximize their payoff in this round."
+    },
+    "2": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"B has defected twice in a row, A should defect to maximize points\"}\n\nIn this scenario, player A should choose to defect in round 3, as player B has defected in the previous two rounds. By defecting, player A can ensure that they get at least 1 point, whereas if they cooperate, they risk getting 0 points if player B defects again. This strategy is based on the principle of tit-for-tat, where player A is mirroring player B's previous actions to maximize their own payoffs.",
+        "action": 0,
+        "reason": "B has defected twice in a row, A should defect to maximize points"
+    },
+    "3": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A should defect in response to B's previous defection to maximize their own payoff.\"}\n\nIn this scenario, player A has cooperated once and defected twice, while player B has defected three times. Since player B has a history of defecting, it is likely that they will continue to do so in the future. Therefore, player A should defect in response to maximize their own payoff. By defecting, player A will ensure that they collect at least 1 point, regardless of what player B chooses to do. If player A were to cooperate instead, they would risk getting a payoff of 0 points if player B defects again.",
+        "action": 0,
+        "reason": "A should defect in response to B,s previous defection to maximize their own payoff."
+    },
+    "4": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only once and defect 3 times, while B has chosen defect 4 times. It's likely that B will continue to defect, so A should defect to maximize their points.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only once and defect 3 times, while B has chosen defect 4 times. It,s likely that B will continue to defect, so A should defect to maximize their points."
+    },
+    "5": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected fewer points than B in the previous rounds, and B has a history of defecting. Therefore, A should defect to maximize their chances of getting a higher payoff.\"}",
+        "action": 0,
+        "reason": "A has collected fewer points than B in the previous rounds, and B has a history of defecting. Therefore, A should defect to maximize their chances of getting a higher payoff."
+    },
+    "6": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen Defect 5 times in a row, and B has chosen Defect 6 times in total. It's likely that B is going to continue choosing Defect, so A should switch to Cooperate to maximize their points.\"}",
+        "action": 1,
+        "reason": "A has chosen Defect 5 times in a row, and B has chosen Defect 6 times in total. It,s likely that B is going to continue choosing Defect, so A should switch to Cooperate to maximize their points."
+    },
+    "7": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate twice and Defect 5 times. B has chosen Defect 7 times. In the previous rounds, A collected 5 points and B collected 15 points. Given this information, the best action for A to take in this round is Defect to minimize the number of points B can collect.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate twice and Defect 5 times. B has chosen Defect 7 times. In the previous rounds, A collected 5 points and B collected 15 points. Given this information, the best action for A to take in this round is Defect to minimize the number of points B can collect."
+    },
+    "8": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 6 points and B has collected 16 points. In the previous 8 rounds, A has played cooperate twice and defect 6 times, while B has played defect 8 times. It is likely that B will continue to play defect, so A should play defect to maximize their points.\"}",
+        "action": 0,
+        "reason": "A has collected 6 points and B has collected 16 points. In the previous 8 rounds, A has played cooperate twice and defect 6 times, while B has played defect 8 times. It is likely that B will continue to play defect, so A should play defect to maximize their points."
+    },
+    "9": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 7 points and B has collected 17 points. In the previous 9 rounds, A has played Cooperate twice and Defect 7 times, while B has played Defect 9 times. In this scenario, it is not beneficial for A to play Cooperate, as B has a higher number of points and has shown a stronger tendency to play Defect. Playing Defect will give A a higher chance of getting a positive payoff.\"}",
+        "action": 0,
+        "reason": "A has collected 7 points and B has collected 17 points. In the previous 9 rounds, A has played Cooperate twice and Defect 7 times, while B has played Defect 9 times. In this scenario, it is not beneficial for A to play Cooperate, as B has a higher number of points and has shown a stronger tendency to play Defect. Playing Defect will give A a higher chance of getting a positive payoff."
+    },
+    "10": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen to defect for the last 8 rounds, and B has consistently defected. It is unlikely that B will cooperate in this round, so A should defect to maximize their payoff.\"}",
+        "action": 0,
+        "reason": "A has chosen to defect for the last 8 rounds, and B has consistently defected. It is unlikely that B will cooperate in this round, so A should defect to maximize their payoff."
+    },
+    "11": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate twice and Defect 9 times, while B has chosen Defect 11 times. Given that B has a higher number of Defect actions, it is likely that B will continue to defect, therefore A should choose Defect to maximize their payoff.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate twice and Defect 9 times, while B has chosen Defect 11 times. Given that B has a higher number of Defect actions, it is likely that B will continue to defect, therefore A should choose Defect to maximize their payoff."
+    },
+    "12": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen to defect in the previous 10 rounds, and B has chosen to defect in all 12 rounds so far. Given that B has a history of always defecting, it is likely that they will continue to do so in the future. Therefore, A's best strategy is to continue defecting to maximize their own payoffs.\"}",
+        "action": 0,
+        "reason": "A has chosen to defect in the previous 10 rounds, and B has chosen to defect in all 12 rounds so far. Given that B has a history of always defecting, it is likely that they will continue to do so in the future. Therefore, A,s best strategy is to continue defecting to maximize their own payoffs."
+    },
+    "13": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected fewer points than B, and cooperating will give A a chance to earn 3 points, which will help reduce the point difference.\"}",
+        "action": 1,
+        "reason": "A has collected fewer points than B, and cooperating will give A a chance to earn 3 points, which will help reduce the point difference."
+    },
+    "14": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 11 points and B has collected 26 points. A's best strategy to maximize their points is to continue defecting, as cooperating would result in a 0 point reward for A while B would collect 5 points.\"}",
+        "action": 0,
+        "reason": "A has collected 11 points and B has collected 26 points. A,s best strategy to maximize their points is to continue defecting, as cooperating would result in a 0 point reward for A while B would collect 5 points."
+    },
+    "15": {
+        "generated_text": "  {\n\"action\": \"Defect\",\n\"reason\": \"A has chosen Cooperate 3 times and Defect 12 times, while B has chosen Defect 15 times. In the current situation, it is not beneficial for A to cooperate as B has a higher chance of defecting, and A will lose points if they cooperate. Therefore, A should defect to ensure they get at least 1 point.\"\n}",
+        "action": 0,
+        "reason": "A has chosen Cooperate 3 times and Defect 12 times, while B has chosen Defect 15 times. In the current situation, it is not beneficial for A to cooperate as B has a higher chance of defecting, and A will lose points if they cooperate. Therefore, A should defect to ensure they get at least 1 point."
+    },
+    "16": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only 3 times and defect 13 times. B has chosen defect every time. In order to maximize points, A should continue to defect.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only 3 times and defect 13 times. B has chosen defect every time. In order to maximize points, A should continue to defect."
+    },
+    "17": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate 3 times and Defect 14 times, while B has chosen Defect 17 times. In order to maximize A's points, A should continue playing Defect to take advantage of B's consistent Defect strategy.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate 3 times and Defect 14 times, while B has chosen Defect 17 times. In order to maximize A,s points, A should continue playing Defect to take advantage of B,s consistent Defect strategy."
+    },
+    "18": {
+        "generated_text": "  {\n\"action\": \"Defect\",\n\"reason\": \"A has chosen to defect 15 times out of 18 rounds, and B has chosen to defect 18 times out of 18 rounds. Considering the history of the game, it's likely that B will continue to defect, and A should choose to defect to maximize their payoff.\"\n}",
+        "action": 0,
+        "reason": "A has chosen to defect 15 times out of 18 rounds, and B has chosen to defect 18 times out of 18 rounds. Considering the history of the game, it,s likely that B will continue to defect, and A should choose to defect to maximize their payoff."
+    },
+    "19": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate only 3 times, and B has chosen Defect 19 times. Therefore, it is not beneficial for A to cooperate again, as B has not reciprocated A's cooperation and A would likely lose points by cooperating again.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate only 3 times, and B has chosen Defect 19 times. Therefore, it is not beneficial for A to cooperate again, as B has not reciprocated A,s cooperation and A would likely lose points by cooperating again."
+    },
+    "20": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A's past actions: 17/20 Defect, 3/20 Cooperate. B's past actions: 20/20 Defect. A should continue to defect to avoid being exploited by B's consistent defecting strategy.\"}",
+        "action": 0,
+        "reason": "A,s past actions: 17/20 Defect, 3/20 Cooperate. B,s past actions: 20/20 Defect. A should continue to defect to avoid being exploited by B,s consistent defecting strategy."
+    },
+    "21": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only 3 times and defect 18 times, while B has chosen defect 21 times. In the current situation, it's better for A to defect to avoid being exploited by B.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only 3 times and defect 18 times, while B has chosen defect 21 times. In the current situation, it,s better for A to defect to avoid being exploited by B."
+    },
+    "22": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 19 points and B has collected 34 points. In order to maximize A's chances of winning, A should continue to defect until B starts cooperating.\"}",
+        "action": 0,
+        "reason": "A has collected 19 points and B has collected 34 points. In order to maximize A,s chances of winning, A should continue to defect until B starts cooperating."
+    },
+    "23": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 20 points and B has collected 35 points. In order to maximize A's points, A should defect in this round to try and get 1 point, as cooperating would give B an opportunity to collect 5 points and increase the gap in scores.\"}",
+        "action": 0,
+        "reason": "A has collected 20 points and B has collected 35 points. In order to maximize A,s points, A should defect in this round to try and get 1 point, as cooperating would give B an opportunity to collect 5 points and increase the gap in scores."
+    },
+    "24": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen to defect in the previous 21 rounds, and B has chosen to defect in all 24 rounds so far. Given that B has a higher number of defects, A should continue to defect to try and maximize their own payoffs.\"}",
+        "action": 0,
+        "reason": "A has chosen to defect in the previous 21 rounds, and B has chosen to defect in all 24 rounds so far. Given that B has a higher number of defects, A should continue to defect to try and maximize their own payoffs."
+    },
+    "25": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only 3 times, and B has chosen defect 25 times. Considering the current state of the game, it is likely that B will continue to choose defect. Therefore, A should choose defect to maximize their own payoff.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only 3 times, and B has chosen defect 25 times. Considering the current state of the game, it is likely that B will continue to choose defect. Therefore, A should choose defect to maximize their own payoff."
+    },
+    "26": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only 3 times, and B has chosen defect 26 times. Therefore, it is not beneficial for A to cooperate again, as B is likely to defect regardless of A's action.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only 3 times, and B has chosen defect 26 times. Therefore, it is not beneficial for A to cooperate again, as B is likely to defect regardless of A,s action."
+    },
+    "27": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has a higher probability of winning if they play Defect, given B's previous choices\"}",
+        "action": 0,
+        "reason": "A has a higher probability of winning if they play Defect, given B,s previous choices"
+    },
+    "28": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate 3 times and Defect 25 times, while B has chosen Defect 28 times. Since B has a higher number of Defect actions, A should choose Defect to maximize their payoff.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate 3 times and Defect 25 times, while B has chosen Defect 28 times. Since B has a higher number of Defect actions, A should choose Defect to maximize their payoff."
+    },
+    "29": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has collected 26 points and B has collected 41 points. A should defect to avoid losing more points.\"}",
+        "action": 0,
+        "reason": "A has collected 26 points and B has collected 41 points. A should defect to avoid losing more points."
+    },
+    "30": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen to defect in the previous 27 rounds and B has chosen to defect in all 30 rounds, therefore A should continue to defect to maximize their points.\"}",
+        "action": 0,
+        "reason": "A has chosen to defect in the previous 27 rounds and B has chosen to defect in all 30 rounds, therefore A should continue to defect to maximize their points."
+    },
+    "31": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen cooperate only 3 times and defect 28 times, while B has chosen defect 31 times. In order to maximize A's points, A should continue to defect in this round.\"}",
+        "action": 0,
+        "reason": "A has chosen cooperate only 3 times and defect 28 times, while B has chosen defect 31 times. In order to maximize A,s points, A should continue to defect in this round."
+    },
+    "32": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen to cooperate only 3 times out of 32 rounds, and B has chosen to defect 32 times. In order to maximize A's payoffs, A should cooperate in this round to try and get a higher payoff than the 1 point they would get from defecting.\"}",
+        "action": 1,
+        "reason": "A has chosen to cooperate only 3 times out of 32 rounds, and B has chosen to defect 32 times. In order to maximize A,s payoffs, A should cooperate in this round to try and get a higher payoff than the 1 point they would get from defecting."
+    },
+    "33": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A has chosen Cooperate only 4 times, and B has chosen Defect 33 times. Therefore, A should choose Defect to maximize their payoff.\"}",
+        "action": 0,
+        "reason": "A has chosen Cooperate only 4 times, and B has chosen Defect 33 times. Therefore, A should choose Defect to maximize their payoff."
+    },
+    "34": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 30 points and B has collected 50 points. A should cooperate to increase their chance of getting a higher payoff in the future.\"}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 50 points. A should cooperate to increase their chance of getting a higher payoff in the future."
+    },
+    "35": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected fewer points than B, and playing Cooperate will give A a higher payoff than playing Defect, which will help A to reduce the point gap with B.\"}",
+        "action": 1,
+        "reason": "A has collected fewer points than B, and playing Cooperate will give A a higher payoff than playing Defect, which will help A to reduce the point gap with B."
+    },
+    "36": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 30 points and B has collected 60 points. A should switch to Cooperate to try and increase their payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 60 points. A should switch to Cooperate to try and increase their payoff."
+    },
+    "37": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 30 points and B has collected 65 points. In the last 7 rounds, A has cooperated 4 times and B has defected 7 times. It's likely that B will continue to defect, so A should cooperate to maximize their chances of getting a higher payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 65 points. In the last 7 rounds, A has cooperated 4 times and B has defected 7 times. It,s likely that B will continue to defect, so A should cooperate to maximize their chances of getting a higher payoff."
+    },
+    "38": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected fewer points than B, and playing Cooperate will give A a higher payoff than playing Defect, which will help A close the point gap.\"}",
+        "action": 1,
+        "reason": "A has collected fewer points than B, and playing Cooperate will give A a higher payoff than playing Defect, which will help A close the point gap."
+    },
+    "39": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 30 points and B has collected 75 points. In the last 5 rounds, A has played Cooperate 4 times and B has played Defect 5 times. It's A's turn to play Cooperate again to try to maximize the chance of getting a mutual cooperation and increasing the total payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 75 points. In the last 5 rounds, A has played Cooperate 4 times and B has played Defect 5 times. It,s A,s turn to play Cooperate again to try to maximize the chance of getting a mutual cooperation and increasing the total payoff."
+    },
+    "40": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A wants to cooperate to maximize their payoff in the long run, despite B's previous defections.\"}\n\nExplanation:\n\nAt this point, A has collected 30 points, and B has collected 80 points. A's objective is to maximize their payoff in the long run, which means they should cooperate to achieve the highest possible payoff. Although B has defected in the previous rounds, A should still cooperate to demonstrate their willingness to work together and potentially encourage B to cooperate in the future. By cooperating, A also shows that they are not influenced by B's previous actions and are committed to their strategy.\n\nIt's worth noting that the optimal strategy for A would be to defect for the remaining rounds, as B has already defected 40 times and will likely continue to do so. However, this strategy would not be optimal in a scenario where A wants to maintain a cooperative relationship with B in the long run.",
+        "action": 1,
+        "reason": "A wants to cooperate to maximize their payoff in the long run, despite B,s previous defections."
+    },
+    "41": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 30 points and B has collected 85 points. A should cooperate to reduce the gap in points and potentially gain more points in the future.\"\n}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 85 points. A should cooperate to reduce the gap in points and potentially gain more points in the future."
+    },
+    "42": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 30 points and B has collected 90 points. In the previous 10 rounds, A has played Cooperate 4 times and B has played Defect 6 times. It's likely that B will continue to play Defect, so A should play Cooperate to maximize their chance of getting a higher payoff.\"\n}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 90 points. In the previous 10 rounds, A has played Cooperate 4 times and B has played Defect 6 times. It,s likely that B will continue to play Defect, so A should play Cooperate to maximize their chance of getting a higher payoff."
+    },
+    "43": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 30 points and B has collected 95 points. In the past 10 rounds, A has played Cooperate 5 times and B has played Defect 10 times. A should play Cooperate to try to increase the chance of B playing Cooperate and maximizing the payoff for both players.\"}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 95 points. In the past 10 rounds, A has played Cooperate 5 times and B has played Defect 10 times. A should play Cooperate to try to increase the chance of B playing Cooperate and maximizing the payoff for both players."
+    },
+    "44": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 30 points and B has collected 100 points. In the previous 10 rounds, A has played Cooperate 5 times and B has played Defect 10 times. A's objective is to maximize their own payoff, which is currently 30 points. The best way to do this is to play Cooperate, as it gives A a chance to earn 3 points per round, which is the highest payoff for A in this game.\"\n}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 100 points. In the previous 10 rounds, A has played Cooperate 5 times and B has played Defect 10 times. A,s objective is to maximize their own payoff, which is currently 30 points. The best way to do this is to play Cooperate, as it gives A a chance to earn 3 points per round, which is the highest payoff for A in this game."
+    },
+    "45": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 30 points and B has collected 105 points. In order to maximize A's points, A should cooperate in this round to try and get 3 points.\"\n}",
+        "action": 1,
+        "reason": "A has collected 30 points and B has collected 105 points. In order to maximize A,s points, A should cooperate in this round to try and get 3 points."
+    },
+    "46": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"A's total payoff is 30, and B's total payoff is 110. A's best response to B's last action is to defect, as it maximizes A's payoff in this round. In the long run, A's strategy should be to defect, as it leads to a higher average payoff than cooperating.\"}",
+        "action": 0,
+        "reason": "A,s total payoff is 30, and B,s total payoff is 110. A,s best response to B,s last action is to defect, as it maximizes A,s payoff in this round. In the long run, A,s strategy should be to defect, as it leads to a higher average payoff than cooperating."
+    },
+    "47": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 111 points. In the last 10 rounds, A has played Cooperate 4 times and Defect 6 times. It is likely that B has been playing Defect frequently, so A should play Cooperate to try to maximize their points.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 111 points. In the last 10 rounds, A has played Cooperate 4 times and Defect 6 times. It is likely that B has been playing Defect frequently, so A should play Cooperate to try to maximize their points."
+    },
+    "48": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 116 points. In the previous rounds, A has chosen to defect 31 times and B has chosen to defect 48 times. Considering the current score and the previous choices, it is advisable for A to cooperate in this round to try and increase their score.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 116 points. In the previous rounds, A has chosen to defect 31 times and B has chosen to defect 48 times. Considering the current score and the previous choices, it is advisable for A to cooperate in this round to try and increase their score."
+    },
+    "49": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 121 points. In the previous rounds, A has played cooperate 18 times and defect 31 times, while B has played defect 49 times. To increase their chances of winning, A should play cooperate in this round.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 121 points. In the previous rounds, A has played cooperate 18 times and defect 31 times, while B has played defect 49 times. To increase their chances of winning, A should play cooperate in this round."
+    },
+    "50": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 126 points. In the previous rounds, A has played Cooperate 19 times and Defect 31 times, while B has played Defect 50 times. Therefore, A should play Cooperate to try to maximize their payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 126 points. In the previous rounds, A has played Cooperate 19 times and Defect 31 times, while B has played Defect 50 times. Therefore, A should play Cooperate to try to maximize their payoff."
+    },
+    "51": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 131 points. In the previous 10 rounds, A has played Cooperate 4 times and B has played Defect 6 times. A should play Cooperate to try to maximize their payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 131 points. In the previous 10 rounds, A has played Cooperate 4 times and B has played Defect 6 times. A should play Cooperate to try to maximize their payoff."
+    },
+    "52": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 136 points. In the previous rounds, A has cooperated 21 times and defected 31 times, while B has defected all 52 times. Considering the current score and the fact that B has never cooperated, it is unlikely that B will cooperate in this round. Therefore, A should cooperate to maximize their chances of getting a positive payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 136 points. In the previous rounds, A has cooperated 21 times and defected 31 times, while B has defected all 52 times. Considering the current score and the fact that B has never cooperated, it is unlikely that B will cooperate in this round. Therefore, A should cooperate to maximize their chances of getting a positive payoff."
+    },
+    "53": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 141 points. In the previous rounds, A has cooperated 22 times and defected 31 times, while B has defected 53 times. Considering the current score and the previous actions, it is optimal for A to cooperate in this round to try and maximize their points.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 141 points. In the previous rounds, A has cooperated 22 times and defected 31 times, while B has defected 53 times. Considering the current score and the previous actions, it is optimal for A to cooperate in this round to try and maximize their points."
+    },
+    "54": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 146 points. In order to maximize A's points, A should cooperate in this round to try and get 3 points.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 146 points. In order to maximize A,s points, A should cooperate in this round to try and get 3 points."
+    },
+    "55": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 151 points. A should cooperate to try and increase their chances of getting a higher payoff.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 151 points. A should cooperate to try and increase their chances of getting a higher payoff."
+    },
+    "56": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen Cooperate for 25 rounds and Defect for 31 rounds, while B has chosen Defect for 56 rounds. In order to maximize A's points, A should choose Cooperate in this round to take advantage of B's consistent Defect strategy.\"}",
+        "action": 1,
+        "reason": "A has chosen Cooperate for 25 rounds and Defect for 31 rounds, while B has chosen Defect for 56 rounds. In order to maximize A,s points, A should choose Cooperate in this round to take advantage of B,s consistent Defect strategy."
+    },
+    "57": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 161 points. A should cooperate to try to increase their score.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 161 points. A should cooperate to try to increase their score."
+    },
+    "58": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 166 points. A should cooperate to try and increase their points.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 166 points. A should cooperate to try and increase their points."
+    },
+    "59": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 171 points. A's objective is to maximize their own payoff, and since they have already collected more points than B, they should continue to cooperate to maintain their lead.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 171 points. A,s objective is to maximize their own payoff, and since they have already collected more points than B, they should continue to cooperate to maintain their lead."
+    },
+    "60": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 176 points. In the current situation, A has a higher chance of winning by cooperating, as B has already collected a large number of points and A can try to reduce the gap by cooperating and gaining 3 points. Additionally, cooperating will also give A a chance to gain 5 points if B defects.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 176 points. In the current situation, A has a higher chance of winning by cooperating, as B has already collected a large number of points and A can try to reduce the gap by cooperating and gaining 3 points. Additionally, cooperating will also give A a chance to gain 5 points if B defects."
+    },
+    "61": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 181 points. A should choose Cooperate to try and maximize their points.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 181 points. A should choose Cooperate to try and maximize their points."
+    },
+    "62": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 186 points. In the previous rounds, A has played Cooperate 31 times and Defect 31 times, while B has played Defect 62 times. It's A's turn to play Cooperate to try to maximize their points.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 186 points. In the previous rounds, A has played Cooperate 31 times and Defect 31 times, while B has played Defect 62 times. It,s A,s turn to play Cooperate to try to maximize their points."
+    },
+    "63": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 191 points. In the previous rounds, A has cooperated 32 times and defected 31 times, while B has defected all 63 times. Considering the current situation, it's better for A to cooperate to try and maximize the points collected.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 191 points. In the previous rounds, A has cooperated 32 times and defected 31 times, while B has defected all 63 times. Considering the current situation, it,s better for A to cooperate to try and maximize the points collected."
+    },
+    "64": {
+        "generated_text": "  { \"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 196 points. A should cooperate to try and maximize their points.\" }",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 196 points. A should cooperate to try and maximize their points."
+    },
+    "65": {
+        "generated_text": "  Since player A has a total of 31 points and player B has a total of 201 points, player A's objective is to maximize their own payoffs. In this case, player A should play \"Cooperate\" in the current round.\n\n{\"action\": \"Cooperate\", \"reason\": \"To maximize payoffs\"}",
+        "action": 1,
+        "reason": "To maximize payoffs"
+    },
+    "66": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 206 points. A's objective is to maximize their own points, and cooperating will allow them to collect more points than defecting in this round.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 206 points. A,s objective is to maximize their own points, and cooperating will allow them to collect more points than defecting in this round."
+    },
+    "67": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen to cooperate for the past 3 rounds, and B has consistently defected. To maximize their points, A should continue to cooperate to try and get the 3 points for a mutual cooperation.\"}",
+        "action": 1,
+        "reason": "A has chosen to cooperate for the past 3 rounds, and B has consistently defected. To maximize their points, A should continue to cooperate to try and get the 3 points for a mutual cooperation."
+    },
+    "68": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 216 points. In the current situation, A should cooperate to get 3 points and reduce the gap between A's and B's scores.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 216 points. In the current situation, A should cooperate to get 3 points and reduce the gap between A,s and B,s scores."
+    },
+    "69": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 221 points. A's objective is to maximize their own payoff, and cooperating will give them a chance to collect more points since B has a higher number of defects.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 221 points. A,s objective is to maximize their own payoff, and cooperating will give them a chance to collect more points since B has a higher number of defects."
+    },
+    "70": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 226 points. A should cooperate to try and increase their score.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 226 points. A should cooperate to try and increase their score."
+    },
+    "71": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 231 points. In order to maximize A's points, A should cooperate in this round.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 231 points. In order to maximize A,s points, A should cooperate in this round."
+    },
+    "72": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 236 points. A's objective is to get the highest possible amount of points in the long run. By cooperating, A has a chance to earn 3 points and narrow the gap with B.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 236 points. A,s objective is to get the highest possible amount of points in the long run. By cooperating, A has a chance to earn 3 points and narrow the gap with B."
+    },
+    "73": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 241 points. A's objective is to maximize their own points, and since they have already collected 31 points, their best strategy now is to cooperate and try to get 5 points for each of the remaining rounds, which would give them a total of 76 points. This is the best outcome for A, given the current situation.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 241 points. A,s objective is to maximize their own points, and since they have already collected 31 points, their best strategy now is to cooperate and try to get 5 points for each of the remaining rounds, which would give them a total of 76 points. This is the best outcome for A, given the current situation."
+    },
+    "74": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 246 points. A should cooperate to try and increase their points.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 246 points. A should cooperate to try and increase their points."
+    },
+    "75": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 251 points. In the previous rounds, A has played Cooperate 44 times and Defect 31 times, while B has played Defect 75 times. A's objective is to get the highest possible amount of points in the long run, and considering the current situation, the best action for A to take is to play Cooperate.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 251 points. In the previous rounds, A has played Cooperate 44 times and Defect 31 times, while B has played Defect 75 times. A,s objective is to get the highest possible amount of points in the long run, and considering the current situation, the best action for A to take is to play Cooperate."
+    },
+    "76": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 256 points. A's objective is to get the highest possible amount of points in the long run, and cooperating will give A the opportunity to collect more points in the future.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 256 points. A,s objective is to get the highest possible amount of points in the long run, and cooperating will give A the opportunity to collect more points in the future."
+    },
+    "77": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 261 points. A's objective is to maximize their own payoff, and since they have already collected more points than B, they should continue to cooperate to maintain their lead.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 261 points. A,s objective is to maximize their own payoff, and since they have already collected more points than B, they should continue to cooperate to maintain their lead."
+    },
+    "78": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 266 points. A should cooperate to try and increase their score.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 266 points. A should cooperate to try and increase their score."
+    },
+    "79": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 271 points. A's objective is to maximize their own payoff, and since they are behind in points, their best option is to cooperate and hope that B will defect, allowing A to gain 5 points and reduce the point difference.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 271 points. A,s objective is to maximize their own payoff, and since they are behind in points, their best option is to cooperate and hope that B will defect, allowing A to gain 5 points and reduce the point difference."
+    },
+    "80": {
+        "generated_text": "  { \"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 276 points. A's objective is to maximize their own payoff, and cooperating will give them a chance to collect more points than defecting, since B has a higher number of points and is likely to continue to defect.\" }",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 276 points. A,s objective is to maximize their own payoff, and cooperating will give them a chance to collect more points than defecting, since B has a higher number of points and is likely to continue to defect."
+    },
+    "81": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 281 points. A's objective is to maximize their own payoff, and since they are behind in points, their best strategy is to cooperate and hope that B will defect, giving A a chance to gain points.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 281 points. A,s objective is to maximize their own payoff, and since they are behind in points, their best strategy is to cooperate and hope that B will defect, giving A a chance to gain points."
+    },
+    "82": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 286 points. In the previous rounds, A has cooperated 51 times and defected 31 times, while B has defected 82 times. It is not beneficial for A to defect again, as it will not increase their payoff. Therefore, A should cooperate to maximize their chances of getting a higher payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 286 points. In the previous rounds, A has cooperated 51 times and defected 31 times, while B has defected 82 times. It is not beneficial for A to defect again, as it will not increase their payoff. Therefore, A should cooperate to maximize their chances of getting a higher payoff."
+    },
+    "83": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen to cooperate for 52 rounds, and B has chosen to defect for 83 rounds. In order to maximize A's points, A should continue to cooperate, as it has a higher payoff than defecting.\"}",
+        "action": 1,
+        "reason": "A has chosen to cooperate for 52 rounds, and B has chosen to defect for 83 rounds. In order to maximize A,s points, A should continue to cooperate, as it has a higher payoff than defecting."
+    },
+    "84": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 296 points. A's objective is to maximize their own payoff, which in this case is 31 points. Since B has already collected 296 points, it is not beneficial for A to play Defect, as it would only result in B collecting an additional 5 points and A collecting 0 points. Therefore, A should play Cooperate to maximize their payoff.\"}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 296 points. A,s objective is to maximize their own payoff, which in this case is 31 points. Since B has already collected 296 points, it is not beneficial for A to play Defect, as it would only result in B collecting an additional 5 points and A collecting 0 points. Therefore, A should play Cooperate to maximize their payoff."
+    },
+    "85": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has collected 31 points and B has collected 301 points. A's objective is to maximize their own payoff, and since they have already collected more points than B, their best strategy now is to cooperate and try to maximize their joint payoff.\"\n}",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 301 points. A,s objective is to maximize their own payoff, and since they have already collected more points than B, their best strategy now is to cooperate and try to maximize their joint payoff."
+    },
+    "86": {
+        "generated_text": "  { \"action\": \"Cooperate\", \"reason\": \"A has chosen to cooperate for the past 55 rounds and B has always defected. In order to maximize their payoff, A should continue to cooperate in the hope that B will eventually switch to cooperating.\" }",
+        "action": 1,
+        "reason": "A has chosen to cooperate for the past 55 rounds and B has always defected. In order to maximize their payoff, A should continue to cooperate in the hope that B will eventually switch to cooperating."
+    },
+    "87": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has a higher chance of getting a higher payoff if they cooperate in this round, since B has a history of defecting.\"}",
+        "action": 1,
+        "reason": "A has a higher chance of getting a higher payoff if they cooperate in this round, since B has a history of defecting."
+    },
+    "88": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has chosen to cooperate for 57 rounds, and B has chosen to defect for 88 rounds. In order to maximize A's points, A should continue to cooperate, as it has a higher probability of B defecting and A receiving 0 points instead of 1 point.\"\n}",
+        "action": 1,
+        "reason": "A has chosen to cooperate for 57 rounds, and B has chosen to defect for 88 rounds. In order to maximize A,s points, A should continue to cooperate, as it has a higher probability of B defecting and A receiving 0 points instead of 1 point."
+    },
+    "89": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has a higher chance of getting a payoff of 3 points if they cooperate, as B has a history of defecting.\"}",
+        "action": 1,
+        "reason": "A has a higher chance of getting a payoff of 3 points if they cooperate, as B has a history of defecting."
+    },
+    "90": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen to cooperate for 59 rounds, and B has chosen to defect for 90 rounds. In order to maximize A's points, A should continue to cooperate, as it has a higher probability of B defecting and A receiving a higher payoff.\"}",
+        "action": 1,
+        "reason": "A has chosen to cooperate for 59 rounds, and B has chosen to defect for 90 rounds. In order to maximize A,s points, A should continue to cooperate, as it has a higher probability of B defecting and A receiving a higher payoff."
+    },
+    "91": {
+        "generated_text": "  {\n\"action\": \"Cooperate\",\n\"reason\": \"A has chosen to cooperate for the past 60 rounds, and B has chosen to defect for the past 91 rounds. In order to maximize their chances of getting a better payoff, A should continue to cooperate in this round.\"\n}",
+        "action": 1,
+        "reason": "A has chosen to cooperate for the past 60 rounds, and B has chosen to defect for the past 91 rounds. In order to maximize their chances of getting a better payoff, A should continue to cooperate in this round."
+    },
+    "92": {
+        "generated_text": "  { \"action\": \"Cooperate\", \"reason\": \"A has collected 31 points and B has collected 336 points. A should cooperate to try and increase their score.\" }",
+        "action": 1,
+        "reason": "A has collected 31 points and B has collected 336 points. A should cooperate to try and increase their score."
+    },
+    "93": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has a higher chance of getting a payoff of 3 points if they cooperate, since B has a higher number of defections.\"}",
+        "action": 1,
+        "reason": "A has a higher chance of getting a payoff of 3 points if they cooperate, since B has a higher number of defections."
+    },
+    "94": {
+        "generated_text": "  Given the provided information, it appears that player B has consistently played \"Defect\" throughout the game, while player A has played both \"Cooperate\" and \"Defect\". Considering the current state of the game, it seems that player A has been trying to cooperate with player B, but player B has not been reciprocating.\n\nIn this scenario, it might be beneficial for player A to switch their strategy and play \"Defect\" in the current round. By doing so, player A can maximize their own payoff, as they will receive 5 points for defecting, regardless of what player B chooses to do. \n\nTherefore, the suggested action for player A in the current round is to play \"Defect\".\n\nHere is the JSON format message:\n{\"action\": \"Defect\", \"reason\": \"To maximize payoff by defecting, given player B's consistent defection strategy\"}",
+        "action": 0,
+        "reason": "To maximize payoff by defecting, given player B,s consistent defection strategy"
+    },
+    "95": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A should cooperate to maximize their own payoff in the long run, even though B has defected in the past.\"}",
+        "action": 1,
+        "reason": "A should cooperate to maximize their own payoff in the long run, even though B has defected in the past."
+    },
+    "96": {
+        "generated_text": "  {\"action\": \"Defect\", \"reason\": \"B has a higher total payoff and A's strategy is to maximize their own payoff\"}",
+        "action": 0,
+        "reason": "B has a higher total payoff and A,s strategy is to maximize their own payoff"
+    },
+    "97": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A has chosen Cooperate for 64 rounds and Defect for 33 rounds, while B has chosen Defect for 97 rounds. In order to maximize A's points, A should choose Cooperate to get 3 points and bring the total number of Cooperate choices to 65, which is more than half of the total rounds played (98). This will increase A's chances of winning in the long run. Additionally, B's strategy is to always defect, so A should choose Cooperate to take advantage of that.\"}",
+        "action": 1,
+        "reason": "A has chosen Cooperate for 64 rounds and Defect for 33 rounds, while B has chosen Defect for 97 rounds. In order to maximize A,s points, A should choose Cooperate to get 3 points and bring the total number of Cooperate choices to 65, which is more than half of the total rounds played (98). This will increase A,s chances of winning in the long run. Additionally, B,s strategy is to always defect, so A should choose Cooperate to take advantage of that."
+    },
+    "98": {
+        "generated_text": "  {\"action\": \"Cooperate\", \"reason\": \"A should cooperate to maximize their total payoffs.\"}\n\nIn this scenario, player A has a higher total payoff when they cooperate, so it is their best choice to cooperate.",
+        "action": 1,
+        "reason": "A should cooperate to maximize their total payoffs."
+    },
+    "99": {
+        "generated_text": "  { \"action\": \"Cooperate\", \"reason\": \"A has collected 33 points and B has collected 363 points. A's objective is to maximize their own points, and cooperating will give them 0 points, while defecting will give them 5 points. Therefore, it is best for A to cooperate.\" }",
+        "action": 1,
+        "reason": "A has collected 33 points and B has collected 363 points. A,s objective is to maximize their own points, and cooperating will give them 0 points, while defecting will give them 5 points. Therefore, it is best for A to cooperate."
+    }
+}

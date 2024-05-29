@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from src.games.two_players_pd_utils import extract_histories_from_files_, player_1_, extract_histories_from_files
+from src.games.two_players_pd_utils import extract_histories_from_files, player_1_, extract_histories_from_files
 from src.utils import OUT_BASE_PATH, compute_average_vector, compute_confidence_interval_vectors
 
 runs = {

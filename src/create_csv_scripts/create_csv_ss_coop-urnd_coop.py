@@ -5,7 +5,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import scipy.stats as st
 
-from src.games.two_players_pd_utils import player_1_, player_2_, plot_ts_, plot_fill, extract_histories_from_files_
+from src.games.two_players_pd_utils import player_1_, player_2_, extract_histories_from_files
+from src.unused_functions import plot_ts_, plot_fill
 from src.llm_utils import history_window_size
 
 history_main_name = player_1_
@@ -31,7 +32,7 @@ for i in range(min_urnd_coop, max_urnd_coop):
     game_histories_dir_path = urnd_dir_path / "game_histories"
     # file_name = f"game_history_{strat_name}-{opponent_name}"
     file_name = f"game_history"
-    game_histories = extract_histories_from_files_(game_histories_dir_path, file_name)
+    game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
 
     main_history_ends = [game_history.get_actions_by_player(history_main_name)[history_window_size:] for game_history in game_histories]
     mean_main_history_ends = [sum(main_history_end) / len(main_history_end) for main_history_end in main_history_ends]

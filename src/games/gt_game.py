@@ -51,8 +51,8 @@ class GTGame:
         self.players[new_player.get_name()] = new_player
         self.history.add_player(new_player.get_name())
 
-    def save_history(self, timestamp, infix=None, subdir=None):
-        self.history.save_to_file(timestamp, infix=infix, subdir=subdir)
+    def save_history(self, out_dir, infix=None):
+        self.history.save_to_file(out_dir, infix=infix)
 
     def get_players(self):
         if self.players is None:

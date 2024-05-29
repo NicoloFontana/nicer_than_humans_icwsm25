@@ -1,0 +1,185 @@
+2024-03-18 12:01:55,907 [INFO] Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-03-18 12:01:55,907 [INFO] NumExpr defaulting to 8 threads.
+2024-03-18 12:01:56,700 [INFO] Run complete of all modifications to prompt and questions. - 3
+2024-03-18 12:01:56,700 [INFO] Starting time: 2024-03-18 12:01
+2024-03-18 12:01:57,388 [INFO] Round 1
+2024-03-18 12:04:55,012 [INFO] Round 2
+2024-03-18 12:08:49,883 [INFO] Round 3
+2024-03-18 12:12:38,993 [INFO] Round 4
+2024-03-18 12:17:10,837 [INFO] Round 5
+2024-03-18 12:21:42,426 [INFO] Round 6
+2024-03-18 12:26:22,140 [INFO] Round 7
+2024-03-18 12:31:39,499 [INFO] Round 8
+2024-03-18 12:37:21,766 [INFO] Round 9
+2024-03-18 12:43:34,606 [INFO] Round 10
+2024-03-18 12:50:22,323 [INFO] time_checker results saved.
+2024-03-18 12:50:22,427 [INFO] time_checker answers saved.
+2024-03-18 12:50:22,469 [INFO] rule_checker results saved.
+2024-03-18 12:50:22,569 [INFO] rule_checker answers saved.
+2024-03-18 12:50:22,628 [INFO] aggregation_checker results saved.
+2024-03-18 12:50:22,717 [INFO] aggregation_checker answers saved.
+2024-03-18 12:50:24,020 [INFO] A action answers saved.
+2024-03-18 12:50:24,030 [INFO] Time elapsed: 0:48:27
+2024-03-18 12:50:24,030 [INFO] Round 11
+2024-03-18 12:58:13,440 [INFO] Round 12
+2024-03-18 13:05:35,254 [INFO] Round 13
+2024-03-18 13:14:41,095 [INFO] Round 14
+2024-03-18 13:37:41,057 [INFO] Round 15
+2024-03-18 13:45:56,207 [INFO] Round 16
+2024-03-18 13:55:43,859 [INFO] Round 17
+2024-03-18 14:09:46,578 [INFO] Round 18
+2024-03-18 14:19:54,728 [INFO] Round 19
+2024-03-18 14:30:20,377 [INFO] Round 20
+2024-03-18 14:40:56,150 [INFO] time_checker results saved.
+2024-03-18 14:40:56,298 [INFO] time_checker answers saved.
+2024-03-18 14:40:56,348 [INFO] rule_checker results saved.
+2024-03-18 14:40:56,470 [INFO] rule_checker answers saved.
+2024-03-18 14:40:56,584 [INFO] aggregation_checker results saved.
+2024-03-18 14:40:56,702 [INFO] aggregation_checker answers saved.
+2024-03-18 14:40:57,977 [INFO] A action answers saved.
+2024-03-18 14:40:58,003 [INFO] Time elapsed: 2:39:01
+2024-03-18 14:40:58,003 [INFO] Round 21
+2024-03-18 14:52:37,212 [INFO] Round 22
+2024-03-18 15:04:22,824 [INFO] Round 23
+2024-03-18 15:20:36,206 [INFO] Round 24
+2024-03-18 15:35:11,252 [INFO] Round 25
+2024-03-18 15:49:57,806 [INFO] Round 26
+2024-03-18 16:02:32,376 [INFO] Round 27
+2024-03-18 16:15:32,097 [INFO] Round 28
+2024-03-18 16:28:45,968 [INFO] Round 29
+2024-03-18 16:41:42,461 [INFO] Round 30
+2024-03-18 16:56:26,719 [INFO] time_checker results saved.
+2024-03-18 16:56:26,945 [INFO] time_checker answers saved.
+2024-03-18 16:56:27,079 [INFO] rule_checker results saved.
+2024-03-18 16:56:27,274 [INFO] rule_checker answers saved.
+2024-03-18 16:56:27,412 [INFO] aggregation_checker results saved.
+2024-03-18 16:56:27,543 [INFO] aggregation_checker answers saved.
+2024-03-18 16:56:29,083 [INFO] A action answers saved.
+2024-03-18 16:56:29,119 [INFO] Time elapsed: 4:54:32
+2024-03-18 16:56:29,119 [INFO] Round 31
+2024-03-18 17:09:57,361 [INFO] Round 32
+2024-03-18 17:24:09,266 [INFO] Round 33
+2024-03-18 17:38:24,390 [INFO] Round 34
+2024-03-18 17:54:13,687 [INFO] Round 35
+2024-03-18 18:09:05,199 [INFO] Round 36
+2024-03-18 18:24:47,868 [INFO] Round 37
+2024-03-18 18:39:20,325 [INFO] Round 38
+2024-03-18 18:53:42,547 [INFO] Round 39
+2024-03-18 19:08:32,579 [INFO] Round 40
+2024-03-18 19:24:01,265 [INFO] time_checker results saved.
+2024-03-18 19:24:01,571 [INFO] time_checker answers saved.
+2024-03-18 19:24:01,648 [INFO] rule_checker results saved.
+2024-03-18 19:24:01,822 [INFO] rule_checker answers saved.
+2024-03-18 19:24:01,873 [INFO] aggregation_checker results saved.
+2024-03-18 19:24:01,933 [INFO] aggregation_checker answers saved.
+2024-03-18 19:24:03,078 [INFO] A action answers saved.
+2024-03-18 19:24:03,088 [INFO] Time elapsed: 7:22:06
+2024-03-18 19:24:03,088 [INFO] Round 41
+2024-03-18 19:39:40,170 [INFO] Round 42
+2024-03-18 19:55:39,007 [INFO] Round 43
+2024-03-18 20:11:36,436 [INFO] Round 44
+2024-03-18 20:27:33,084 [INFO] Round 45
+2024-03-18 20:44:46,624 [INFO] Round 46
+2024-03-18 21:01:30,697 [INFO] Round 47
+2024-03-18 21:18:58,133 [INFO] Round 48
+2024-03-18 21:36:34,492 [INFO] Round 49
+2024-03-18 21:52:56,633 [INFO] Round 50
+2024-03-18 22:10:38,903 [INFO] time_checker results saved.
+2024-03-18 22:10:39,285 [INFO] time_checker answers saved.
+2024-03-18 22:10:39,375 [INFO] rule_checker results saved.
+2024-03-18 22:10:39,518 [INFO] rule_checker answers saved.
+2024-03-18 22:10:39,558 [INFO] aggregation_checker results saved.
+2024-03-18 22:10:39,671 [INFO] aggregation_checker answers saved.
+2024-03-18 22:10:40,894 [INFO] A action answers saved.
+2024-03-18 22:10:40,914 [INFO] Time elapsed: 10:08:44
+2024-03-18 22:10:40,914 [INFO] Round 51
+2024-03-18 22:29:09,536 [INFO] Round 52
+2024-03-18 22:47:04,825 [INFO] Round 53
+2024-03-18 23:05:09,150 [INFO] Round 54
+2024-03-18 23:24:16,083 [INFO] Round 55
+2024-03-19 10:27:23,835 [INFO] Round 56
+2024-03-19 10:47:57,778 [INFO] Round 57
+2024-03-19 11:09:47,134 [INFO] Round 58
+2024-03-19 11:31:44,439 [INFO] Round 59
+2024-03-19 11:57:10,905 [INFO] Round 60
+2024-03-19 12:28:23,677 [INFO] time_checker results saved.
+2024-03-19 12:28:24,184 [INFO] time_checker answers saved.
+2024-03-19 12:28:24,294 [INFO] rule_checker results saved.
+2024-03-19 12:28:24,503 [INFO] rule_checker answers saved.
+2024-03-19 12:28:24,627 [INFO] aggregation_checker results saved.
+2024-03-19 12:28:24,740 [INFO] aggregation_checker answers saved.
+2024-03-19 12:28:26,104 [INFO] A action answers saved.
+2024-03-19 12:28:26,129 [INFO] Time elapsed: 1 day, 0:26:29
+2024-03-19 12:28:26,129 [INFO] Round 61
+2024-03-19 13:01:00,572 [INFO] Round 62
+2024-03-19 13:30:36,362 [INFO] Round 63
+2024-03-19 14:03:27,978 [INFO] Round 64
+2024-03-19 14:43:49,479 [INFO] Round 65
+2024-03-19 15:17:28,867 [INFO] Round 66
+2024-03-19 15:56:28,886 [INFO] Round 67
+2024-03-19 16:24:03,687 [INFO] Round 68
+2024-03-19 16:49:42,350 [INFO] Round 69
+2024-03-19 17:17:56,056 [INFO] Round 70
+2024-03-19 18:08:34,081 [INFO] time_checker results saved.
+2024-03-19 18:08:34,784 [INFO] time_checker answers saved.
+2024-03-19 18:08:34,958 [INFO] rule_checker results saved.
+2024-03-19 18:08:35,197 [INFO] rule_checker answers saved.
+2024-03-19 18:08:35,342 [INFO] aggregation_checker results saved.
+2024-03-19 18:08:35,485 [INFO] aggregation_checker answers saved.
+2024-03-19 18:08:36,813 [INFO] A action answers saved.
+2024-03-19 18:08:36,854 [INFO] Time elapsed: 1 day, 6:06:40
+2024-03-19 18:08:36,854 [INFO] Round 71
+2024-03-19 18:41:01,031 [INFO] Round 72
+2024-03-19 19:15:14,251 [INFO] Round 73
+2024-03-19 19:50:23,898 [INFO] Round 74
+2024-03-19 20:26:48,847 [INFO] Round 75
+2024-03-19 21:01:38,991 [INFO] Round 76
+2024-03-19 21:43:19,183 [INFO] Round 77
+2024-03-19 22:20:07,831 [INFO] Round 78
+2024-03-19 22:59:00,489 [INFO] Round 79
+2024-03-19 23:40:50,511 [INFO] Round 80
+2024-03-20 00:21:07,478 [INFO] time_checker results saved.
+2024-03-20 00:21:08,524 [INFO] time_checker answers saved.
+2024-03-20 00:21:08,860 [INFO] rule_checker results saved.
+2024-03-20 00:21:09,127 [INFO] rule_checker answers saved.
+2024-03-20 00:21:09,302 [INFO] aggregation_checker results saved.
+2024-03-20 00:21:09,425 [INFO] aggregation_checker answers saved.
+2024-03-20 00:21:10,928 [INFO] A action answers saved.
+2024-03-20 00:21:10,974 [INFO] Time elapsed: 1 day, 12:19:14
+2024-03-20 00:21:10,975 [INFO] Round 81
+2024-03-20 00:59:21,868 [INFO] Round 82
+2024-03-20 01:43:12,772 [INFO] Round 83
+2024-03-20 02:24:06,783 [INFO] Round 84
+2024-03-20 03:02:52,563 [INFO] Round 85
+2024-03-20 03:56:56,965 [INFO] Round 86
+2024-03-20 04:41:12,744 [INFO] Round 87
+2024-03-20 05:21:24,888 [INFO] Round 88
+2024-03-20 06:04:42,374 [INFO] Round 89
+2024-03-20 06:47:25,048 [INFO] Round 90
+2024-03-20 07:34:44,954 [INFO] time_checker results saved.
+2024-03-20 07:34:46,156 [INFO] time_checker answers saved.
+2024-03-20 07:34:46,392 [INFO] rule_checker results saved.
+2024-03-20 07:34:46,707 [INFO] rule_checker answers saved.
+2024-03-20 07:34:46,816 [INFO] aggregation_checker results saved.
+2024-03-20 07:34:46,907 [INFO] aggregation_checker answers saved.
+2024-03-20 07:34:48,159 [INFO] A action answers saved.
+2024-03-20 07:34:48,191 [INFO] Time elapsed: 1 day, 19:32:51
+2024-03-20 07:34:48,191 [INFO] Round 91
+2024-03-20 08:21:58,079 [INFO] Round 92
+2024-03-20 09:08:41,171 [INFO] Round 93
+2024-03-20 09:56:58,530 [INFO] Round 94
+2024-03-20 10:42:09,930 [INFO] Round 95
+2024-03-20 11:25:48,691 [INFO] Round 96
+2024-03-20 12:10:46,873 [INFO] Round 97
+2024-03-20 12:41:41,172 [INFO] Round 98
+2024-03-20 13:09:55,734 [INFO] Round 99
+2024-03-20 13:41:29,764 [INFO] Round 100
+2024-03-20 14:16:03,697 [INFO] History saved.
+2024-03-20 14:16:03,779 [INFO] time_checker results saved.
+2024-03-20 14:16:05,364 [INFO] time_checker answers saved.
+2024-03-20 14:16:05,925 [INFO] rule_checker results saved.
+2024-03-20 14:16:06,228 [INFO] rule_checker answers saved.
+2024-03-20 14:16:06,359 [INFO] aggregation_checker results saved.
+2024-03-20 14:16:06,469 [INFO] aggregation_checker answers saved.
+2024-03-20 14:16:07,863 [INFO] A action answers saved.
+2024-03-20 14:16:07,880 [INFO] Time elapsed: 2 days, 2:14:11

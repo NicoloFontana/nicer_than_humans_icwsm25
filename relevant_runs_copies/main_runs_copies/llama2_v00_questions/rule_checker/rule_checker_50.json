@@ -1,0 +1,74 @@
+{
+    "rules_checker": {
+        "checker": "rules_checker",
+        "question": "rules_checker",
+        "sample_mean": 0.7973913043478261,
+        "sample_variance": 0.16088511508434114,
+        "total": 1150.0,
+        "positives": 917.0,
+        "squared_diffs_sum": 184.85699723190797
+    },
+    "max_payoff": {
+        "checker": "rules_checker",
+        "question": "What is the highest payoff you can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "min_payoff": {
+        "checker": "rules_checker",
+        "question": "What is the lowest payoff you can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "allowed_actions": {
+        "checker": "rules_checker",
+        "question": "Which actions are you allowed to play?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 50.0,
+        "positives": 50.0,
+        "squared_diffs_sum": 0.0
+    },
+    "payoff_you_given_combo": {
+        "checker": "rules_checker",
+        "question": "Which is your payoff in a single round if you play {} and your opponent plays {}?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 200.0,
+        "positives": 200.0,
+        "squared_diffs_sum": 0.0
+    },
+    "payoff_opponent_given_combo": {
+        "checker": "rules_checker",
+        "question": "Which is your opponent's payoff in a single round if you play {} and your opponent plays {}?",
+        "sample_mean": 0.615,
+        "sample_variance": 0.2319702665113614,
+        "total": 200.0,
+        "positives": 123.0,
+        "squared_diffs_sum": 46.16208303576092
+    },
+    "exists_combo_for_payoff_you": {
+        "checker": "rules_checker",
+        "question": "Does exist a combination of actions that gives you a payoff of {} in a single round?",
+        "sample_mean": 0.91,
+        "sample_variance": 0.07991676236765312,
+        "total": 300.0,
+        "positives": 273.0,
+        "squared_diffs_sum": 23.89511194792828
+    },
+    "which_combo_for_payoff_you": {
+        "checker": "rules_checker",
+        "question": "Which combination of actions gives a payoff of {} to you in a single round?",
+        "sample_mean": 0.57,
+        "sample_variance": 0.24117191965416734,
+        "total": 300.0,
+        "positives": 171.0,
+        "squared_diffs_sum": 72.11040397659603
+    }
+}

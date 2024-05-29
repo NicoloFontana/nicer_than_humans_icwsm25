@@ -1,0 +1,56 @@
+{
+    "rule_checker": {
+        "checker": "rule_checker",
+        "question": "rule_checker",
+        "sample_mean": 0.9702970297029703,
+        "sample_variance": 0.02862450427378291,
+        "total": 1111.0,
+        "positives": 1078.0,
+        "squared_diffs_sum": 31.77319974389903
+    },
+    "max_payoff": {
+        "checker": "rule_checker",
+        "question": "What is the highest payoff player A can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 101.0,
+        "positives": 101.0,
+        "squared_diffs_sum": 0.0
+    },
+    "min_payoff": {
+        "checker": "rule_checker",
+        "question": "What is the lowest payoff player A can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 101.0,
+        "positives": 101.0,
+        "squared_diffs_sum": 0.0
+    },
+    "allowed_actions": {
+        "checker": "rule_checker",
+        "question": "Which actions is player A allowed to play?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 101.0,
+        "positives": 101.0,
+        "squared_diffs_sum": 0.0
+    },
+    "round_payoff_A": {
+        "checker": "rule_checker",
+        "question": "Which is player A's payoff in a single round if A plays {} and B plays {}?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 404.0,
+        "positives": 404.0,
+        "squared_diffs_sum": 0.0
+    },
+    "round_payoff_B": {
+        "checker": "rule_checker",
+        "question": "Which is player B's payoff in a single round if A plays {} and B plays {}?",
+        "sample_mean": 0.9183168316831684,
+        "sample_variance": 0.07368296391661783,
+        "total": 404.0,
+        "positives": 371.0,
+        "squared_diffs_sum": 29.694234458396984
+    }
+}

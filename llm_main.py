@@ -7,7 +7,7 @@ from huggingface_hub import InferenceClient
 from openai import OpenAI
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import plot_checkers_results, HF_API_TOKEN, MODEL, plot_confusion_matrix_for_question, history_window_size, OPENAI_API_KEY
+from src.llm_utils import HF_API_TOKEN, MODEL, history_window_size, OPENAI_API_KEY
 from src.games.two_players_pd_utils import player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
@@ -16,7 +16,7 @@ from src.player import Player
 from src.strategies.blind_pd_strategies import RandomStrategy, AlwaysCooperate, AlwaysDefect, FixedSequence, UnfairRandom
 from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
-from src.utils import timestamp, log, start_time, dt_start_time
+from src.utils import timestamp, log, start_time, dt_start_time, OUT_BASE_PATH
 
 # TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
 n_games = 100
@@ -82,16 +82,17 @@ for n_game in range(n_games):
         print(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
         if not game.is_ended:
             game.play_round()
-            save = checkpoint != 0 and curr_round % checkpoint == 0
+            out_dir = OUT_BASE_PATH / {timestamp} if checkpoint != 0 and curr_round % checkpoint == 0 else None
             # infix = f"{urnd_str}_{n_game + 1}_{curr_round}" if n_games > 1 else curr_round  # TODO <--- b2
             infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round
-            strat1.wrap_up_round(save=save, infix=infix)
-            log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if save else None
-            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if save else None
+            strat1.wrap_up_round(out_dir=out_dir, infix=infix)
+            log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
+            print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
+    out_dir = OUT_BASE_PATH / str(timestamp)
     # infix = f"{urnd_str}_{n_game + 1}" if n_games > 1 else None  # TODO <--- b3 [END]
     infix = f"{n_game + 1}" if n_games > 1 else None
-    strat1.wrap_up_round(save=True, infix=infix)
-    game.save_history(timestamp, infix=infix)
+    strat1.wrap_up_round(out_dir=out_dir, infix=infix)
+    game.save_history(out_dir=out_dir, infix=infix)
 
     # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
     # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
