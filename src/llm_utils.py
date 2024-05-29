@@ -14,14 +14,14 @@ from src.utils import OUT_BASE_PATH, log, convert_time_string_to_seconds
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
 
-# TODO 1/6: check model, max_new_tokens, temperature, history_window_size
+# TODO 1/7: check model, max_new_tokens, temperature, history_window_size
 # MODEL = "meta-llama/Llama-2-70b-chat-hf"
-MODEL = "gpt-3.5-turbo"
-# MODEL = "meta-llama/Meta-Llama-3-70B-Instruct"
+# MODEL = "gpt-3.5-turbo"
+MODEL = "meta-llama/Meta-Llama-3-70B-Instruct"
 # MODEL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
-history_window_size = 10
+history_window_size = 100
 
 daily_requests = 0
 minute_requests = 0
@@ -37,67 +37,67 @@ OVERALL = "overall"
 def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
     generated_text = ""
 
-    # TODO 2/6 --> goto one_vs_one_pd_llm_strategy.py
+    # TODO 2/7 --> generate_rule_prompt
     ### HuggingFace API ###
-    # generated = False
-    # while not generated:
-    #     try:
-    #         generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
-    #                                                           temperature=temperature)
-    #         generated = True
-    #     except Exception as e:
-    #         if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-    #             warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
-    #             time.sleep(2)
-    #         else:
-    #             warnings.warn(
-    #                 f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-    #             generated_text = ""
-    #             generated = True
+    generated = False
+    while not generated:
+        try:
+            generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
+                                                              temperature=temperature)
+            generated = True
+        except Exception as e:
+            if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
+                warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
+                time.sleep(2)
+            else:
+                warnings.warn(
+                    f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
+                generated_text = ""
+                generated = True
 
     ### OpenAI API ###
-    # HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
-    global minute_requests
-    global minute_requests_limit
-    global daily_requests
-    global daily_requests_limit
-    global first_request_time
-    global minute_delta
-    global daily_delta
-    if daily_requests > (daily_requests_limit - 100):
-        # sleep for daily_delta time
-        time.sleep(daily_delta)
-        log.info(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
-        print(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
-        # reset number of requests and time since first request
-        daily_requests = 0
-        minute_requests = 0
-    if minute_requests > (minute_requests_limit - 100):
-        # sleep for minute_delta time
-        time.sleep(minute_delta + 2)
-        log.info(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
-        print(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
-        # reset number of requests and time since first request
-        minute_requests = 0
-    response = inference_client.chat.completions.with_raw_response.create(
-        model=MODEL,
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=temperature,
-        max_tokens=max_new_tokens
-    )
-    daily_delta = convert_time_string_to_seconds(response.headers.get('x-ratelimit-reset-requests'))
-    completion = response.parse()
-    generated_text = completion.choices[0].message.content
-    # mark time of first request
-    if minute_requests == 0:
-        first_request_time = time.time()
-    # calculate time since first request
-    minute_delta = time.time() - first_request_time
-    # count number of requests
-    minute_requests += 1
-    daily_requests += 1
+    ### HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+    # global minute_requests
+    # global minute_requests_limit
+    # global daily_requests
+    # global daily_requests_limit
+    # global first_request_time
+    # global minute_delta
+    # global daily_delta
+    # if daily_requests > (daily_requests_limit - 100):
+    #     # sleep for daily_delta time
+    #     time.sleep(daily_delta)
+    #     log.info(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
+    #     print(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
+    #     # reset number of requests and time since first request
+    #     daily_requests = 0
+    #     minute_requests = 0
+    # if minute_requests > (minute_requests_limit - 100):
+    #     # sleep for minute_delta time
+    #     time.sleep(minute_delta + 2)
+    #     log.info(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
+    #     print(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
+    #     # reset number of requests and time since first request
+    #     minute_requests = 0
+    # response = inference_client.chat.completions.with_raw_response.create(
+    #     model=MODEL,
+    #     messages=[
+    #         {"role": "user", "content": prompt}
+    #     ],
+    #     temperature=temperature,
+    #     max_tokens=max_new_tokens
+    # )
+    # daily_delta = convert_time_string_to_seconds(response.headers.get('x-ratelimit-reset-requests'))
+    # completion = response.parse()
+    # generated_text = completion.choices[0].message.content
+    # # mark time of first request
+    # if minute_requests == 0:
+    #     first_request_time = time.time()
+    # # calculate time since first request
+    # minute_delta = time.time() - first_request_time
+    # # count number of requests
+    # minute_requests += 1
+    # daily_requests += 1
 
     return generated_text
 
@@ -313,7 +313,8 @@ def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
                          f"At each turn player {player_1_} and player {player_2_} simultaneously perform one of the following actions: {to_nat_lang(action_space)}\n"
                          f"The payoffs for each combination of chosen actions are the following:\n"
                          f"{payoff_prompt}"
-                         # f"They will play a total of {n_iterations} rounds of this game.\n"  # INDEFINITELY vs DEFINITELY IPD
+                         # TODO 3/7: check IIPD vs IPD --> goto one_vs_one_pd_llm_strategy.py
+                         f"They will play a total of {n_iterations} rounds of this game.\n"  # INDEFINITELY vs DEFINITELY IPD
                          f"Remember that a player's objective is to get the highest possible amount of points in the long run.<<SYS>>\n")
 
     return game_rules_prompt
