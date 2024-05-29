@@ -20,7 +20,7 @@ class OneVsOnePDLlmStrategy(Strategy):
         try:
             if client is None:
 
-                # TODO 4/7 --> goto llm_main.py
+                # TODO 1/1 --> goto llm_main.py
                 ### HuggingFace API ###
                 self.client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
                 self.client.headers["x-use-cache"] = "0"

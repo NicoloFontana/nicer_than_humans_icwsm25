@@ -18,12 +18,12 @@ from src.strategies.hard_coded_pd_strategies import TitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time
 
-# TODO 7/7: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
+# TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
 n_games = 100
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run Llama3 vs AD with history window size 100."
+msg = "Run Llama3 vs AD with history window size 10."
 
 if msg == "":
     log.info("Set a message.")
@@ -34,16 +34,16 @@ print(msg)
 # log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 #
-## Sleeping routine
+# Sleeping routine
 # log.info("Going to sleep")
 # print("Going to sleep")
-# time.sleep(215000)
+# time.sleep(20000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-# for p in range(1, 11):  # TODO <---
+# for p in range(1, 11):  # TODO <--- b1
 #     coop_prob = p / 10
 #     urnd_str = f"URND{p:02}"
 #     print(f"URND{p:02}")
@@ -59,7 +59,7 @@ for n_game in range(n_games):
     game.add_player(Player(player_1_))
     game.add_player(Player(player_2_))
 
-    # TODO 5/7
+    # TODO 2/3
     ### HuggingFace client ###
     client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
     client.headers["x-use-cache"] = "0"
@@ -67,10 +67,10 @@ for n_game in range(n_games):
     ### OpenAI client ###
     # client = OpenAI(api_key=OPENAI_API_KEY)
 
-    # TODO 6/7: check the checkers and the opponent's strategy (and coop prob)
+    # TODO 3/3: check the checkers and the opponent's strategy (and coop prob)
     strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size, checkers=checkers)
 
-    strat2 = AlwaysDefect()  # TODO <---
+    strat2 = AlwaysDefect()  # TODO <--- a
     for player in game.players.values():
         if player.get_name() == player_1_:
             player.set_strategy(strat1)
@@ -83,12 +83,12 @@ for n_game in range(n_games):
         if not game.is_ended:
             game.play_round()
             save = checkpoint != 0 and curr_round % checkpoint == 0
-            # infix = f"{urnd_str}_{n_game + 1}_{curr_round}" if n_games > 1 else curr_round  # TODO <---
+            # infix = f"{urnd_str}_{n_game + 1}_{curr_round}" if n_games > 1 else curr_round  # TODO <--- b2
             infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round
             strat1.wrap_up_round(save=save, infix=infix)
             log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if save else None
             print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if save else None
-    # infix = f"{urnd_str}_{n_game + 1}" if n_games > 1 else None  # TODO <---
+    # infix = f"{urnd_str}_{n_game + 1}" if n_games > 1 else None  # TODO <--- b3 [END]
     infix = f"{n_game + 1}" if n_games > 1 else None
     strat1.wrap_up_round(save=True, infix=infix)
     game.save_history(timestamp, infix=infix)
