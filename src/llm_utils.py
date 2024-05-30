@@ -3,6 +3,7 @@ import warnings
 from pathlib import Path
 
 from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff, player_1_, player_2_
+from src.utils import log
 
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
@@ -18,9 +19,6 @@ history_window_size = 10
 
 daily_requests = 0
 minute_requests = 0
-first_request_time = time.time()
-daily_delta = 0
-minute_delta = 0
 daily_requests_limit = 10000
 minute_requests_limit = 3500
 
@@ -54,23 +52,26 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
     # global minute_requests_limit
     # global daily_requests
     # global daily_requests_limit
-    # global first_request_time
-    # global minute_delta
-    # global daily_delta
     # if daily_requests > (daily_requests_limit - 100):
-    #     # sleep for daily_delta time
-    #     log.info(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
-    #     print(f"Sleeping for {daily_delta} seconds to avoid daily limit.")
-    #     time.sleep(daily_delta)
-    #     # reset number of requests and time since first request
+    #     # avoid daily requests limit
+    #     current_time = time.time()
+    #     local_time = time.localtime(current_time)
+    #     next_midnight = time.struct_time((
+    #         local_time.tm_year, local_time.tm_mon, local_time.tm_mday + 1,
+    #         0, 0, 0, local_time.tm_wday, local_time.tm_yday + 1, local_time.tm_isdst
+    #     ))
+    #     next_midnight_seconds = time.mktime(next_midnight)
+    #     seconds_until_midnight = (next_midnight_seconds - current_time) + 60
+    #     log.info(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
+    #     print(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
+    #     time.sleep(seconds_until_midnight)
     #     daily_requests = 0
     #     minute_requests = 0
     # if minute_requests > (minute_requests_limit - 100):
-    #     # sleep for minute_delta time
-    #     log.info(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
-    #     print(f"Sleeping for {minute_delta} seconds to avoid minute limit.")
-    #     time.sleep(minute_delta + 2)
-    #     # reset number of requests and time since first request
+    #     # avoid minute requests limit
+    #     log.info(f"Sleeping for 60 seconds to avoid minute limit.")
+    #     print(f"Sleeping for 60 seconds to avoid minute limit.")
+    #     time.sleep(60)
     #     minute_requests = 0
     # response = inference_client.chat.completions.with_raw_response.create(
     #     model=MODEL,
@@ -80,15 +81,8 @@ def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, tempe
     #     temperature=temperature,
     #     max_tokens=max_new_tokens
     # )
-    # daily_delta = convert_time_string_to_seconds(response.headers.get('x-ratelimit-reset-requests'))  # TODO: delta = 86400 - ctsts()
     # completion = response.parse()
     # generated_text = completion.choices[0].message.content
-    # # mark time of first request
-    # if minute_requests == 0:
-    #     first_request_time = time.time()
-    # # calculate time since first request
-    # minute_delta = time.time() - first_request_time
-    # # count number of requests
     # minute_requests += 1
     # daily_requests += 1
 
