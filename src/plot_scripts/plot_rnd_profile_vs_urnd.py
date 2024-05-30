@@ -140,7 +140,7 @@ plt.show()
 # plt.legend(title="Faced strategies", bbox_to_anchor=(1, 0.75))
 # plt.tight_layout()
 #
-# # out_file_path = OUT_BASE_PATH / "behavioral_profiles" / "plots" / f"Llama2-vs-URND_test"  # TODO
+# # out_file_path = OUT_BASE_PATH / "behavioral_profiles" / "plots" / f"Llama2-vs-URND_test"
 # # plt.savefig(out_file_path.with_suffix('.png'))
 # # plt.savefig(out_file_path.with_suffix('.svg'))
 # plt.show()

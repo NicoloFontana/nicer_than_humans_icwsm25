@@ -91,6 +91,7 @@ class GameHistory:
         return iteration_history
 
     def save_to_file(self, out_dir, infix=None):
+        ### COPYING THE ENTIRE DICTIONARY TO SOLVE FIXED-SIZED INTEGERS ISSUE ###
         # From https://stackoverflow.com/questions/38155039/what-is-the-difference-between-native-int-type-and-the-numpy-int-types
         # " [...] python uses fixed-sized integers behind-the-scenes when the number is small enough,
         # only switching to the slower, flexible-sized integers when the number gets too large."
@@ -109,7 +110,6 @@ class GameHistory:
         with open(out_file_path, "w") as out_file:
             json_out = json.dumps(history, indent=4)
             out_file.write(json_out)
-            # log.info("History saved.")
 
     def load_from_file(self, file_path):
         with open(file_path, "r") as history_file:

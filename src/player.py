@@ -1,6 +1,6 @@
 import numbers
 
-from src.player_memory import PlayerMemory
+# from src.player_memory import PlayerMemory
 from src.strategies.strategy import Strategy
 
 
@@ -17,8 +17,6 @@ class Player:
     def __init__(self, name: str):
         self.name = name
         self.total_payoff = 0
-        # Store the memory of the faced opponents and the relative actions taken
-        self.memory = PlayerMemory()  # TODO: useless for now
         self.strategy = None
         self.strategy_args = None
 
@@ -41,30 +39,30 @@ class Player:
         """
         return self.total_payoff
 
-    def set_memory(self, memory: PlayerMemory):
-        """
-        Set the memory of the player
-        :param memory: memory of the faced opponents and the relative actions taken
-        """
-        if not isinstance(memory, PlayerMemory):
-            raise TypeError(f"The memory must be a PlayerMemory object")
-        self.memory.append(memory)
-
-    def update_memory(self, new_memory: PlayerMemory):
-        """
-        Update the memory of the player by concatenating the actions played in the last iterations by every opponent
-        :param new_memory: the new memory to be added to the player's memory
-        """
-        if not isinstance(new_memory, PlayerMemory):
-            raise TypeError(f"The memory to be added must be a PlayerMemory object")
-        self.memory.append(new_memory)
-
-    def get_memory(self) -> PlayerMemory:
-        """
-        Get the memory of the player
-        :return: the memory of the player
-        """
-        return self.memory
+    # def set_memory(self, memory: PlayerMemory):
+    #     """
+    #     Set the memory of the player
+    #     :param memory: memory of the faced opponents and the relative actions taken
+    #     """
+    #     if not isinstance(memory, PlayerMemory):
+    #         raise TypeError(f"The memory must be a PlayerMemory object")
+    #     self.memory.append(memory)
+    #
+    # def update_memory(self, new_memory: PlayerMemory):
+    #     """
+    #     Update the memory of the player by concatenating the actions played in the last iterations by every opponent
+    #     :param new_memory: the new memory to be added to the player's memory
+    #     """
+    #     if not isinstance(new_memory, PlayerMemory):
+    #         raise TypeError(f"The memory to be added must be a PlayerMemory object")
+    #     self.memory.append(new_memory)
+    #
+    # def get_memory(self) -> PlayerMemory:
+    #     """
+    #     Get the memory of the player
+    #     :return: the memory of the player
+    #     """
+    #     return self.memory
 
     def get_strategy(self) -> Strategy:
         """
@@ -80,6 +78,7 @@ class Player:
         """
         if not isinstance(strategy, Strategy):
             raise TypeError(f"The strategy must be a Strategy object")
+        strategy.player_name = self.name
         self.strategy = strategy
         self.strategy_args = strategy_args
 
@@ -95,7 +94,7 @@ class Player:
         return None
 
     def __eq__(self, other):
-        return self.name == other.name and self.total_payoff == other.total_payoff and self.memory == other.memory
+        return self.name == other.name and self.total_payoff == other.total_payoff# and self.memory == other.memory
 
     def __str__(self):
         return f"Player {self.name}\ntotal_payoff: {self.total_payoff}\n"

@@ -67,7 +67,7 @@ class RuleChecker(Checker):
         llm_answer = set(self.get_answer_from_llm(prompt, label, need_str=False))
         self.check_answer(llm_answer, correct_answer, label)
 
-    def check_payoff_of_combo(self, primary_action, secondary_action, payoff_function, is_inverse=False, question_idx=None):
+    def check_payoff_of_combo(self, primary_action, secondary_action, payoff_function, question_idx, is_inverse=False):
         # Question 3: "Which is your payoff if you play {} and your opponent plays {}?"
         # Question 4: "Which is your opponent's payoff if he plays {} and you play {}?"
         # Question 5: "Which is your opponent's payoff if you play {} and he plays {}?"
@@ -83,7 +83,7 @@ class RuleChecker(Checker):
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
         self.check_answer(llm_answer, correct_answer, label)
 
-    def check_exists_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
+    def check_exists_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx):
         # Question 5: "Does exist a combination of actions that gives you a payoff of {} in a single round?"
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
@@ -96,7 +96,7 @@ class RuleChecker(Checker):
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), {"Yes", "No"})
         self.check_answer(llm_answer, correct_answer, label)
 
-    def check_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx=None):
+    def check_combo_for_payoff(self, action_space, payoff_function, given_payoff, question_idx):
         # Question 6: "Which is a combination of actions that gives you a payoff of {}?"
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
@@ -121,7 +121,7 @@ class RuleChecker(Checker):
             llm_answer = self.get_answer_from_llm(prompt, label, need_str=False)
         self.check_answer(llm_answer, correct_answer, label)
 
-    def ask_questions(self, game, player_name="", history_window_size=None):
+    def ask_checker_questions(self, game, player_name="", history_window_size=None):
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
         opponent_name = ""
@@ -147,13 +147,14 @@ class RuleChecker(Checker):
                 self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, question_idx=question_idx)
                 question_idx = 4
                 self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, is_inverse=True, question_idx=question_idx)
-        # for payoff in {0, 1, 3, 5}:
-        #     question_idx = 5
-        #     self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-        #     question_idx = 6
-        #     self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-        # for payoff in range(0, 6):
-        #     question_idx = 7
-        #     self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-        #     question_idx = 8
-        #     self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        ## REMOVE ###
+        for payoff in {0, 1, 3, 5}:
+            question_idx = 5
+            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+            question_idx = 6
+            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        for payoff in range(0, 6):
+            question_idx = 7
+            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+            question_idx = 8
+            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)

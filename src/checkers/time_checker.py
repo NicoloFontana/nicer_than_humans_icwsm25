@@ -22,7 +22,7 @@ class TimeChecker(Checker):
         ]
         super().__init__("time_checker", questions, questions_labels)
 
-    def check_current_round(self, current_round, question_idx, weight=1.0):
+    def check_current_round(self, current_round, question_idx):
         # Question 0: "Which is the current round of the game?"
         question = self.questions[question_idx]
         label = self.questions_labels[question_idx]
@@ -31,9 +31,9 @@ class TimeChecker(Checker):
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(current_round)
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        self.check_answer(llm_answer, correct_answer, label, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label)
 
-    def check_action_played(self, inspected_round, action_played, action_space, question_idx, weight=1.0):
+    def check_action_played(self, inspected_round, action_played, action_space, question_idx):
         # Question 1: "Which action did you play in round {}?"
         # Question 2: "Which action did your opponent play in round {}?"
         question = self.questions[question_idx]
@@ -44,9 +44,9 @@ class TimeChecker(Checker):
         correct_answer = to_nat_lang(action_played, string_of_string=False)
         nat_action_space = {to_nat_lang(action, string_of_string=False) for action in action_space}
         llm_answer = find_first_substring(self.get_answer_from_llm(prompt, label), nat_action_space)
-        self.check_answer(llm_answer, correct_answer, label, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label)
 
-    def check_points_collected(self, inspected_round, points_collected, question_idx, weight=1.0):
+    def check_points_collected(self, inspected_round, points_collected, question_idx):
         # Question 3: "How many points did you collect in round {}?"
         # Question 4: "How many points did your opponent collect in round {}?"
         question = self.questions[question_idx]
@@ -56,9 +56,9 @@ class TimeChecker(Checker):
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(points_collected)
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        self.check_answer(llm_answer, correct_answer, label, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label)
 
-    def ask_questions(self, game, player_name="", history_window_size=None):
+    def ask_checker_questions(self, game, player_name="", history_window_size=None):
         current_round = game.get_current_round()
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
@@ -79,7 +79,7 @@ class TimeChecker(Checker):
             self.check_current_round(current_round, question_idx=question_idx)
         question_idx = 1
         if current_round % 10 == 0:  # Added to reduce the frequency of FAQs
-            for i in range(1, current_round):
+            for i in range(max(1, current_round-history_window_size), current_round):
                 self.check_action_played(i, game.get_actions_by_iteration(i - 1)[player_name], game.get_action_space(), question_idx=question_idx)
             question_idx = 2
             for i in range(1, current_round):

@@ -2,8 +2,6 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, is_e
     history_prompt = ""
 
     ### v0.5 - Pass the action and payoff histories as 10-long-chunked lists
-    # TODO: check which is the min length to allow LLM to understand history without specifying number of each round
-    # TODO: check if changing the token representing the action is better
     own_coop = 0
     own_defect = 0
     opponent_coop = 0

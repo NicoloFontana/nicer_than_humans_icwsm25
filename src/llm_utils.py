@@ -9,10 +9,11 @@ HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
 
 # TODO 1/3: [START] check model, max_new_tokens, temperature, history_window_size
-# MODEL = "meta-llama/Llama-2-70b-chat-hf"
-# MODEL = "gpt-3.5-turbo"
-MODEL = "meta-llama/Meta-Llama-3-70B-Instruct"
-# MODEL = "CohereForAI/c4ai-command-r-plus"
+MODEL_NAME = "llama3"
+# MODEL_URL = "meta-llama/Llama-2-70b-chat-hf"
+# MODEL_URL = "gpt-3.5-turbo"
+MODEL_URL = "meta-llama/Meta-Llama-3-70B-Instruct"
+# MODEL_URL = "CohereForAI/c4ai-command-r-plus"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
 history_window_size = 10
@@ -23,70 +24,6 @@ daily_requests_limit = 10000
 minute_requests_limit = 3500
 
 OVERALL = "overall"
-
-
-def generate_text(prompt, inference_client, max_new_tokens=MAX_NEW_TOKENS, temperature=TEMPERATURE):
-    generated_text = ""
-
-    # TODO 2/3 --> generate_rule_prompt
-    ## HuggingFace API ###
-    generated = False
-    while not generated:
-        try:
-            generated_text = inference_client.text_generation(prompt, max_new_tokens=max_new_tokens,
-                                                              temperature=temperature)
-            generated = True
-        except Exception as e:
-            if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-                warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
-                time.sleep(2)
-            else:
-                warnings.warn(
-                    f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
-                generated_text = ""
-                generated = True
-
-    ### OpenAI API ###
-    ### HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
-    # global minute_requests
-    # global minute_requests_limit
-    # global daily_requests
-    # global daily_requests_limit
-    # if daily_requests > (daily_requests_limit - 100):
-    #     # avoid daily requests limit
-    #     current_time = time.time()
-    #     local_time = time.localtime(current_time)
-    #     next_midnight = time.struct_time((
-    #         local_time.tm_year, local_time.tm_mon, local_time.tm_mday + 1,
-    #         0, 0, 0, local_time.tm_wday, local_time.tm_yday + 1, local_time.tm_isdst
-    #     ))
-    #     next_midnight_seconds = time.mktime(next_midnight)
-    #     seconds_until_midnight = (next_midnight_seconds - current_time) + 60
-    #     log.info(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
-    #     print(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
-    #     time.sleep(seconds_until_midnight)
-    #     daily_requests = 0
-    #     minute_requests = 0
-    # if minute_requests > (minute_requests_limit - 100):
-    #     # avoid minute requests limit
-    #     log.info(f"Sleeping for 60 seconds to avoid minute limit.")
-    #     print(f"Sleeping for 60 seconds to avoid minute limit.")
-    #     time.sleep(60)
-    #     minute_requests = 0
-    # response = inference_client.chat.completions.with_raw_response.create(
-    #     model=MODEL,
-    #     messages=[
-    #         {"role": "user", "content": prompt}
-    #     ],
-    #     temperature=temperature,
-    #     max_tokens=max_new_tokens
-    # )
-    # completion = response.parse()
-    # generated_text = completion.choices[0].message.content
-    # minute_requests += 1
-    # daily_requests += 1
-
-    return generated_text
 
 # PROMPT UTILS
 

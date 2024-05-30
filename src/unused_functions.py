@@ -643,7 +643,6 @@ def plot_similarity_between_histories(timestamp, game_histories, main_player_nam
     plot_ts(average_similarity, f"LLM-{opponent_label}", 'b', out_file_path, mean_color='r', show=False, title=title, xlabel=xlabel, ylabel=ylabel, axhlines=axhlines, fill=True)
 
     # # Compute how much the average main player's actions are similar to the average opponent's actions
-    # # TODO: may it be interesting??
     # main_average_history = compute_average_vector(main_histories)
     # opponent_average_history = compute_average_vector(opponent_histories)
     # similarity_average = compute_similarity_between_single_histories(main_average_history, opponent_average_history)

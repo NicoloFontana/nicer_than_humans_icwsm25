@@ -31,7 +31,7 @@ class GTGame:
         self.current_round = 1
         self.is_ended = False
 
-    def play_round(self):
+    def play_game_round(self):
         self.current_round += 1
         if self.current_round > self.iterations:
             self.is_ended = True
@@ -60,6 +60,8 @@ class GTGame:
         return list(self.players.keys())
 
     def get_opponents_names(self, player_name):
+        if player_name is None or player_name not in self.players:
+            return []
         return [name for name in self.players.keys() if name != player_name]
 
     def get_player_by_name(self, name):
@@ -78,10 +80,14 @@ class GTGame:
         return self.current_round
 
     def get_actions_by_player(self, player_name: str):
+        if player_name is None or player_name not in self.players:
+            return []
         return self.history.get_actions_by_player(player_name)
 
     def get_actions_by_iteration(self, iteration: int):
         return self.history.get_actions_by_iteration(iteration)
 
     def get_total_payoff_by_player(self, player_name: str):
+        if player_name is None or player_name not in self.players:
+            return None
         return self.players[player_name].get_total_payoff()

@@ -17,7 +17,7 @@ start_time = time.mktime(dt_start_time.timetuple())
 timestamp = dt_start_time.strftime("%Y%m%d%H%M%S")
 OUT_BASE_PATH = Path("out")
 out_path = OUT_BASE_PATH / str(timestamp)
-os.makedirs(out_path, exist_ok=True)
+os.makedirs(out_path, exist_ok=True)  # TODO comment
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", filename=out_path / f"{timestamp}.log")
 log = logging.getLogger()
 

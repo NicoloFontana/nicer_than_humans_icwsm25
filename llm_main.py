@@ -7,11 +7,12 @@ from huggingface_hub import InferenceClient
 from openai import OpenAI
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import HF_API_TOKEN, MODEL, history_window_size, OPENAI_API_KEY
+from src.llm_utils import HF_API_TOKEN, MODEL_URL, history_window_size, OPENAI_API_KEY, MODEL_NAME
 from src.games.two_players_pd_utils import player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
 from src.games.two_players_pd import TwoPlayersPD
+from src.model_client import ModelClient
 from src.player import Player
 from src.strategies.blind_pd_strategies import RandomStrategy, AlwaysCooperate, AlwaysDefect, FixedSequence, UnfairRandom
 from src.strategies.hard_coded_pd_strategies import TitForTat
@@ -19,12 +20,12 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time, OUT_BASE_PATH
 
 # TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 100
-n_iterations = 100
+n_games = 2
+n_iterations = 2
 checkpoint = 0
 checkers = False
-msg = "Run Llama3 vs URNDx. x in [0.1,0.5]. 100 games, 100 iterations, window size 10"
-
+# msg = "Run Llama3 vs URNDx. x in [0.1,0.5]. 100 games, 100 iterations, window size 10"
+msg="test"
 if msg == "":
     log.info("Set a message.")
     sys.exit()
@@ -43,7 +44,7 @@ new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-for p in range(1, 6):  # TODO <--- b1
+for p in range(1, 2):  # TODO <--- b1
     coop_prob = p / 10
     urnd_str = f"URND{p:02}"
     print(f"URND{p:02}")
@@ -55,43 +56,39 @@ for p in range(1, 6):  # TODO <--- b1
             RuleChecker(),
             AggregationChecker(),
         ] if checkers else []
+
+        model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=HF_API_TOKEN, provider="huggingface")
+
+        # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
-        game.add_player(Player(player_1_))
-        game.add_player(Player(player_2_))
-
-        # TODO 2/3
-        ### HuggingFace client ###
-        client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-        client.headers["x-use-cache"] = "0"
-
-        ### OpenAI client ###
-        # client = OpenAI(api_key=OPENAI_API_KEY)
 
         # TODO 3/3: check the checkers and the opponent's strategy (and coop prob)
-        strat1 = OneVsOnePDLlmStrategy(game, player_1_, client, history_window_size=history_window_size, checkers=checkers)
+        llm_player = Player(player_1_)
+        llm_strategy = OneVsOnePDLlmStrategy(game, model_client, history_window_size=history_window_size, checkers=checkers)
+        llm_player.set_strategy(llm_strategy)
+        game.add_player(llm_player)
 
-        strat2 = UnfairRandom(coop_prob)  # TODO <--- a
-        for player in game.players.values():
-            if player.get_name() == player_1_:
-                player.set_strategy(strat1)
-            else:
-                player.set_strategy(strat2)
+        second_player = Player(player_2_)
+        second_player_strategy = UnfairRandom(coop_prob)  # TODO <--- a
+        second_player.set_strategy(second_player_strategy)
+        game.add_player(second_player)
+
         for iteration in range(n_iterations):
             curr_round = iteration + 1
             log.info(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
             print(f"Round {curr_round}") if n_games == 1 or curr_round % 10 == 0 else None
             if not game.is_ended:
-                game.play_round()
+                game.play_game_round()
                 out_dir = OUT_BASE_PATH / {timestamp} if checkpoint != 0 and curr_round % checkpoint == 0 else None
                 infix = f"{urnd_str}_{n_game + 1}_{curr_round}" if n_games > 1 else curr_round  # TODO <--- b2
                 # infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round
-                strat1.wrap_up_round(out_dir=out_dir, infix=infix)
+                llm_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
                 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
                 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
         out_dir = OUT_BASE_PATH / str(timestamp)
         infix = f"{urnd_str}_{n_game + 1}" if n_games > 1 else None  # TODO <--- b3 [END]
         # infix = f"{n_game + 1}" if n_games > 1 else None
-        strat1.wrap_up_round(out_dir=out_dir, infix=infix)
+        llm_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
         game.save_history(out_dir=out_dir, infix=infix)
 
         # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")

@@ -20,7 +20,7 @@ class AggregationChecker(Checker):
         ]
         super().__init__("aggregation_checker", questions, questions_labels)
 
-    def check_action_chosen(self, action, n_times, question_idx, weight=1.0):
+    def check_action_chosen(self, action, n_times, question_idx):
         # Question 0: "How many times did you choose {}?"
         # Question 1: "How many times did your opponent choose {}?"
         question = self.questions[question_idx]
@@ -30,9 +30,9 @@ class AggregationChecker(Checker):
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(n_times)
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        self.check_answer(llm_answer, correct_answer, label, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label)
 
-    def check_total_payoff(self, payoff, question_idx, weight=1.0):
+    def check_total_payoff(self, payoff, question_idx):
         # Question 2: "What is your current total payoff?"
         # Question 3: "What is your opponent's current total payoff?"
         question = self.questions[question_idx]
@@ -42,9 +42,9 @@ class AggregationChecker(Checker):
         prompt = generate_prompt_from_sub_prompts([self.system_prompt, json_prompt, question_prompt])
         correct_answer = str(payoff)
         llm_answer = find_first_int(self.get_answer_from_llm(prompt, label))
-        self.check_answer(llm_answer, correct_answer, label, weight=weight)
+        self.check_answer(llm_answer, correct_answer, label)
 
-    def ask_questions(self, game, player_name="", history_window_size=None):
+    def ask_checker_questions(self, game, player_name="", history_window_size=None):
         n_iterations = game.get_iterations()
         is_ended = game.is_ended
         opponent_name = ""
@@ -66,10 +66,11 @@ class AggregationChecker(Checker):
             question_idx = 0
             n_times = own_history.count(action)
             self.check_action_chosen(action, n_times, question_idx=question_idx)
-            question_idx = 1
-            n_times = opponent_history.count(action)
-            self.check_action_chosen(action, n_times, question_idx=question_idx)
-        question_idx = 2
-        self.check_total_payoff(own_payoff, question_idx=question_idx)
-        question_idx = 3
-        self.check_total_payoff(opponent_payoff, question_idx=question_idx)
+            # TODO de-comment
+        #     question_idx = 1
+        #     n_times = opponent_history.count(action)
+        #     self.check_action_chosen(action, n_times, question_idx=question_idx)
+        # question_idx = 2
+        # self.check_total_payoff(own_payoff, question_idx=question_idx)
+        # question_idx = 3
+        # self.check_total_payoff(opponent_payoff, question_idx=question_idx)

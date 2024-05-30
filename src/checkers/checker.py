@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import InferenceClient
 
 from src.utils import find_json_object, log, out_path
-from src.llm_utils import HF_API_TOKEN, MODEL, MAX_NEW_TOKENS, TEMPERATURE, generate_text
+from src.llm_utils import HF_API_TOKEN, MODEL_URL, MAX_NEW_TOKENS, TEMPERATURE
 
 
 class Checker:
@@ -51,7 +51,7 @@ class Checker:
         self.squared_diffs_sum = 0
         self.system_prompt = None
 
-        self.inference_client = None
+        self.model_client = None
 
     def get_name(self):
         return self.name
@@ -66,13 +66,8 @@ class Checker:
         :param need_str: requires the answer to be a string.
         :return: always a string if need_str is True, otherwise the type of the answer extracted from the JSON object.
         """
-        if self.inference_client is None:
-            warnings.warn("Inference client not set. Using default one.")
-            self.inference_client = InferenceClient(model=MODEL, token=HF_API_TOKEN)
-            self.inference_client.headers["x-use-cache"] = "0"
         self.questions_results[label][self.prompt_str].append(prompt)
-        generated_text = generate_text(prompt, self.inference_client, max_new_tokens=max_new_tokens,
-                                       temperature=temperature)
+        generated_text = self.model_client.generate_text(prompt, max_new_tokens=max_new_tokens, temperature=temperature)
         self.questions_results[label][self.generated_text_str].append(generated_text)
         json_object = find_json_object(generated_text)
         if json_object is not None:
@@ -88,14 +83,13 @@ class Checker:
             answer = str(answer)
         return answer
 
-    def check_answer(self, llm_answer, correct_answer, label, weight=1.0):
+    def check_answer(self, llm_answer, correct_answer, label):
         """
         Check if the LLM answer is correct and update the scores and checks accordingly.\n
         The correct answer can be a string, a set of strings or a list of strings.\n
         If the correct answer is a string, the LLM answer is correct if it is equal to it.\n
         If the correct answer is a set of strings, the LLM answer is correct if all its element are in the set and there are no extra ones.\n
         If the correct answer is a list of strings, the LLM answer is correct if all its elements are present in the same order as in the list.\n
-        :param weight: how much the answer should be weighted.
         :param llm_answer: answer from the LLM to be checked.
         :param correct_answer: correct answer.
         :param label: label to which the correct answer is related.
@@ -141,40 +135,41 @@ class Checker:
         self.questions_results[label][self.answer_str].append(
             {"correct_answer": str(correct_answer), "llm_answer": str(llm_answer), "is_correct": correct})
 
-        self.update_aggregates_for_question(label, int(correct), weight)
-        self.update_aggregates_for_checker(correct, weight)
+        self.update_aggregates_for_question(label, int(correct))
+        self.update_aggregates_for_checker(correct)
         return correct
 
-    def update_aggregates_for_question(self, label, answer, weight):
+    def update_aggregates_for_question(self, label, answer):
         # Compute weighted sample mean
-        self.questions_results[label][self.positives_str] += answer * weight
+        self.questions_results[label][self.positives_str] += answer
         positives = self.questions_results[label][self.positives_str]
-        self.questions_results[label][self.total_str] += weight
+        self.questions_results[label][self.total_str] += 1
         total = self.questions_results[label][self.total_str]
         sample_mean = positives / total if total > 0 else 0
         self.questions_results[label][self.sample_mean_str] = sample_mean
         # Compute weighted sample variance
-        self.questions_results[label][self.squared_diffs_sum_str] += ((answer - sample_mean) ** 2) * weight
+        self.questions_results[label][self.squared_diffs_sum_str] += ((answer - sample_mean) ** 2)
         squared_diffs_sum = self.questions_results[label][self.squared_diffs_sum_str]
         sample_variance = squared_diffs_sum / (total - 1) if total > 1 else 0
         self.questions_results[label][self.sample_variance_str] = sample_variance
 
-    def update_aggregates_for_checker(self, answer, weight):
+    def update_aggregates_for_checker(self, answer):
         # Compute weighted sample mean for the checker
-        self.positives += answer * weight
-        self.total += weight
+        self.positives += answer
+        self.total += 1
         self.sample_mean = self.positives / self.total if self.total > 0 else 0
         # Compute the weighted sample variance for the checker
-        self.squared_diffs_sum += ((answer - self.sample_mean) ** 2) * weight
+        self.squared_diffs_sum += ((answer - self.sample_mean) ** 2)
         self.sample_variance = self.squared_diffs_sum / (self.total - 1) if self.total > 1 else 0
 
-    def set_inference_client(self, inference_client):
-        self.inference_client = inference_client
+    def set_model_client(self, model_client):
+        self.model_client = model_client
 
-    def ask_questions(self, game):
+    def ask_checker_questions(self, game):
         raise NotImplementedError
 
     def save_results(self, out_dir, infix=None):
+        # TODO save only results, no aggregates.
         results = {self.name: {
             self.checker_str: self.name,
             self.question_str: self.name,
@@ -223,9 +218,9 @@ class Checker:
         out_dir = out_dir / self.name / "complete_answers"
         out_dir.mkdir(exist_ok=True, parents=True)
         if infix is None:
-            tmp_out_file_name = out_dir / (self.name + "_complete_answers.json")
+            tmp_out_file_name = out_dir / "complete_answers.json"
         else:
-            tmp_out_file_name = out_dir / (self.name + f"_complete_answers_{infix}.json")
+            tmp_out_file_name = out_dir / f"complete_answers_{infix}.json"
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
             log.info(f"{self.name} answers saved.")
