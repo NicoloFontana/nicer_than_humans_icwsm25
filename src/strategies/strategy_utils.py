@@ -14,11 +14,11 @@ main_blind_strategies = {
     },
     "always_cooperate": {
         "strategy": AlwaysCooperate,
-        "label": "ALLC",
+        "label": "AC",
     },
     "always_defect": {
         "strategy": AlwaysDefect,
-        "label": "ALLD",
+        "label": "AD",
     },
 }
 main_hard_coded_strategies = {
@@ -52,6 +52,14 @@ def get_strategies_by_names(strategies_names):
     return ret
 
 
+def get_strategy_instance_by_name(strategy_name):
+    strategy_dict = get_strategies_by_names(strategy_name)
+    if len(strategy_dict) == 1:
+        return list(strategy_dict.values())[0]["strategy"]()
+    else:
+        return None
+
+
 def get_strategies_by_labels(strategies_labels):
     if isinstance(strategies_labels, str):
         strategies_labels = [strategies_labels]
@@ -64,6 +72,27 @@ def get_strategies_by_labels(strategies_labels):
     return ret
 
 
+def get_strategy_instance_by_label(strategy_label):
+    strategy_dict = get_strategies_by_labels(strategy_label)
+    if len(strategy_dict) == 1:
+        return list(strategy_dict.values())[0]["strategy"]()
+    else:
+        return None
+
+
+def get_strategy_instance(strategy_str):
+    strategy_instance = get_strategy_instance_by_name(strategy_str)
+    if strategy_instance is None:
+        strategy_instance = get_strategy_instance_by_label(strategy_str)
+    if strategy_instance is None:
+        raise ValueError(f"Invalid strategy: {strategy_str}.\n"
+                         f"Provide a strategy name among these:\n"
+                         f"{get_strategies_names()}\n"
+                         f"or a label among these:\n"
+                         f"{get_strategies_labels()}")
+    return strategy_instance
+
+
 def get_strategies():
     main_strategies = {}
     for strategy_name in main_blind_strategies:
@@ -71,6 +100,16 @@ def get_strategies():
     for strategy_name in main_hard_coded_strategies:
         main_strategies[strategy_name] = main_hard_coded_strategies[strategy_name]
     return main_strategies
+
+
+def get_strategies_labels():
+    strategies = get_strategies()
+    return [strategies[sk]["label"] for sk in strategies.keys()]
+
+
+def get_strategies_names():
+    strategies = get_strategies()
+    return [sk for sk in strategies.keys()]
 
 
 def compute_behavioral_profile_(game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):

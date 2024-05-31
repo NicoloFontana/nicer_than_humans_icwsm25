@@ -1,9 +1,6 @@
-import time
-import warnings
 from pathlib import Path
 
-from src.games.two_players_pd_utils import to_nat_lang, two_players_pd_payoff, player_1_, player_2_
-from src.utils import log
+from src.games.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
 
 HF_API_TOKEN = "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"
 OPENAI_API_KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"
@@ -109,7 +106,7 @@ def save_prompt(version, description=None):  # TODO parametrize
     custom_prompt = ('Remember to use only the following JSON format: {"action": <ACTION_of_A>}\n'  # , "reason": <YOUR_REASON>}\n'
                      f'Answer saying which action player {player_1_} should play.')
     with open(out_path / "prompt.txt", "w") as f:
-        f.write(generate_prompt({1, 0}, two_players_pd_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
+        f.write(generate_prompt({1, 0}, two_players_pd_axelrod_payoff, 100, [1, 0, 1, 0, 1], [0, 1, 0, 1, 0], custom_prompt))
     with open(out_path / "description.txt", "w") as f:
         f.write(description)
 

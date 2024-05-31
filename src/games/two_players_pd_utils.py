@@ -1,7 +1,7 @@
 import warnings
 
 from src.games.game_history import GameHistory
-from src.utils import OUT_BASE_PATH, extract_infixes, extract_infixes_
+from src.utils import extract_infixes_
 
 action_0_ = "Defect"
 action_1_ = "Cooperate"
@@ -29,7 +29,21 @@ def from_nat_lang(action):
     return 0
 
 
-def two_players_pd_payoff(own_action: int, other_action: int) -> int:
+def extract_histories_from_files(out_dir, file_name=None, numerical_infixes=None, max_infix=None):
+    game_histories = []
+    if file_name is None:
+        file_name = "game_history"
+    if numerical_infixes is None:
+        numerical_infixes = extract_infixes_(out_dir, file_name=file_name, max_infix=max_infix)
+    for infix in numerical_infixes:
+        game_history = GameHistory()
+        file_path = out_dir / f"{file_name}_{infix}.json"
+        game_history.load_from_file(file_path)
+        game_histories.append(game_history)
+    return game_histories
+
+
+def two_players_pd_axelrod_payoff(own_action: int, other_action: int) -> int:
     """
     Default payoff function for the two-player version of the Prisoner's Dilemma game
     :param own_action: action of the player for which the payoff is computed
@@ -46,17 +60,3 @@ def two_players_pd_payoff(own_action: int, other_action: int) -> int:
         return 1
     else:
         raise ValueError("Invalid actions")
-
-
-def extract_histories_from_files(out_dir, file_name=None, numerical_infixes=None, max_infix=None):
-    game_histories = []
-    if file_name is None:
-        file_name = "game_history"
-    if numerical_infixes is None:
-        numerical_infixes = extract_infixes_(out_dir, file_name=file_name, max_infix=max_infix)
-    for infix in numerical_infixes:
-        game_history = GameHistory()
-        file_path = out_dir / f"{file_name}_{infix}.json"
-        game_history.load_from_file(file_path)
-        game_histories.append(game_history)
-    return game_histories

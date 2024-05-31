@@ -1,9 +1,14 @@
+import datetime as dt
+import time
 import warnings
 
+from src.checkers.checkers_utils import get_checkers_by_names
 from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import two_players_pd_payoff
+from src.games.two_players_pd_utils import player_1_, player_2_, two_players_pd_axelrod_payoff
+from src.model_client import ModelClient
 from src.player import Player
-# from src.player_memory import PlayerMemory
+from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
+from src.strategies.strategy_utils import get_strategy_instance
 
 
 class TwoPlayersPD(GTGame):
@@ -17,7 +22,7 @@ class TwoPlayersPD(GTGame):
             players[player_one.get_name()] = player_one
         if player_two is not None:
             players[player_two.get_name()] = player_two
-        super().__init__(players, iterations, action_space={1, 0}, payoff_function=two_players_pd_payoff)
+        super().__init__(players, iterations, action_space={1, 0}, payoff_function=two_players_pd_axelrod_payoff)
 
     def play_game_round(self):#, memories=None):
         player_one = self.players[list(self.players)[0]]
@@ -58,3 +63,64 @@ class TwoPlayersPD(GTGame):
                 return name
         warnings.warn(f"The player {player_name} is not present in the game")
         return None
+
+
+def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None, ask_questions=False):
+    if checkpoint == 0:
+        checkpoint = n_iterations + 1
+    if isinstance(first_strategy_id, ModelClient):
+        first_strategy_name = first_strategy_id.model_name
+    else:
+        first_strategy_name = first_strategy_id
+    if isinstance(second_strategy_id, ModelClient):
+        second_strategy_name = second_strategy_id.model_name
+    else:
+        second_strategy_name = second_strategy_id
+    dt_start_time = dt.datetime.now()
+    start_time = time.mktime(dt_start_time.timetuple())
+    out_dir.mkdir(parents=True, exist_ok=True)
+    first_player_name = player_1_
+    second_player_name = player_2_
+    if run_description is None:
+        run_description = f"Running {first_strategy_name} as '{first_player_name}' against {second_strategy_name} as '{second_player_name}' in {n_games} games of {n_iterations} iterations each with {history_window_size} window size."
+        if ask_questions:
+            run_description += " Asking comprehension questions."
+    print(run_description)
+    for n_game in range(n_games):
+        current_game = n_game + 1
+        print(f"Game {current_game}")
+        checkers_names = ["time", "rule", "aggregation"] if ask_questions else []
+        checkers = get_checkers_by_names(checkers_names)
+        # Set up the game
+        game = TwoPlayersPD(iterations=n_iterations)
+
+        first_player = Player(first_player_name)
+
+        if isinstance(first_strategy_id, ModelClient):
+            first_player_strategy = OneVsOnePDLlmStrategy(game, first_strategy_id, history_window_size=history_window_size, checkers=checkers)
+        else:
+            first_player_strategy = get_strategy_instance(first_strategy_id)
+        first_player.set_strategy(first_player_strategy)
+        game.add_player(first_player)
+
+        second_player = Player(second_player_name)
+        if isinstance(second_strategy_id, ModelClient):
+            second_player_strategy = OneVsOnePDLlmStrategy(game, second_strategy_id, history_window_size=history_window_size, checkers=checkers)
+        else:
+            second_player_strategy = get_strategy_instance(second_strategy_id)
+        second_player.set_strategy(second_player_strategy)
+        game.add_player(second_player)
+
+        for iteration in range(n_iterations):
+            current_round = iteration + 1
+            print(f"Round {current_round}") if current_round % checkpoint == 0 else None
+            if not game.is_ended:
+                game.play_game_round()
+                checkpoint_dir = out_dir if current_round % checkpoint == 0 else None
+                infix = f"{current_game}_{current_round}"
+                first_player_strategy.wrap_up_round(out_dir=checkpoint_dir, infix=infix)
+                print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if checkpoint_dir is not None else None
+        infix = f"{current_game}"
+        first_player_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
+        game.save_history(out_dir=out_dir, infix=infix)
+        print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
