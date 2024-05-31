@@ -7,7 +7,7 @@ from huggingface_hub import InferenceClient
 from openai import OpenAI
 
 from src.checkers.aggregation_checker import AggregationChecker
-from src.llm_utils import HF_API_TOKEN, MODEL_URL, history_window_size, OPENAI_API_KEY, MODEL_NAME
+from src.llm_utils import HF_API_TOKEN, MODEL_URL, history_window_size, OPENAI_API_KEY, MODEL_NAME, PROVIDER
 from src.games.two_players_pd_utils import player_1_, player_2_
 from src.checkers.rule_checker import RuleChecker
 from src.checkers.time_checker import TimeChecker
@@ -20,34 +20,35 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, dt_start_time, OUT_BASE_PATH
 
 # TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 2
-n_iterations = 2
+n_games = 100
+n_iterations = 100
 checkpoint = 0
 checkers = False
-# msg = "Run Llama3 vs URNDx. x in [0.1,0.5]. 100 games, 100 iterations, window size 10"
-msg="test"
+msg = "Run Llama3 vs URNDx. x in [0.6,1.0]. 100 games, 100 iterations, window size 10"
+
 if msg == "":
     log.info("Set a message.")
     sys.exit()
 log.info(msg)
 print(msg)
 
-# log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-# print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-#
+log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
 # Sleeping routine
-# log.info("Going to sleep")
-# print("Going to sleep")
-# time.sleep(20000)
+log.info("Going to sleep")
+print("Going to sleep")
+time.sleep(72000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-for p in range(1, 2):  # TODO <--- b1
+for p in range(6, 11):  # TODO <--- b1
     coop_prob = p / 10
     urnd_str = f"URND{p:02}"
     print(f"URND{p:02}")
+    log.info(f"URND{p:02}")
     for n_game in range(n_games):
         log.info(f"Game {n_game + 1}") if n_games > 1 else None
         print(f"Game {n_game + 1}") if n_games > 1 else None
@@ -57,7 +58,7 @@ for p in range(1, 2):  # TODO <--- b1
             AggregationChecker(),
         ] if checkers else []
 
-        model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=HF_API_TOKEN, provider="huggingface")
+        model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=OPENAI_API_KEY, provider=PROVIDER)
 
         # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
