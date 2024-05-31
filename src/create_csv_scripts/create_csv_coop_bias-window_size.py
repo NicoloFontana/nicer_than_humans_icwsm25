@@ -37,9 +37,9 @@ csv_dir_path.mkdir(parents=True, exist_ok=True)
 csv_file = []
 for timestamp in runs.keys():
     window_size = runs[timestamp]
-    game_histories = extract_histories_from_files(timestamp)
+    game_histories = extract_histories_from_files(Path("../../") / OUT_BASE_PATH / str(timestamp) / "game_histories")
     main_histories = [game_history.get_actions_by_player(player_1_) for game_history in game_histories]
-    mean_main_histories = [sum(main_history[:-10]) / len(main_history[:-10]) for main_history in main_histories]
+    mean_main_histories = [sum(main_history[-10:]) / len(main_history[-10:]) for main_history in main_histories]
     ci = st.norm.interval(confidence=confidence, loc=np.mean(mean_main_histories), scale=st.sem(mean_main_histories))
     mean = sum(mean_main_histories) / len(mean_main_histories)
     element = {
@@ -50,7 +50,7 @@ for timestamp in runs.keys():
     }
     csv_file.append(element)
     df = pd.DataFrame(csv_file)
-    df.to_csv(csv_dir_path / f"llama2_coop_bias_per_window_size.csv")
+    df.to_csv(csv_dir_path / f"llama2_coop_bias_per_window_size_fixed.csv")
 
 
 from src.utils import shutdown_run
