@@ -3,7 +3,7 @@ from scipy.optimize import minimize
 
 from src.games.gt_game import GTGame
 from src.player import Player
-from src.strategies.strategy_utils import main_hard_coded_strategies, main_blind_strategies
+from src.strategies.strategy_utils import main_hard_coded_strategies, main_blind_strategies, get_strategies_by_labels
 
 """
 Implementation of the SFEM algorithm to compute the behavioral profile of a player against a set of strategies.
@@ -32,21 +32,27 @@ def constraint(x):
     return x[1:].sum() - 1
 
 
+def compute_sfem_from_labels(game_histories, strategies_labels, main_player_name):
+    strategies = get_strategies_by_labels(strategies_labels)
+    scores, labels = compute_sfem(game_histories, strategies, main_player_name)
+    return scores
+
+
 def compute_sfem(game_histories, strategies, main_player_name):
     n_games = len(game_histories)
     opponent_name = game_histories[0].get_opponents_names(main_player_name)[0]
     game = GTGame(players={main_player_name: Player(main_player_name), opponent_name: Player(opponent_name)})
 
-    strategies_names = []
+    strategies_labels = []
     strategies_instances = []
     for strategy_name in strategies.keys():
         if strategy_name in main_hard_coded_strategies:
-            strategies_names.append(main_hard_coded_strategies[strategy_name]["label"])
-            strategies_instances.append(main_hard_coded_strategies[strategy_name]["strategy"](game, None))
+            strategies_labels.append(main_hard_coded_strategies[strategy_name]["label"])
+            strategies_instances.append(main_hard_coded_strategies[strategy_name]["strategy"](game, main_player_name))
         elif strategy_name == "unfair_random":
             continue
         else:
-            strategies_names.append(strategies[strategy_name]["label"])
+            strategies_labels.append(strategies[strategy_name]["label"])
             strategies_instances.append(strategies[strategy_name]["strategy"]())
     num_strategies = len(strategies_instances)
 
@@ -97,4 +103,4 @@ def compute_sfem(game_histories, strategies, main_player_name):
         sfem_scores += bestX[1:]
 
     sfem_scores = sfem_scores / n_games
-    return sfem_scores, strategies_names
+    return sfem_scores, strategies_labels

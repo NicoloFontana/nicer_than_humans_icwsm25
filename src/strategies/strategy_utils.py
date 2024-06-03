@@ -52,10 +52,13 @@ def get_strategies_by_names(strategies_names):
     return ret
 
 
-def get_strategy_instance_by_name(strategy_name):
+def get_strategy_instance_by_name(strategy_name, args=None):
     strategy_dict = get_strategies_by_names(strategy_name)
     if len(strategy_dict) == 1:
-        return list(strategy_dict.values())[0]["strategy"]()
+        strategy_dict_element = list(strategy_dict.values())[0]
+        if strategy_dict_element["label"] == "URND":
+            return strategy_dict_element["strategy"](args)
+        return strategy_dict_element["strategy"]()
     else:
         return None
 
@@ -72,18 +75,21 @@ def get_strategies_by_labels(strategies_labels):
     return ret
 
 
-def get_strategy_instance_by_label(strategy_label):
+def get_strategy_instance_by_label(strategy_label, args=None):
     strategy_dict = get_strategies_by_labels(strategy_label)
     if len(strategy_dict) == 1:
-        return list(strategy_dict.values())[0]["strategy"]()
+        strategy_dict_element = list(strategy_dict.values())[0]
+        if strategy_dict_element["label"] == "URND":
+            return strategy_dict_element["strategy"](args)
+        return strategy_dict_element["strategy"]()
     else:
         return None
 
 
-def get_strategy_instance(strategy_str):
-    strategy_instance = get_strategy_instance_by_name(strategy_str)
+def get_strategy_instance(strategy_str, args=None):
+    strategy_instance = get_strategy_instance_by_name(strategy_str, args=args)
     if strategy_instance is None:
-        strategy_instance = get_strategy_instance_by_label(strategy_str)
+        strategy_instance = get_strategy_instance_by_label(strategy_str, args=args)
     if strategy_instance is None:
         raise ValueError(f"Invalid strategy: {strategy_str}.\n"
                          f"Provide a strategy name among these:\n"
@@ -112,9 +118,9 @@ def get_strategies_names():
     return [sk for sk in strategies.keys()]
 
 
-def compute_behavioral_profile_(game_histories, behavioral_features, main_player_name=player_1_, opponent_name=player_2_):
+def compute_behavioral_profile(game_histories, behavioral_dimensions_names, main_player_name=player_1_, opponent_name=player_2_):
     profile = BehavioralProfile(main_player_name, opponent_name)
-    profile.add_dimensions(behavioral_features)
+    profile.add_dimensions(behavioral_dimensions_names)
     for game_history in game_histories:
         main_history = game_history.get_actions_by_player(main_player_name)
         opponent_history = game_history.get_actions_by_player(opponent_name)

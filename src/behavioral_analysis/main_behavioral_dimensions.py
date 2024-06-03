@@ -23,99 +23,6 @@ class Niceness(BehavioralDimension):
         self.update_aggregates()
         return is_nice
 
-#
-# class Forgiveness1(BehavioralDimension):
-#     # 1-\frac{\sum(\frac{\mathsf{\#waited\_rounds}}{\mathsf{\#remaining\_rounds}})}{\mathsf{\#opponent\_defections}}
-#     def __init__(self):
-#         super().__init__("forgiveness1")
-#         self.values = []
-#         self.mean = None
-#         self.variance = None
-#         self.std_dev = None
-#
-#     def compute_feature(self, main_history: list, opponent_history: list) -> float:
-#         n = len(main_history)
-#         total_unforgiveness = 0
-#         opponent_defection = 0  # for each opponent's defection, there is a chance to forgive
-#         for i in range(n - 1):
-#             if opponent_history[i] == 0:  # opponent's defection
-#                 opponent_defection += 1
-#                 start = i + 1
-#                 forgiving_round = -1
-#                 for j in range(start, n):
-#                     if main_history[j] == 1:  # main cooperates after opponent's defection
-#                         forgiving_round = j
-#                         break
-#                 if forgiving_round == -1:
-#                     forgiving_round = n
-#                 total_unforgiveness += (forgiving_round - start) / (n - start) if n > start else 0  # ratio between waited rounds to cooperate and remaining rounds
-#                 # 0 if immediate cooperation, 1 if no cooperation
-#         relative_unforgiveness = total_unforgiveness / opponent_defection if opponent_defection > 0 else 0  # ratio between total unforgiveness and occasions to forgive
-#         # 0 if always forgives immediately, 1 if never forgives
-#         forgiveness = 1 - relative_unforgiveness
-#         self.values.append(forgiveness)
-#         self.update_aggregates()
-#         return forgiveness
-#
-#
-# class Forgiveness2(BehavioralDimension):
-#     # 1-\frac{\sum{\mathsf{\#waited\_rounds}}}{\sum{\mathsf{\#remaining\_rounds}}}
-#     def __init__(self):
-#         super().__init__("forgiveness2")
-#         self.values = []
-#         self.mean = None
-#         self.variance = None
-#         self.std_dev = None
-#
-#     def compute_feature(self, main_history: list, opponent_history: list) -> float:
-#         n = len(main_history)
-#         waited = 0  # how many rounds the main player waited to forgive in total
-#         remaining = 0  # how many rounds the main player had to forgive in total
-#         for i in range(n - 1):
-#             if opponent_history[i] == 0:  # opponent's defection
-#                 start = i + 1
-#                 forgiving_round = -1
-#                 for j in range(start, n):
-#                     if main_history[j] == 1:  # main cooperates after opponent's defection
-#                         forgiving_round = j
-#                         break
-#                 if forgiving_round == -1:
-#                     forgiving_round = n
-#                 waited += forgiving_round - start
-#                 remaining += n - start
-#         unforgiveness = waited / remaining if remaining > 0 else 0  # ratio between waited rounds to forgive and remaining rounds
-#         # 0 if always forgives immediately, 1 if never forgives
-#         forgiveness = 1 - unforgiveness
-#         self.values.append(forgiveness)
-#         self.update_aggregates()
-#         return forgiveness
-#
-#
-# class Forgiveness3(BehavioralDimension):
-#     def __init__(self):
-#         super().__init__("forgiveness3")
-#         self.values = []
-#         self.mean = None
-#         self.variance = None
-#         self.std_dev = None
-#
-#     def compute_feature(self, main_history: list, opponent_history: list) -> float:
-#         n = len(main_history)
-#         opponent_defection = 0  # for each opponent's defection, there is a chance to forgive
-#         unforgiven = 0
-#         for i in range(n):
-#             if main_history[i] == 1:  # main cooperates
-#                 unforgiven = max(0, unforgiven - 1)
-#             if opponent_history[i] == 0 and i < n - 1:  # opponent's defection
-#                 opponent_defection += 1
-#                 unforgiven += 1
-#         unforgiveness = unforgiven / opponent_defection if opponent_defection > 0 else 0  # ratio between total unforgiveness and occasions to forgive
-#         # 0 if always forgives immediately, 1 if never forgives
-#         forgiveness = 1 - unforgiveness
-#         self.values.append(forgiveness)
-#         self.update_aggregates()
-#         return forgiveness
-
 
 class Forgiveness(BehavioralDimension):
     def __init__(self):
@@ -146,7 +53,7 @@ class Forgiveness(BehavioralDimension):
         return forgiveness
 
 
-class Provocability(BehavioralDimension):
+class Retaliation(BehavioralDimension):
     def __init__(self):
         super().__init__("provocability")
         self.values = []
@@ -171,23 +78,6 @@ class Provocability(BehavioralDimension):
         self.values.append(provocability)
         self.update_aggregates()
         return provocability
-
-
-class Cooperativeness(BehavioralDimension):
-    def __init__(self):
-        super().__init__("cooperativeness")
-        self.values = []
-        self.mean = None
-        self.variance = None
-        self.std_dev = None
-
-    def compute_dimension(self, main_history: list, opponent_history: list) -> float:
-        n = len(main_history)
-        cooperation = sum(main_history)
-        cooperativeness = cooperation / n if n > 0 else 0
-        self.values.append(cooperativeness)
-        self.update_aggregates()
-        return cooperativeness
 
 
 class Emulation(BehavioralDimension):
@@ -231,57 +121,28 @@ class Troublemaking(BehavioralDimension):
         return troublemaking
 
 
-class Naivety(BehavioralDimension):
-    def __init__(self):
-        super().__init__("naivety")
-        self.values = []
-        self.mean = None
-        self.variance = None
-        self.std_dev = None
-
-    def compute_dimension(self, main_history: list, opponent_history: list) -> float:
-        n = len(main_history)
-        uncalled_cooperation = 1 if main_history[0] == 1 else 0  # first cooperation was uncalled
-        occasions = 1
-        for i in range(n - 1):
-            if opponent_history[i] == 0:  # opponent's defection
-                occasions += 1
-                uncalled_cooperation += 1 if main_history[i + 1] == 1 else 0  # main's uncalled cooperation
-        naivety = uncalled_cooperation / occasions
-        self.values.append(naivety)
-        self.update_aggregates()
-        return naivety
-
-
-class Consistency(BehavioralDimension):
-    def __init__(self):
-        super().__init__("consistency")
-        self.values = []
-        self.mean = None
-        self.variance = None
-        self.std_dev = None
-
-    def compute_dimension(self, main_history: list, opponent_history: list) -> float:
-        n = len(main_history)
-        changes = 0
-        for i in range(n - 1):
-            changes += 1 if main_history[i] != main_history[i + 1] else 0
-        consistency = 1 - (changes / (n - 1)) if n > 1 else 1
-        self.values.append(consistency)
-        self.update_aggregates()
-        return consistency
-
-
 main_behavioral_dimensions = {
     "niceness": Niceness,
-    # "forgiveness1": Forgiveness1,
-    # "forgiveness2": Forgiveness2,
-    # "forgiveness3": Forgiveness3,
     "forgiveness": Forgiveness,
-    "provocability": Provocability,
-    "cooperativeness": Cooperativeness,
-    "emulation": Emulation,
+    "retaliation": Retaliation,
     "troublemaking": Troublemaking,
-    "naivety": Naivety,
-    "consistency": Consistency
+    "emulation": Emulation,
 }
+
+
+def dimensions_names_to_adjectives(dimensions_names):
+    if isinstance(dimensions_names, str):
+        dimensions_names = [dimensions_names]
+    adjectives = []
+    for dimension_name in dimensions_names:
+        if dimension_name == "niceness":
+            adjectives.append("nice")
+        elif dimension_name == "forgiveness":
+            adjectives.append("forgiving")
+        elif dimension_name == "retaliation":
+            adjectives.append("retaliatory")
+        elif dimension_name == "troublemaking":
+            adjectives.append("troublemaking")
+        elif dimension_name == "emulation":
+            adjectives.append("emulative")
+    return adjectives

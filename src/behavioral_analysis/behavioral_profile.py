@@ -10,9 +10,9 @@ class BehavioralProfile:
         self.n_games = None
         self.dimensions = {}
 
-    def add_dimensions(self, dimensions):
-        for dimension_name in dimensions.keys():
-            self.dimensions[dimension_name] = dimensions[dimension_name]()
+    def add_dimensions(self, dimensions_names):
+        for dimension_name in dimensions_names:
+            self.dimensions[dimension_name] = main_behavioral_dimensions[dimension_name]()
 
     def compute_dimensions(self, main_history, opponent_history):
         for dimension in self.dimensions.values():
