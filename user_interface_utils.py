@@ -37,7 +37,7 @@ max_p = 2  # TODO fix
 
 
 def evaluate_comprehension_questions(model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None):
-    out_dir = base_out_dir / model_client.model_name / comprehension_questions_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+    out_dir = base_out_dir / model_client.model_name / f"g{n_games}_i{n_iterations}_w{history_window_size}" / comprehension_questions_dir
     play_two_players_pd(out_dir, model_client, "RND", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=True)
 
@@ -88,7 +88,7 @@ def create_csv_comprehension_questions_results(out_dir, n_games):
 
 
 def plot_comprehension_questions_results(model_name, n_games, n_iterations, history_window_size):
-    out_dir = base_out_dir / model_name / comprehension_questions_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+    out_dir = base_out_dir / model_name / f"g{n_games}_i{n_iterations}_w{history_window_size}" / comprehension_questions_dir
     df_questions = pd.read_csv(out_dir / f"comprehension_questions_results.csv")
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
@@ -353,8 +353,8 @@ def create_csv_behavioral_profile_results(out_dir, model_name, n_games=2, n_iter
             "URND_alpha": alpha,
         }
         rnd_out_dir = urnd_out_dir / rnd_str
-        play_two_players_pd(rnd_out_dir, rnd_str, "URND", second_strategy_args=alpha, n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size,
-                            checkpoint=0, run_description=None, ask_questions=False)
+        play_two_players_pd(rnd_out_dir, rnd_str, "URND", second_strategy_args=alpha, n_games=100, n_iterations=n_iterations, history_window_size=history_window_size,
+                            checkpoint=0, run_description=None, ask_questions=False, verbose=False)
         game_histories_dir_path = rnd_out_dir / "game_histories"
         file_name = f"game_history"
         game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
@@ -414,12 +414,17 @@ def plot_sfem_results_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, histo
     colors = [c_blue1, c_orange1, c_green1]
     markers = ['o', 'x', '^']
     fig, ax = plt.subplots(1, 1, figsize=(5, 3))
+    others_already_set = False
     for strategy_label in sfem_strategies_labels:
         alpha = 1 if strategy_label in best_strategies else 0.7
         color = colors[best_strategies.index(strategy_label)] if strategy_label in best_strategies else c_gray1
         marker = markers[best_strategies.index(strategy_label)] if strategy_label in best_strategies else ','
+        label = strategy_label if strategy_label in best_strategies else None
+        if label is None and not others_already_set:
+            label = 'Others'
+            others_already_set = True
         ax.plot(df_sfem['URND_alpha'], df_sfem[f'{strategy_label}_score'], marker=marker, markersize=5,
-                c=color, zorder=4, alpha=alpha, label=strategy_label)
+                c=color, zorder=4, alpha=alpha, label=label)
 
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)

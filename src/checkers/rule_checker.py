@@ -148,13 +148,13 @@ class RuleChecker(Checker):
                 question_idx = 4
                 self.check_payoff_of_combo(primary_action, secondary_action, payoff_function, is_inverse=True, question_idx=question_idx)
         ## REMOVE ###
-        for payoff in {0, 1, 3, 5}:
-            question_idx = 5
-            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-            question_idx = 6
-            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-        for payoff in range(0, 6):
-            question_idx = 7
-            self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
-            question_idx = 8
-            self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        # for payoff in {0, 1, 3, 5}:
+        #     question_idx = 5
+        #     self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        #     question_idx = 6
+        #     self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        # for payoff in range(0, 6):
+        #     question_idx = 7
+        #     self.check_exists_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)
+        #     question_idx = 8
+        #     self.check_combo_for_payoff(action_space, payoff_function, payoff, question_idx=question_idx)

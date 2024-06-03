@@ -66,11 +66,10 @@ class AggregationChecker(Checker):
             question_idx = 0
             n_times = own_history.count(action)
             self.check_action_chosen(action, n_times, question_idx=question_idx)
-            # TODO de-comment
-        #     question_idx = 1
-        #     n_times = opponent_history.count(action)
-        #     self.check_action_chosen(action, n_times, question_idx=question_idx)
-        # question_idx = 2
-        # self.check_total_payoff(own_payoff, question_idx=question_idx)
-        # question_idx = 3
-        # self.check_total_payoff(opponent_payoff, question_idx=question_idx)
+            question_idx = 1
+            n_times = opponent_history.count(action)
+            self.check_action_chosen(action, n_times, question_idx=question_idx)
+        question_idx = 2
+        self.check_total_payoff(own_payoff, question_idx=question_idx)
+        question_idx = 3
+        self.check_total_payoff(opponent_payoff, question_idx=question_idx)

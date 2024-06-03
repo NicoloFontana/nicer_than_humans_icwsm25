@@ -24,7 +24,7 @@ class TwoPlayersPD(GTGame):
             players[player_two.get_name()] = player_two
         super().__init__(players, iterations, action_space={1, 0}, payoff_function=two_players_pd_axelrod_payoff)
 
-    def play_game_round(self):#, memories=None):
+    def play_game_round(self):  # , memories=None):
         player_one = self.players[list(self.players)[0]]
         player_two = self.players[list(self.players)[1]]
         # if memories is None:
@@ -65,7 +65,8 @@ class TwoPlayersPD(GTGame):
         return None
 
 
-def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_strategy_args=None, second_strategy_args=None, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None, ask_questions=False):
+def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_strategy_args=None, second_strategy_args=None, n_games=2, n_iterations=5, history_window_size=5,
+                        checkpoint=2, run_description=None, ask_questions=False, verbose=True):
     if checkpoint == 0:
         checkpoint = n_iterations + 1
     if isinstance(first_strategy_id, ModelClient):
@@ -88,7 +89,7 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
     print(run_description)
     for n_game in range(n_games):
         current_game = n_game + 1
-        print(f"Game {current_game}")
+        print(f"Game {current_game}") if verbose else None
         checkers_names = ["time", "rule", "aggregation"] if ask_questions else []
         checkers = get_checkers_by_names(checkers_names)
         # Set up the game
@@ -129,4 +130,4 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
         if isinstance(second_strategy_id, ModelClient):
             second_player_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
         game.save_history(out_dir=out_dir, infix=infix)
-        print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+        print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if verbose or n_game == n_games - 1 else None
