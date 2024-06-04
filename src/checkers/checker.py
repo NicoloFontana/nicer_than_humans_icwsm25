@@ -215,12 +215,35 @@ class Checker:
                     self.answer_str: self.questions_results[label][self.answer_str][idx],
                 }
         json_complete_answers = json.dumps(complete_answers, indent=4)
-        out_dir = out_dir / self.name / "complete_answers"
-        out_dir.mkdir(exist_ok=True, parents=True)
+        complete_answers_out_dir = out_dir / self.name / "complete_answers"
+        complete_answers_out_dir.mkdir(exist_ok=True, parents=True)
         if infix is None:
-            tmp_out_file_name = out_dir / "complete_answers.json"
+            tmp_out_file_name = complete_answers_out_dir / "complete_answers.json"
         else:
-            tmp_out_file_name = out_dir / f"complete_answers_{infix}.json"
+            tmp_out_file_name = complete_answers_out_dir / f"complete_answers_{infix}.json"
         with open(tmp_out_file_name, "w") as out_file:
             out_file.write(json_complete_answers)
-            log.info(f"{self.name} answers saved.")
+            log.info(f"{self.name} complete answers saved.")
+
+        light_complete_answers = {}
+        for label in complete_answers.keys():
+            light_single_complete_answer = {
+                "question": complete_answers[label][0][self.question_str],
+                "answers": []
+            }
+            # first_iteration = True
+            for iteration in complete_answers[label].keys():
+            #     if first_iteration:
+            #         light_single_complete_answer["question"] = complete_answers[label][][self.question_str]
+            #         first_iteration = False
+                light_single_complete_answer["answers"].append(complete_answers[label][iteration][self.answer_str]["is_correct"])
+            light_complete_answers[label] = light_single_complete_answer
+        light_answers_out_dir = out_dir / self.name / "light_answers"
+        light_answers_out_dir.mkdir(exist_ok=True, parents=True)
+        if infix is None:
+            light_complete_answers_file = light_answers_out_dir / "light_answers.json"
+        else:
+            light_complete_answers_file = light_answers_out_dir / f"light_answers_{infix}.json"
+        with open(light_complete_answers_file, "w") as light_complete_answers_file:
+            json.dump(light_complete_answers, light_complete_answers_file, indent=4)
+            log.info(f"Light answers of {self.name} saved.")

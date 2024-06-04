@@ -34,29 +34,33 @@ urnd_str = "URND{p:02}"
 rnd_str = "RND"
 confidence = 0.95
 
-max_p = 2  # TODO fix
+max_p = 10
 
 
-def evaluate_comprehension_questions(model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None):
-    out_dir = base_out_dir / model_client.model_name / f"g{n_games}_i{n_iterations}_w{history_window_size}" / comprehension_questions_dir
+def get_comprehension_questions_dir(model_name, n_games, n_iterations, history_window_size):
+    return base_out_dir / model_name / comprehension_questions_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+
+
+def evaluate_comprehension_questions(out_dir, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None):
     play_two_players_pd(out_dir, model_client, "RND", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=True)
-    return out_dir
 
 
-def create_csv_comprehension_questions_results(out_dir, n_games):
+def create_csv_comprehension_questions_results(out_dir, n_games, use_light_complete_answers=False):
     checkers_csv = []
     for checker_name in checkers_names:
         new_checker_name = old_to_new_checker_name(checker_name)
         data = {}
         for n_game in range(n_games):
-            checker_path = out_dir / f"{checker_name}_checker" / "complete_answers"
-            file_name = f"complete_answers_{n_game + 1}.json"
+            if use_light_complete_answers:
+                checker_path = out_dir / f"{checker_name}_checker" / "light_answers"
+                file_name = f"light_answers_{n_game + 1}.json"
+            else:
+                checker_path = out_dir / f"{checker_name}_checker" / "complete_answers"
+                file_name = f"complete_answers_{n_game + 1}.json"
             with open(checker_path / file_name, "r") as f:
                 complete_answers = json.load(f)
             for old_label in complete_answers.keys():
-                # if "combo" in old_label:
-                #     continue
                 new_label = old_to_new_label(old_label)
                 if new_label not in data.keys():
                     data[new_label] = {}
@@ -66,8 +70,11 @@ def create_csv_comprehension_questions_results(out_dir, n_games):
                     data[new_label]["mean"] = None
                     data[new_label]["lb"] = None
                     data[new_label]["ub"] = None
-                for idx in complete_answers[old_label].keys():
-                    data[new_label]["values"].append(complete_answers[old_label][idx]["answer"]["is_correct"])
+                if use_light_complete_answers:
+                    data[new_label]["values"] += complete_answers[old_label]["answers"]
+                else:
+                    for idx in complete_answers[old_label].keys():
+                        data[new_label]["values"].append(complete_answers[old_label][idx]["answer"]["is_correct"])
         for new_label in data.keys():
             data[new_label]["mean"] = np.mean(data[new_label]["values"])
             ci = st.norm.interval(confidence, loc=data[new_label]["mean"], scale=st.sem(data[new_label]["values"]))
@@ -87,8 +94,7 @@ def create_csv_comprehension_questions_results(out_dir, n_games):
     df.to_csv(out_dir / f"comprehension_questions_results.csv")
 
 
-def plot_comprehension_questions_results(model_name, n_games, n_iterations, history_window_size):
-    out_dir = base_out_dir / model_name / f"g{n_games}_i{n_iterations}_w{history_window_size}" / comprehension_questions_dir
+def plot_comprehension_questions_results(out_dir, model_name):
     df_questions = pd.read_csv(out_dir / f"comprehension_questions_results.csv")
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
@@ -101,7 +107,7 @@ def plot_comprehension_questions_results(model_name, n_games, n_iterations, hist
                 capsize=2, fmt='none', c=c_blue1)
 
     ax.set_xlabel('Comprehension questions', fontsize=24)
-    ax.set_ylabel('Response accuracy', fontsize=24)
+    ax.set_ylabel(f'{model_name} response accuracy', fontsize=24)
 
     x_labels = comprehension_questions_labels
     ax.set_ylim(-0.01, 1.1)
@@ -131,25 +137,24 @@ def plot_comprehension_questions_results(model_name, n_games, n_iterations, hist
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def get_model_window_size_effect_dir(model_name):
+def get_window_size_comparison_dir(model_name):
     return base_out_dir / model_name / window_size_effect_dir
 
 
 def get_window_size_effect_dir(model_name, n_games, n_iterations, history_window_size):
-    model_window_size_effect_dir = get_model_window_size_effect_dir(model_name)
+    model_window_size_effect_dir = get_window_size_comparison_dir(model_name)
     return model_window_size_effect_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
 
 
-def evaluate_window_size_effect(model_client, history_window_size, n_games=2, n_iterations=5, checkpoint=2, run_description=None):
-    out_dir = get_window_size_effect_dir(model_client.model_name, n_games, n_iterations, history_window_size)
+def evaluate_window_size_effect(out_dir, model_client, history_window_size, n_games=2, n_iterations=5, checkpoint=2, run_description=None):
     play_two_players_pd(out_dir, model_client, "AD", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=False)
-    return out_dir
 
 
-def create_csv_window_size_effect_results(out_dir, n_iterations, history_window_size):
+def create_csv_window_size_effect_results(out_dir, history_window_size):
     game_histories = extract_histories_from_files(out_dir / "game_histories", f"game_history")
     main_histories = [game_history.get_actions_by_player(player_1_) for game_history in game_histories]
+    n_iterations = len(main_histories[0])
     avg_main_history = compute_average_vector(main_histories)
     avg_ci_lbs, avg_ci_ubs = compute_confidence_interval_vectors(main_histories, confidence=confidence)
 
@@ -181,8 +186,7 @@ def create_csv_window_size_effect_results(out_dir, n_iterations, history_window_
     df.to_csv(out_dir / f"steady_state_cooperation.csv")
 
 
-def plot_window_size_effect_comparison(model_name, first_dir, first_window_size, second_dir, second_window_size, with_confidence_intervals=True):
-    out_dir = get_model_window_size_effect_dir(model_name)
+def plot_window_size_effect_comparison(out_dir, model_name, first_dir, first_window_size, second_dir, second_window_size, with_confidence_intervals=True):
     df_win1 = pd.read_csv(first_dir / "average_cooperation_per_round.csv")
     df_win2 = pd.read_csv(second_dir / "average_cooperation_per_round.csv")
 
@@ -197,7 +201,7 @@ def plot_window_size_effect_comparison(model_name, first_dir, first_window_size,
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1)
 
-    ax.set_ylabel('$p_{coop}$ vs. Always Defect', fontsize=18)
+    ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=18)
     ax.tick_params(axis='both', labelsize=14)
     ax.set_xlabel('Round', fontsize=18)
 
@@ -210,8 +214,7 @@ def plot_window_size_effect_comparison(model_name, first_dir, first_window_size,
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def plot_steady_state_cooperation_per_window_sizes(model_name, dirs, window_sizes):
-    out_dir = get_model_window_size_effect_dir(model_name)
+def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, dirs, window_sizes):
     csv_file = []
     for window_size in window_sizes:
         wdw_df = pd.read_csv(dirs[window_sizes.index(window_size)] / "steady_state_cooperation.csv")
@@ -232,6 +235,7 @@ def plot_steady_state_cooperation_per_window_sizes(model_name, dirs, window_size
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
     ax.set_xlim([0, 40])
     ax.tick_params(axis='both', labelsize=14)
+    ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=18)
     ax.set_xlabel('Window size', fontsize=18)
     ax.set_yticks([0, 0.2, 0.4, 0.6])
 
@@ -244,17 +248,12 @@ def plot_steady_state_cooperation_per_window_sizes(model_name, dirs, window_size
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def get_model_behavioral_analysis_dir(model_name):
-    return base_out_dir / model_name / behavioral_analysis_dir
-
-
 def get_behavioral_analysis_dir(model_name, n_games, n_iterations, history_window_size):
-    model_behavioral_analysis_dir = get_model_behavioral_analysis_dir(model_name)
-    return model_behavioral_analysis_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+    return base_out_dir / model_name / behavioral_analysis_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
 
 
-def compute_response_to_different_hostilities(model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None, already_run_against_ad=False):
-    out_dir = get_behavioral_analysis_dir(model_client.model_name, n_games, n_iterations, history_window_size)
+def compute_response_to_different_hostilities(out_dir, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None,
+                                              already_run_against_ad=False):
     if already_run_against_ad:
         initial_p = 1
         in_dir = get_window_size_effect_dir(model_client.model_name, n_games, n_iterations, history_window_size)
@@ -270,12 +269,8 @@ def compute_response_to_different_hostilities(model_client, n_games=2, n_iterati
                             checkpoint=checkpoint,
                             run_description=run_description, ask_questions=False)
 
-    create_csv_cooperation_probability_results(out_dir, n_iterations)
-    create_csv_sfem_results(out_dir)
-    create_csv_behavioral_profile_results(out_dir, model_client.model_name)
 
-
-def create_csv_cooperation_probability_results(out_dir, n_iterations):
+def create_csv_cooperation_probability_results(out_dir):
     csv_file = []
     for p in range(max_p + 1):
         alpha = p / 10
@@ -283,6 +278,7 @@ def create_csv_cooperation_probability_results(out_dir, n_iterations):
         game_histories_dir_path = urnd_out_dir / "game_histories"
         file_name = f"game_history"
         game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+        n_iterations = len(game_histories[0].get_actions_by_player(player_1_))
 
         main_history_ends = [game_history.get_actions_by_player(player_1_)[-min(n_iterations, 10):] for game_history in game_histories]
         mean_main_history_ends = [sum(main_history_end) / len(main_history_end) for main_history_end in main_history_ends]
@@ -321,7 +317,7 @@ def create_csv_sfem_results(out_dir):
     df.to_csv(out_dir / f"sfem_scores_vs_urnd_alpha.csv")
 
 
-def create_csv_behavioral_profile_results(out_dir, model_name, n_games=2, n_iterations=5, history_window_size=5):
+def create_csv_behavioral_profile_results(out_dir, model_name, already_profiled_rnd=False):
     model_csv_file = []
     rnd_csv_file = []
     for p in range(max_p + 1):
@@ -335,6 +331,7 @@ def create_csv_behavioral_profile_results(out_dir, model_name, n_games=2, n_iter
         game_histories_dir_path = urnd_out_dir / "game_histories"
         file_name = f"game_history"
         game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+        n_iterations = len(game_histories[0].get_actions_by_player(player_1_))
         history_main_name = player_1_
         history_opponent_name = player_2_
         profile = compute_behavioral_profile(game_histories, behavioral_dimensions_names, history_main_name, history_opponent_name)
@@ -349,38 +346,39 @@ def create_csv_behavioral_profile_results(out_dir, model_name, n_games=2, n_iter
             model_element[f"{behavioral_adjective}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else dimension.mean
         model_csv_file.append(model_element)
 
-        # Compute the behavioral profile for RND (as baseline of comparison)
-        rnd_element = {
-            "URND_alpha": alpha,
-        }
-        rnd_out_dir = urnd_out_dir / rnd_str
-        play_two_players_pd(rnd_out_dir, rnd_str, "URND", second_strategy_args=alpha, n_games=100, n_iterations=n_iterations, history_window_size=history_window_size,
-                            checkpoint=0, run_description=None, ask_questions=False, verbose=False)
-        game_histories_dir_path = rnd_out_dir / "game_histories"
-        file_name = f"game_history"
-        game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
-        history_main_name = player_1_
-        history_opponent_name = player_2_
-        profile = compute_behavioral_profile(game_histories, behavioral_dimensions_names, history_main_name, history_opponent_name)
-        profile.strategy_name = model_name
-        profile.opponent_name = urnd_str.format(p=p)
-        for dimension_name in behavioral_dimensions_names:
-            behavioral_adjective = dimensions_names_to_adjectives(dimension_name)[0]
-            dimension = profile.dimensions[dimension_name]
-            cis = st.norm.interval(confidence, loc=dimension.mean, scale=st.sem(dimension.values))
-            rnd_element[f"{behavioral_adjective}_mean"] = dimension.mean
-            rnd_element[f"{behavioral_adjective}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else dimension.mean
-            rnd_element[f"{behavioral_adjective}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else dimension.mean
-        rnd_csv_file.append(rnd_element)
+        if not already_profiled_rnd:
+            # Compute the behavioral profile for RND (as baseline of comparison)
+            rnd_element = {
+                "URND_alpha": alpha,
+            }
+            rnd_out_dir = urnd_out_dir / rnd_str
+            play_two_players_pd(rnd_out_dir, rnd_str, "URND", second_strategy_args=alpha, n_games=100, n_iterations=n_iterations,
+                                checkpoint=0, run_description=None, ask_questions=False, verbose=False)
+            game_histories_dir_path = rnd_out_dir / "game_histories"
+            file_name = f"game_history"
+            game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+            history_main_name = player_1_
+            history_opponent_name = player_2_
+            profile = compute_behavioral_profile(game_histories, behavioral_dimensions_names, history_main_name, history_opponent_name)
+            profile.strategy_name = model_name
+            profile.opponent_name = urnd_str.format(p=p)
+            for dimension_name in behavioral_dimensions_names:
+                behavioral_adjective = dimensions_names_to_adjectives(dimension_name)[0]
+                dimension = profile.dimensions[dimension_name]
+                cis = st.norm.interval(confidence, loc=dimension.mean, scale=st.sem(dimension.values))
+                rnd_element[f"{behavioral_adjective}_mean"] = dimension.mean
+                rnd_element[f"{behavioral_adjective}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else dimension.mean
+                rnd_element[f"{behavioral_adjective}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else dimension.mean
+            rnd_csv_file.append(rnd_element)
 
     model_df = pd.DataFrame(model_csv_file)
     model_df.to_csv(out_dir / f"behavioral_profile_vs_urnd_alpha.csv")
-    rnd_df = pd.DataFrame(rnd_csv_file)
-    rnd_df.to_csv(out_dir / f"{rnd_str.casefold()}_behavioral_profile_vs_urnd_alpha.csv")
+    if not already_profiled_rnd:
+        rnd_df = pd.DataFrame(rnd_csv_file)
+        rnd_df.to_csv(out_dir / f"{rnd_str.casefold()}_behavioral_profile_vs_urnd_alpha.csv")
 
 
-def plot_coop_probability_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, history_window_size=5):
-    out_dir = get_behavioral_analysis_dir(model_name, n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size)
+def plot_coop_probability_vs_urnd_alpha(out_dir, model_name):
     df_coop = pd.read_csv(out_dir / f"coop_probability_vs_urnd_alpha.csv")
     fig, ax = plt.subplots(1, 1, figsize=(5, 3))
 
@@ -392,7 +390,7 @@ def plot_coop_probability_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, h
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
     ax.set_xticks(df_coop['URND_alpha'])
-    ax.set_ylabel('$p_{coop}$', fontsize=14)
+    ax.set_ylabel(f'{model_name} $p_{{coop}}$', fontsize=14)
     ax.tick_params(axis='both', labelsize=12)
     ax.set_xlabel('Opponent cooperation probability ($α$)', fontsize=14)
     plt.tight_layout()
@@ -402,8 +400,7 @@ def plot_coop_probability_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, h
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def plot_sfem_results_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, history_window_size=5):
-    out_dir = get_behavioral_analysis_dir(model_name, n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size)
+def plot_sfem_results_vs_urnd_alpha(out_dir, model_name):
     df_sfem = pd.read_csv(out_dir / f"sfem_scores_vs_urnd_alpha.csv")
     threshold = 0.2
     best_strategies = []
@@ -430,19 +427,18 @@ def plot_sfem_results_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, histo
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
     ax.set_xticks(df_sfem['URND_alpha'])
-    ax.set_ylabel('SFEM score', fontsize=14)
+    ax.set_ylabel(f'{model_name} SFEM score', fontsize=14)
     ax.tick_params(axis='both', labelsize=12)
     ax.set_xlabel('Opponent cooperation probability ($α$)', fontsize=14)
     plt.legend()
     plt.tight_layout()
 
-    file_path = out_dir / f'sfem_vs_alpha'
+    file_path = out_dir / f'{model_name}_sfem_vs_alpha'
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def plot_behavioral_profile_vs_urnd_alpha(model_name, n_games=2, n_iterations=5, history_window_size=5):
-    out_dir = get_behavioral_analysis_dir(model_name, n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size)
+def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name):
     df_profile = pd.read_csv(out_dir / 'behavioral_profile_vs_urnd_alpha.csv')
     # df_profile.at[10, 'forgiving_mean'] = float("NaN")
     # df_profile.at[10, 'forgiving_ci_lb'] = float("NaN")
@@ -494,6 +490,6 @@ def plot_behavioral_profile_vs_urnd_alpha(model_name, n_games=2, n_iterations=5,
     ax.set_xlabel('Opponent cooperation probability ($α$)', fontsize=14)
     # plt.tight_layout()
 
-    file_path = out_dir / 'behavioral_profile_vs_alpha'
+    file_path = out_dir / f'{model_name}_behavioral_profile_vs_alpha'
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
