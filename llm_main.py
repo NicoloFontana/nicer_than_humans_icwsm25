@@ -32,13 +32,13 @@ if msg == "":
 log.info(msg)
 print(msg)
 
-log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-
-# Sleeping routine
-log.info("Going to sleep")
-print("Going to sleep")
-time.sleep(72000)
+# log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+# print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+#
+# # Sleeping routine
+# log.info("Going to sleep")
+# print("Going to sleep")
+# time.sleep(72000)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -58,7 +58,7 @@ for p in range(6, 11):  # TODO <--- b1
             AggregationChecker(),
         ] if checkers else []
 
-        model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=OPENAI_API_KEY, provider=PROVIDER)
+        model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=HF_API_TOKEN, provider=PROVIDER)
 
         # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
