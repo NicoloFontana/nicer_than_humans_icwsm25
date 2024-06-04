@@ -182,6 +182,9 @@ GPT-3.5 runs:
     against AD (window = 10)
 >> 20240524133431 (30 games, 100 iterations):
     against AD (IIPD, wdw = 10)
+>> 20240528150831 (30 games, 100 iterations):
+    against URND[01, 10]
+
 
 Llama3:
 >> 20240528145105 (1 game, 100 iterations):
@@ -190,6 +193,11 @@ Llama3:
     against AD (no window)
 >> 20240529151748 (30 games, 100 iterations):
     against AD (window = 10)
+>> 20240530103900 (100 games, 100 iterations):
+    against URND[01, 05]
+>> 20240531174821 (100 games, 100 iterations):
+    against URND[06, 10]
+
 
 
 Prompts re-runs
