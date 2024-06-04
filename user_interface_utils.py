@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -40,8 +41,7 @@ def evaluate_comprehension_questions(model_client, n_games=2, n_iterations=5, hi
     out_dir = base_out_dir / model_client.model_name / f"g{n_games}_i{n_iterations}_w{history_window_size}" / comprehension_questions_dir
     play_two_players_pd(out_dir, model_client, "RND", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=True)
-
-    create_csv_comprehension_questions_results(out_dir, n_games)
+    return out_dir
 
 
 def create_csv_comprehension_questions_results(out_dir, n_games):
@@ -144,8 +144,7 @@ def evaluate_window_size_effect(model_client, history_window_size, n_games=2, n_
     out_dir = get_window_size_effect_dir(model_client.model_name, n_games, n_iterations, history_window_size)
     play_two_players_pd(out_dir, model_client, "AD", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=False)
-
-    create_csv_window_size_effect_results(out_dir, n_iterations, history_window_size)
+    return out_dir
 
 
 def create_csv_window_size_effect_results(out_dir, n_iterations, history_window_size):
@@ -192,7 +191,7 @@ def plot_window_size_effect_comparison(model_name, first_dir, first_window_size,
     ax.plot(df_win1['iteration'], df_win1['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, c=c_blue1, label=f"ws {first_window_size}")
     ax.fill_between(df_win1['iteration'], df_win1['ci_lb'], df_win1['ci_ub'], color=c_blue1, alpha=0.3, edgecolor="none", zorder=0) if with_confidence_intervals else None
 
-    ax.plot(df_win2['iteration'], df_win2['mean'], marker='.', linestyle='-', markersize=5, zorder=2, alpha=1.0, c=c_green1, label=f"ws {second_window_size}")
+    ax.plot(df_win2['iteration'], df_win2['mean'], marker='.', linestyle='--', markersize=5, zorder=2, alpha=1.0, c=c_green1, label=f"ws {second_window_size}")
     ax.fill_between(df_win2['iteration'], df_win2['ci_lb'], df_win2['ci_ub'], color=c_green1, alpha=0.3, edgecolor="none", zorder=0) if with_confidence_intervals else None
 
     ax.spines[['right', 'top']].set_visible(False)
@@ -258,7 +257,9 @@ def compute_response_to_different_hostilities(model_client, n_games=2, n_iterati
     out_dir = get_behavioral_analysis_dir(model_client.model_name, n_games, n_iterations, history_window_size)
     if already_run_against_ad:
         initial_p = 1
-        # TODO copy results of the previous run
+        in_dir = get_window_size_effect_dir(model_client.model_name, n_games, n_iterations, history_window_size)
+        game_histories_dir_path = in_dir / "game_histories"
+        shutil.copytree(str(game_histories_dir_path), str(out_dir / urnd_str.format(p=0) / "game_histories"), dirs_exist_ok=True)
     else:
         initial_p = 0
     for p in range(initial_p, max_p + 1):
