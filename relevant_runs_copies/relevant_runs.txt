@@ -189,9 +189,9 @@ GPT-3.5 runs:
 Llama3:
 >> 20240528145105 (1 game, 100 iterations):
     v1.0 with questions
->> 20240529102526 (30 games, 100 iterations):
+>> 20240529102526 (100 games, 100 iterations):
     against AD (no window)
->> 20240529151748 (30 games, 100 iterations):
+>> 20240529151748 (100 games, 100 iterations):
     against AD (window = 10)
 >> 20240530103900 (100 games, 100 iterations):
     against URND[01, 05]
