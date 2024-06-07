@@ -24,7 +24,7 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run Llama3 vs URNDx. x in [0.6,1.0]. 100 games, 100 iterations, window size 10"
+msg = "Run Llama3 vs TFT 100 games, 100 iterations, window size 10"
 
 if msg == "":
     log.info("Set a message.")
@@ -70,7 +70,7 @@ for p in range(6, 11):  # TODO <--- b1
         game.add_player(llm_player)
 
         second_player = Player(player_2_)
-        second_player_strategy = UnfairRandom(coop_prob)  # TODO <--- a
+        second_player_strategy = TitForTat(game, player_2_)  # TODO <--- a
         second_player.set_strategy(second_player_strategy)
         game.add_player(second_player)
 

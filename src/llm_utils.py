@@ -25,6 +25,7 @@ minute_requests_limit = 3500
 
 OVERALL = "overall"
 
+
 # PROMPT UTILS
 
 def generate_game_rules_prompt(action_space, payoff_function, n_iterations):
