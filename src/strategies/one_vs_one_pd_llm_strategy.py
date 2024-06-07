@@ -9,8 +9,7 @@ from src.games.gt_game import GTGame
 from src.games.two_players_pd_utils import from_nat_lang, player_1_
 from src.model_client import ModelClient
 from src.strategies.strategy import Strategy
-from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, \
-    HF_API_TOKEN, MODEL_URL, MAX_NEW_TOKENS, TEMPERATURE, history_window_size, OPENAI_API_KEY
+from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts, MAX_NEW_TOKENS, TEMPERATURE
 from src.utils import find_json_object, log, out_path, timestamp
 
 

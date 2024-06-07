@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import InferenceClient
 
 from src.utils import find_json_object, log, out_path
-from src.llm_utils import HF_API_TOKEN, MODEL_URL, MAX_NEW_TOKENS, TEMPERATURE
+from src.llm_utils import KEY, MODEL_URL, MAX_NEW_TOKENS, TEMPERATURE
 
 
 class Checker:
