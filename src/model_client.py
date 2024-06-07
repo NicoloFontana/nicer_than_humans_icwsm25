@@ -64,13 +64,13 @@ class ModelClient:
                 seconds_until_midnight = (next_midnight_seconds - current_time) + 60
                 log.info(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
                 time.sleep(seconds_until_midnight)
-                daily_requests = 0
-                minute_requests = 0
+                self.daily_requests = 0
+                self.minute_requests = 0
             if self.minute_requests > (self.minute_requests_limit - 100):
                 # avoid minute requests limit
                 log.info(f"Sleeping for 60 seconds to avoid minute limit.")
                 time.sleep(60)
-                minute_requests = 0
+                self.minute_requests = 0
             response = self.api_client.chat.completions.with_raw_response.create(
                 model=self.model_url,
                 messages=[
