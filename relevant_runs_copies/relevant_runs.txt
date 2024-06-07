@@ -195,7 +195,7 @@ Llama3:
     against AD (window = 10)
 >> 20240530103900 (100 games, 100 iterations):
     against URND[01, 05]
->>  (100 games, 100 iterations):
+>> 20240604181515 (100 games, 100 iterations):
     against URND[06, 10]
 
 
