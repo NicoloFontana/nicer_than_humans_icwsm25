@@ -6,11 +6,11 @@ class TitForTat(Strategy):
     def __init__(self, game: GTGame, player_name: str):
         self.game = game
         self.player_name = player_name
-        self.opponent_name = self.game.get_opponents_names(self.player_name)[0]
         super().__init__("TitForTat")
 
     def play(self):
-        opponent_history = self.game.get_actions_by_player(self.opponent_name)
+        opponent_name = self.game.get_opponents_names(self.player_name)[0]
+        opponent_history = self.game.get_actions_by_player(opponent_name)
         if opponent_history is None or len(opponent_history) == 0:
             return 1
         return opponent_history[-1]
@@ -28,11 +28,11 @@ class SuspiciousTitForTat(Strategy):
     def __init__(self, game: GTGame, player_name: str):
         self.game = game
         self.player_name = player_name
-        self.opponent_name = self.game.get_opponents_names(self.player_name)[0]
         super().__init__("SuspiciousTitForTat")
 
     def play(self):
-        opponent_history = self.game.get_actions_by_player(self.opponent_name)
+        opponent_name = self.game.get_opponents_names(self.player_name)[0]
+        opponent_history = self.game.get_actions_by_player(opponent_name)
         if opponent_history is None or len(opponent_history) == 0:
             return 0
         return opponent_history[-1]
@@ -51,11 +51,11 @@ class Grim(Strategy):
         super().__init__("Grim")
         self.game = game
         self.player_name = player_name
-        self.opponent_name = self.game.get_opponents_names(self.player_name)[0]
         self.defected = False
 
     def play(self):
-        opponent_history = self.game.get_actions_by_player(self.opponent_name)
+        opponent_name = self.game.get_opponents_names(self.player_name)[0]
+        opponent_history = self.game.get_actions_by_player(opponent_name)
         if opponent_history is not None and len(opponent_history) > 0:
             if not opponent_history[-1]:
                 self.defected = True
@@ -81,11 +81,11 @@ class WinStayLoseShift(Strategy):  # Also known as Pavlov
         super().__init__("WinStayLoseShift")
         self.game = game
         self.player_name = player_name
-        self.opponent_name = self.game.get_opponents_names(self.player_name)[0]
 
     def play(self):
         self_history = self.game.get_actions_by_player(self.player_name)
-        opponent_history = self.game.get_actions_by_player(self.opponent_name)
+        opponent_name = self.game.get_opponents_names(self.player_name)[0]
+        opponent_history = self.game.get_actions_by_player(opponent_name)
         if self_history is None or len(self_history) == 0:
             return 1
         if self_history[-1] == opponent_history[-1]:
