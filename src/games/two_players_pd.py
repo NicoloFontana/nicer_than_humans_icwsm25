@@ -83,7 +83,7 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
     first_player_name = player_1_
     second_player_name = player_2_
     if run_description is None:
-        run_description = f"Running {first_strategy_name} as '{first_player_name}' against {second_strategy_name} as '{second_player_name}' in {n_games} games of {n_iterations} iterations each with {history_window_size} window size."
+        run_description = f"Running {first_strategy_name} as '{first_player_name}' against {second_strategy_name} as '{second_player_name}' in {n_games} games of {n_iterations} iterations each with window size {history_window_size}."
         if ask_questions:
             run_description += " Asking comprehension questions."
     print(run_description)

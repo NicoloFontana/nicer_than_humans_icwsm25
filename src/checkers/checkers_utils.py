@@ -18,15 +18,16 @@ def old_to_new_label(old_label):
         return "actions"
     if old_label == "round_payoff_A" or old_label == "round_payoff_B" or old_label == "payoff_you_given_combo" or old_label == "payoff_opponent_given_combo":
         return "payoff"
-    if old_label == "exists_combo" or old_label == "exists_combo_for_payoff_you":
-        return "exist_combo"
-    if old_label == "combo_for_payoff_A" or old_label == "which_combo_for_payoff_you":
-        return "combo"
+    # if old_label == "exists_combo" or old_label == "exists_combo_for_payoff_you":
+    #     return "exist_combo"
+    # if old_label == "combo_for_payoff_A" or old_label == "which_combo_for_payoff_you":
+    #     return "combo"
     # aggreg
     if old_label == "#actions_A" or old_label == "#actions_B" or old_label == "#actions_you" or old_label == "#actions_opponent":
         return "#actions"
     if old_label == "total_payoff_A" or old_label == "total_payoff_B" or old_label == "total_payoff_you" or old_label == "total_payoff_opponent":
         return "#points"
+    return None
 
 
 def new_label_to_full_question(new_label):
