@@ -24,7 +24,7 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run Llama3 vs TFT 100 games, 100 iterations, window size 10"
+msg = "Run Llama3 vs GRIM 100 games, 100 iterations, window size 10"
 
 if msg == "":
     log.info("Set a message.")
@@ -32,13 +32,13 @@ if msg == "":
 log.info(msg)
 print(msg)
 
-# log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-# print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-#
-# # Sleeping routine
-# log.info("Going to sleep")
-# print("Going to sleep")
-# time.sleep(129600)
+log.info(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Starting time: {dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+# Sleeping routine
+log.info("Going to sleep")
+print("Going to sleep")
+time.sleep(43200)
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -70,7 +70,7 @@ for n_game in range(n_games):
     game.add_player(llm_player)
 
     second_player = Player(player_2_)
-    second_player_strategy = TitForTat(game, player_2_)  # TODO <--- a
+    second_player_strategy = Grim(game, player_2_)  # TODO <--- a
     second_player.set_strategy(second_player_strategy)
     game.add_player(second_player)
 
