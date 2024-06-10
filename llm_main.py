@@ -24,7 +24,7 @@ n_games = 70
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run gpt35t vs URND[00,03] for 70 games, 100 iterations, window size 10"
+msg = "Run gpt35t vs URND[04,08] for 70 games, 100 iterations, window size 10"
 
 if msg == "":
     log.info("Set a message.")
@@ -44,7 +44,7 @@ new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-for p in range(0, 4):  # TODO <--- b1
+for p in range(4, 9):  # TODO <--- b1
     coop_prob = p / 10
     urnd_str = f"URND{p:02}"
     print(f"URND{p:02}")
