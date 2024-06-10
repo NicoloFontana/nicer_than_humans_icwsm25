@@ -1,5 +1,5 @@
-from src.checkers.checker import Checker
-from src.games.two_players_pd_utils import to_nat_lang, player_1_, player_2_
+from src.analysis.checker import Checker
+from src.game.two_players_pd_utils import to_nat_lang, player_1_, player_2_
 from src.llm_utils import generate_game_rules_prompt, generate_history_prompt, generate_prompt_from_sub_prompts
 from src.utils import find_first_int, find_first_substring
 

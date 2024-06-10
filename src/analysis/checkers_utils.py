@@ -1,6 +1,6 @@
-from src.checkers.aggregation_checker import AggregationChecker
-from src.checkers.rule_checker import RuleChecker
-from src.checkers.time_checker import TimeChecker
+from src.analysis.aggregation_checker import AggregationChecker
+from src.analysis.rule_checker import RuleChecker
+from src.analysis.time_checker import TimeChecker
 
 
 def old_to_new_label(old_label):
