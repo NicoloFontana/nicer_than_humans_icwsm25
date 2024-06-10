@@ -480,3 +480,107 @@ def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir):
     file_path = out_dir / f'{model_name}_behavioral_profile_vs_alpha'
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
+
+
+def create_csv_delta_behavioral_profile(out_dir, model_name, rnd_out_dir, abs_values=True):
+    model_csv_file = []
+    dimensions_overall_values = {d: [] for d in behavioral_dimensions.keys()}
+    for p in range(max_p + 1):
+        urnd_out_dir = out_dir / urnd_str.format(p=p)
+
+        # Compute the delta behavioral profile for the model
+        game_histories_dir_path = urnd_out_dir / "game_histories"
+        file_name = f"game_history"
+        game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+        rnd_game_histories_dir_path = rnd_out_dir / urnd_str.format(p=p) / "game_histories"
+        rnd_game_histories = extract_histories_from_files(rnd_game_histories_dir_path, file_name)
+        n_games = min(len(game_histories), len(rnd_game_histories))
+        for rnd_idx in range(n_games):
+            urnd_history = game_histories[rnd_idx].get_actions_by_player(player_2_)
+            rnd_game_histories[rnd_idx].substitute_history_of_player(player_2_, urnd_history)
+        history_main_name = player_1_
+        history_opponent_name = player_2_
+        profile = compute_behavioral_profile(game_histories[:n_games], history_main_name, history_opponent_name)
+        profile.strategy_name = model_name
+        rnd_profile = compute_behavioral_profile(rnd_game_histories[:n_games], history_main_name, history_opponent_name)
+        rnd_profile.strategy_name = rnd_str
+        delta_profile = abs(profile - rnd_profile) if abs_values else profile - rnd_profile
+        for dimension_name in behavioral_dimensions.keys():
+            dimensions_overall_values[dimension_name].extend(delta_profile.dimensions[dimension_name])
+    for dimension_name in behavioral_dimensions.keys():
+        model_element = {
+            "dimension": dimension_name,
+        }
+        dimension_values = dimensions_overall_values[dimension_name]
+        mean = np.mean(dimension_values)
+        cis = st.norm.interval(confidence, loc=mean, scale=st.sem(dimension_values))
+        model_element[f"mean"] = mean
+        model_element[f"ci_lb"] = cis[0] if not np.isnan(cis[0]) else mean
+        model_element[f"ci_ub"] = cis[1] if not np.isnan(cis[1]) else mean
+        model_csv_file.append(model_element)
+    model_df = pd.DataFrame(model_csv_file)
+    csv_file_name = "abs_delta_behavioral_profile_vs_urnd_alpha.csv" if abs_values else "delta_behavioral_profile_vs_urnd_alpha.csv"
+    model_df.to_csv(out_dir / csv_file_name)
+
+
+def plot_delta_behavioral_profile(out_dir, model_name, abs_values=True):
+    csv_file_name = "abs_delta_behavioral_profile_vs_urnd_alpha.csv" if abs_values else "delta_behavioral_profile_vs_urnd_alpha.csv"
+    df_profile = pd.read_csv(out_dir / csv_file_name)
+
+    fig, ax = plt.subplots(1, 1, figsize=(5, 3))
+    # for i, (d, ax) in enumerate(zip(behavioral_dimensions.keys(), axs)):
+
+    ax.scatter(list(behavioral_dimensions.keys()), df_profile[f'mean'], marker='o',
+               s=70, zorder=10, alpha=0.9, c=c_blue1)
+    ax.errorbar(list(behavioral_dimensions.keys()), df_profile[f'mean'],
+                # TODO check yerr
+                yerr=df_profile[f'ci_ub'] - df_profile[f'ci_lb'],
+                # yerr=(df_questions['ci_ub'] - df_questions['ci_lb']) / 2,
+                capsize=2, fmt='none', c=c_blue1)
+    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
+    ax.grid(axis='x', color='gray', linestyle=':', linewidth=1, zorder=0)
+
+    ax.hlines(0, -0.5, 4.5, color=c_gray1, linewidth=1, linestyle='--')
+
+    ax.set_ylim([-0.05, 1.05]) if abs_values else ax.set_ylim([-1.05, 1.05])
+    plt.tight_layout()
+
+    img_file_name = f"{model_name}_abs_delta_behavioral_profile_vs_urnd_alpha" if abs_values else f"{model_name}_delta_behavioral_profile_vs_urnd_alpha"
+    file_path = out_dir / img_file_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+
+
+def plot_comparison_delta_behavioral_profiles(first_out_dir, first_model_name, second_out_dir, second_model_name, abs_values=False):
+    # TODO fix title, xticks and stuff...
+    csv_file_name = "abs_delta_behavioral_profile_vs_urnd_alpha.csv" if abs_values else "delta_behavioral_profile_vs_urnd_alpha.csv"
+    first_df_profile = pd.read_csv(first_out_dir / csv_file_name)
+    second_df_profile = pd.read_csv(second_out_dir / csv_file_name)
+
+    fig, ax = plt.subplots(1, 1, figsize=(5, 3))
+
+    ax.scatter(list(behavioral_dimensions.keys()), first_df_profile[f'mean'], marker='o',
+               s=70, zorder=10, alpha=0.9, c=c_blue1, label=first_model_name)
+    ax.errorbar(list(behavioral_dimensions.keys()), first_df_profile[f'mean'],
+                yerr=first_df_profile[f'ci_ub'] - first_df_profile[f'ci_lb'],
+                capsize=2, fmt='none', c=c_blue1)
+
+    ax.scatter(list(behavioral_dimensions.keys()), second_df_profile[f'mean'], marker='o',
+               s=70, zorder=10, alpha=0.9, c=c_orange1, label=second_model_name)
+    ax.errorbar(list(behavioral_dimensions.keys()), second_df_profile[f'mean'],
+                yerr=second_df_profile[f'ci_ub'] - second_df_profile[f'ci_lb'],
+                capsize=2, fmt='none', c=c_orange1)
+
+    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
+    ax.grid(axis='x', color='gray', linestyle=':', linewidth=1, zorder=0)
+
+    ax.hlines(0, -0.5, 4.5, color=c_gray1, linewidth=1, linestyle='--')
+
+    ax.set_ylim([-0.05, 1.05]) if abs_values else ax.set_ylim([-1.05, 1.05])
+    plt.tight_layout()
+    plt.legend()
+
+    img_file_name = f"{first_model_name}_vs_{second_model_name}_abs_delta_behavioral_profile_vs_urnd_alpha" if abs_values else f"{first_model_name}_vs_{second_model_name}_delta_behavioral_profile_vs_urnd_alpha"
+    file_path = first_out_dir / img_file_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
