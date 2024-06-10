@@ -1,4 +1,4 @@
-from src.games.gt_game import GTGame
+from src.game.gt_game import GTGame
 from src.strategies.strategy import Strategy
 
 

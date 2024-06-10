@@ -2,11 +2,11 @@ import datetime as dt
 import time
 import warnings
 
-from src.checkers.checkers_utils import get_checkers_by_names
-from src.games.gt_game import GTGame
-from src.games.two_players_pd_utils import player_1_, player_2_, two_players_pd_axelrod_payoff
+from src.analysis.checkers_utils import get_checkers_by_names
+from src.game.gt_game import GTGame
+from src.game.two_players_pd_utils import player_1_, player_2_, two_players_pd_axelrod_payoff
 from src.model_client import ModelClient
-from src.player import Player
+from src.game.player import Player
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.strategies.strategy_utils import get_strategy_instance
 

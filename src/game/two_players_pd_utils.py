@@ -1,6 +1,6 @@
 import warnings
 
-from src.games.game_history import GameHistory
+from src.game.game_history import GameHistory
 from src.utils import extract_infixes_
 
 action_0_ = "Defect"

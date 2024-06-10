@@ -1,8 +1,5 @@
 import json
-import os
 import warnings
-
-from src.utils import log, OUT_BASE_PATH
 
 
 class GameHistory:

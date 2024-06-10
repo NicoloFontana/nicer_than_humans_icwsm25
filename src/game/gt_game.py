@@ -1,7 +1,7 @@
 import warnings
 
-from src.games.game_history import GameHistory
-from src.player import Player
+from src.game.game_history import GameHistory
+from src.game.player import Player
 
 
 class GTGame:

@@ -1,5 +1,5 @@
-from src.behavioral_analysis.behavioral_profile import BehavioralProfile
-from src.games.two_players_pd_utils import player_1_, player_2_
+from src.analysis.behavioral_profile import BehavioralProfile
+from src.game.two_players_pd_utils import player_1_, player_2_
 from src.strategies.blind_pd_strategies import RandomStrategy, UnfairRandom, AlwaysCooperate, AlwaysDefect
 from src.strategies.hard_coded_pd_strategies import TitForTat, SuspiciousTitForTat, Grim, WinStayLoseShift
 
@@ -118,9 +118,8 @@ def get_strategies_names():
     return [sk for sk in strategies.keys()]
 
 
-def compute_behavioral_profile(game_histories, behavioral_dimensions_names, main_player_name=player_1_, opponent_name=player_2_):
+def compute_behavioral_profile(game_histories, main_player_name=player_1_, opponent_name=player_2_):
     profile = BehavioralProfile(main_player_name, opponent_name)
-    profile.add_dimensions(behavioral_dimensions_names)
     for game_history in game_histories:
         main_history = game_history.get_actions_by_player(main_player_name)
         opponent_history = game_history.get_actions_by_player(opponent_name)
