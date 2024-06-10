@@ -139,10 +139,10 @@ Run with history sliding window against AlwaysDefect for 50 games:
 
 Behavioral profiles runs:
 >> 20240422133439 (1000 games):
-    RND, AC, AD, TFT, susTFT, Pavlov, Grim, WSLS
+    RND, AC, AD, TFT, STFT, Pavlov, Grim, WSLS
     against RND and themselves
 >> 20240502163839 (1000 games):
-    TFT, susTFT, Grim, WSLS
+    TFT, STFT, Grim, WSLS
     against URND[0,1]
 >> 20240429102205 (1000 games):
     URND06, URND07, URND08, URND09
@@ -184,6 +184,8 @@ GPT-3.5 runs:
     against AD (IIPD, wdw = 10)
 >> 20240528150831 (30 games, 100 iterations):
     against URND[01, 10]
+>> 20240607183210 (70 games, 100 iterations):
+    against URND[00, 03]
 
 
 Llama3:
@@ -198,6 +200,14 @@ Llama3:
 >> 20240604181515 (100 games, 100 iterations):
     against URND[06, 10]
 
+>> 20240607175913 (100 games, 100 iterations):
+    against TFT
+>> 20240607180150 (100 games, 100 iterations):
+    against Grim
+>> 20240607180311 (100 games, 100 iterations):
+    against WSLS
+>> 20240607180531 (100 games, 100 iterations):
+    against STFT
 
 
 Prompts re-runs
