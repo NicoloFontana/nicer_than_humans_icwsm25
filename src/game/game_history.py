@@ -22,6 +22,17 @@ class GameHistory:
                 self.history[player] = []
             self.history[player].extend(history[player])
 
+    def substitute_history_of_player(self, player_name: str, new_history: list):
+        """
+        Replace the history of a player with a new one.\n
+        :param player_name: name of the player
+        :param new_history: new history to be added
+        """
+        if player_name not in self.history.keys():
+            warnings.warn(f"The player {player_name} is not present in the history")
+            return
+        self.history[player_name] = new_history
+
     def add_player(self, player_name: str):
         """
         Add a player to the history.\n
