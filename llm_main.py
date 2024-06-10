@@ -1,23 +1,19 @@
 import datetime as dt
 import sys
 import time
-from pathlib import Path
 
-from huggingface_hub import InferenceClient
-from openai import OpenAI
-
-from src.checkers.aggregation_checker import AggregationChecker
+from src.analysis.aggregation_checker import AggregationChecker
 from src.llm_utils import KEY, MODEL_URL, history_window_size, MODEL_NAME, PROVIDER
-from src.games.two_players_pd_utils import player_1_, player_2_
-from src.checkers.rule_checker import RuleChecker
-from src.checkers.time_checker import TimeChecker
-from src.games.two_players_pd import TwoPlayersPD
+from src.game.two_players_pd_utils import player_1_, player_2_
+from src.analysis.rule_checker import RuleChecker
+from src.analysis.time_checker import TimeChecker
+from src.game.two_players_pd import TwoPlayersPD
 from src.model_client import ModelClient
-from src.player import Player
+from src.game.player import Player
 from src.strategies.blind_pd_strategies import RandomStrategy, AlwaysCooperate, AlwaysDefect, FixedSequence, UnfairRandom
 from src.strategies.hard_coded_pd_strategies import TitForTat, Grim, WinStayLoseShift, SuspiciousTitForTat
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
-from src.utils import timestamp, log, start_time, dt_start_time, OUT_BASE_PATH
+from src.utils import timestamp, log, start_time, OUT_BASE_PATH
 
 # TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
 n_games = 70

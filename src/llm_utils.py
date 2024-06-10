@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.games.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
+from src.game.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
 
 # KEY = "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"  # huggingface
 KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai

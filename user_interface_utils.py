@@ -8,10 +8,10 @@ import scipy.stats as st
 from matplotlib import pyplot as plt
 
 from sfem_computation import compute_sfem_from_labels
-from src.behavioral_analysis.main_behavioral_dimensions import dimensions_names_to_adjectives
-from src.checkers.checkers_utils import old_to_new_label, new_label_to_full_question, old_to_new_checker_name
-from src.games.two_players_pd import play_two_players_pd
-from src.games.two_players_pd_utils import extract_histories_from_files, player_1_, player_2_
+from src.analysis.behavioral_profile import behavioral_dimensions
+from src.analysis.checkers_utils import old_to_new_label, new_label_to_full_question, old_to_new_checker_name
+from src.game.two_players_pd import play_two_players_pd
+from src.game.two_players_pd_utils import extract_histories_from_files, player_1_, player_2_
 from src.strategies.strategy_utils import compute_behavioral_profile
 from src.utils import compute_average_vector, compute_confidence_interval_vectors
 
@@ -25,7 +25,6 @@ c_orange1 = '#ECA72C'
 checkers_names = ["time", "rule", "aggregation"]  # TODO FIX CHECKERS NAMES
 comprehension_questions_labels = ['min_max', 'actions', 'payoff', 'round', 'action$_i$', 'points$_i$', '#actions', '#points']
 sfem_strategies_labels = ['RND', 'AD', 'TFT', 'STFT', 'WSLS', 'AC', 'GRIM']
-behavioral_dimensions_names = ['niceness', 'forgiveness', 'retaliation', 'troublemaking', 'emulation']
 base_out_dir = Path("out") / "analysis"
 comprehension_questions_dir = "comprehension_questions"
 window_size_effect_dir = "window_size_effect"
@@ -346,16 +345,16 @@ def create_csv_behavioral_profile_results(out_dir, model_name):
         game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
         history_main_name = player_1_
         history_opponent_name = player_2_
-        profile = compute_behavioral_profile(game_histories, behavioral_dimensions_names, history_main_name, history_opponent_name)
+        profile = compute_behavioral_profile(game_histories, history_main_name, history_opponent_name)
         profile.strategy_name = model_name
         profile.opponent_name = urnd_str.format(p=p)
-        for dimension_name in behavioral_dimensions_names:
-            behavioral_adjective = dimensions_names_to_adjectives(dimension_name)[0]
-            dimension = profile.dimensions[dimension_name]
-            cis = st.norm.interval(confidence, loc=dimension.mean, scale=st.sem(dimension.values))
-            model_element[f"{behavioral_adjective}_mean"] = dimension.mean
-            model_element[f"{behavioral_adjective}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else dimension.mean
-            model_element[f"{behavioral_adjective}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else dimension.mean
+        for dimension_name in behavioral_dimensions.keys():
+            dimension_values = profile.dimensions[dimension_name]
+            mean = np.mean(dimension_values)
+            cis = st.norm.interval(confidence, loc=mean, scale=st.sem(dimension_values))
+            model_element[f"{dimension_name}_mean"] = mean
+            model_element[f"{dimension_name}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else mean
+            model_element[f"{dimension_name}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else mean
         model_csv_file.append(model_element)
 
     model_df = pd.DataFrame(model_csv_file)
@@ -449,7 +448,7 @@ def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir):
     df_profile_rnd.at[0, 'troublemaking_ci_lb'] = float("NaN")
     df_profile_rnd.at[0, 'troublemaking_ci_ub'] = float("NaN")
     fig, axs = plt.subplots(5, 1, figsize=(5, 7))
-    for i, (d, ax) in enumerate(zip(dimensions_names_to_adjectives(behavioral_dimensions_names), axs)):
+    for i, (d, ax) in enumerate(zip(behavioral_dimensions.keys(), axs)):
         #    ax= axs[0]
         ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
         ax.plot(df_profile['URND_alpha'], df_profile[f'{d}_mean'], '-o', markersize=5, color=c_blue1,

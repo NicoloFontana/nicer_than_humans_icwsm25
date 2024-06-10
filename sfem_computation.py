@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.optimize import minimize
 
-from src.games.gt_game import GTGame
-from src.player import Player
-from src.strategies.strategy_utils import main_hard_coded_strategies, main_blind_strategies, get_strategies_by_labels
+from src.game.gt_game import GTGame
+from src.game.player import Player
+from src.strategies.strategy_utils import main_hard_coded_strategies, get_strategies_by_labels
 
 """
 Implementation of the SFEM algorithm to compute the behavioral profile of a player against a set of strategies.

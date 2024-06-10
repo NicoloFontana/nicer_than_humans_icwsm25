@@ -9,8 +9,8 @@ import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from src.behavioral_analysis.behavioral_dimension import BehavioralDimension
-from src.games.two_players_pd_utils import action_0_, action_1_, player_2_, player_1_, extract_histories_from_files
+# from src.behavioral_analysis.behavioral_dimension import BehavioralDimension
+from src.game.two_players_pd_utils import action_0_, action_1_, player_2_, player_1_, extract_histories_from_files
 from src.llm_utils import OVERALL
 from src.utils import OUT_BASE_PATH, compute_cumulative_estimators_of_ts, compute_average_vector, convert_matrix_to_percentage
 
