@@ -39,6 +39,7 @@ new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+daily_requests = 3275
 
 for p in range(9, 11):  # TODO <--- b1
     coop_prob = p / 10
@@ -55,6 +56,7 @@ for p in range(9, 11):  # TODO <--- b1
         ] if checkers else []
 
         model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=KEY, provider=PROVIDER)
+        model_client.daily_requests = daily_requests
 
         # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
@@ -90,6 +92,9 @@ for p in range(9, 11):  # TODO <--- b1
 
         # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
         # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
+
+        daily_requests = model_client.daily_requests
+        time.sleep(60)
 
         log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")
         print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")

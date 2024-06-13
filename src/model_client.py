@@ -82,6 +82,8 @@ class ModelClient:
                 temperature=temperature,
                 max_tokens=max_new_tokens
             )
+            print(f"Daily requests: {self.daily_requests}, Minute requests: {self.minute_requests}")
+            log.info(f"Daily requests: {self.daily_requests}, Minute requests: {self.minute_requests}")
             completion = response.parse()
             generated_text = completion.choices[0].message.content
             self.minute_requests += 1
