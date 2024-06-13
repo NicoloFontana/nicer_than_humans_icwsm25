@@ -2,11 +2,9 @@ from pathlib import Path
 
 from src.game.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
 
+# TODO 1/3: [START] check model, max_new_tokens, temperature, history_window_size
 # KEY = "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"  # huggingface
 KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai
-
-
-# TODO 1/3: [START] check model, max_new_tokens, temperature, history_window_size
 # MODEL_NAME = "llama3"
 MODEL_NAME = "gpt35t"
 # MODEL_URL = "meta-llama/Llama-2-70b-chat-hf"

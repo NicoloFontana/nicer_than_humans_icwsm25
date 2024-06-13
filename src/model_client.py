@@ -22,9 +22,10 @@ class ModelClient:
             from openai import OpenAI
             self.api_client = OpenAI(api_key=api_key)
             self.minute_requests = 0
-            self.minute_requests_limit = 3500
+            self.minute_requests_limit = 500
             self.daily_requests = 0
             self.daily_requests_limit = 10000
+            self.buffer_size = 100
         else:
             self.api_client = None
 
@@ -52,7 +53,7 @@ class ModelClient:
         elif self.provider == openai_str:
             ### OpenAI API ###
             ### HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
-            if self.daily_requests > (self.daily_requests_limit - 100):
+            if self.daily_requests > (self.daily_requests_limit - self.buffer_size):
                 # avoid daily requests limit
                 current_time = time.time()
                 local_time = time.localtime(current_time)
@@ -62,13 +63,15 @@ class ModelClient:
                 ))
                 next_midnight_seconds = time.mktime(next_midnight)
                 seconds_until_midnight = (next_midnight_seconds - current_time) + 60
-                log.info(f"Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
+                print(f"Daily requests limit reached. Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
+                log.info(f"Daily requests limit reached. Sleeping for {seconds_until_midnight} seconds to avoid daily limit.")
                 time.sleep(seconds_until_midnight)
                 self.daily_requests = 0
                 self.minute_requests = 0
-            if self.minute_requests > (self.minute_requests_limit - 100):
+            if self.minute_requests > (self.minute_requests_limit - self.buffer_size):
                 # avoid minute requests limit
-                log.info(f"Sleeping for 60 seconds to avoid minute limit.")
+                print(f"Minute requests limit reached. Sleeping for 60 seconds to avoid minute limit.")
+                log.info(f"Minute requests limit reached. Sleeping for 60 seconds to avoid minute limit.")
                 time.sleep(60)
                 self.minute_requests = 0
             response = self.api_client.chat.completions.with_raw_response.create(
