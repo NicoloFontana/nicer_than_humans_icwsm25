@@ -188,7 +188,8 @@ GPT-3.5 runs:
     against URND[00, 03]
 >> 20240610101530 (70 games, 100 iterations):
     against URND[04, 08]
->>
+>> 20240613110014 (70 games, 100 iterations):
+    against URND[09, 10]
 
 
 Llama3:
