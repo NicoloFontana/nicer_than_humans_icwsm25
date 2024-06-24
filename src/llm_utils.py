@@ -3,16 +3,16 @@ from pathlib import Path
 from src.game.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
 
 # TODO 1/3: [START] check model, max_new_tokens, temperature, history_window_size
-# KEY = "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"  # huggingface
-KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai
-# MODEL_NAME = "llama3"
-MODEL_NAME = "gpt35t"
+KEY = "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"  # huggingface
+# KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai
+MODEL_NAME = "llama3"
+# MODEL_NAME = "gpt35t"
 # MODEL_URL = "meta-llama/Llama-2-70b-chat-hf"
-MODEL_URL = "gpt-3.5-turbo"
-# MODEL_URL = "meta-llama/Meta-Llama-3-70B-Instruct"
+# MODEL_URL = "gpt-3.5-turbo"
+MODEL_URL = "meta-llama/Meta-Llama-3-70B-Instruct"
 # MODEL_URL = "CohereForAI/c4ai-command-r-plus"
-# PROVIDER = "huggingface"
-PROVIDER = "openai"
+PROVIDER = "huggingface"
+# PROVIDER = "openai"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
 history_window_size = 10
@@ -55,12 +55,12 @@ def generate_history_prompt(own_history, opponent_history, payoff_function, wind
 
     start = max(0, len(own_history) - window_size)
     end = len(own_history)
-    own_coop = sum(own_history[start:end])
-    own_defect = sum([1 for action in own_history[start:end] if not action])
-    opponent_coop = sum(opponent_history[start:end])
-    opponent_defect = sum([1 for action in opponent_history[start:end] if not action])
-    own_total_payoff = sum([payoff_function(own_history[i], opponent_history[i]) for i in range(start, end)])
-    opponent_total_payoff = sum([payoff_function(opponent_history[i], own_history[i]) for i in range(start, end)])
+    own_coop = sum(own_history)
+    own_defect = sum([1 for action in own_history if not action])
+    opponent_coop = sum(opponent_history)
+    opponent_defect = sum([1 for action in opponent_history if not action])
+    own_total_payoff = sum([payoff_function(own_history[i], opponent_history[i]) for i in range(0, end)])
+    opponent_total_payoff = sum([payoff_function(opponent_history[i], own_history[i]) for i in range(0, end)])
     single_round_prompt = ("Round {}: {} played {} and {} played {} "  # Round 1: A played "Cooperate" and B played "Defect"
                            "{} collected {} points and {} collected {} points.\n")  # A collected 0 points and B collected 5 points.
     rounds_prompt = "".join([single_round_prompt.format(i + 1, player_1_, to_nat_lang(own_history[i]), player_2_, to_nat_lang(opponent_history[i]),

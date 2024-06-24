@@ -16,11 +16,11 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, OUT_BASE_PATH
 
 # TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
-n_games = 70
+n_games = 50
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run gpt35t vs URND[09,10] for 70 games, 100 iterations, window size 10"
+msg = "Run llama3 vs URND[01, 05, 09, 10] for 50 games, 100 iterations, window size 10 with fixed prompt."
 
 if msg == "":
     log.info("Set a message.")
@@ -39,14 +39,14 @@ new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
 log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-daily_requests = 3275
+# daily_requests = 3275
 
-for p in range(9, 11):  # TODO <--- b1
+for p in {1, 5, 9, 10}:  # TODO <--- b1
     coop_prob = p / 10
     urnd_str = f"URND{p:02}"
     print(f"URND{p:02}")
     log.info(f"URND{p:02}")
-    for n_game in range(30, 30+n_games):  # TODO remove 30
+    for n_game in range(n_games):
         log.info(f"Game {n_game + 1}") if n_games > 1 else None
         print(f"Game {n_game + 1}") if n_games > 1 else None
         checkers = [
@@ -56,7 +56,7 @@ for p in range(9, 11):  # TODO <--- b1
         ] if checkers else []
 
         model_client = ModelClient(model_name=MODEL_NAME, model_url=MODEL_URL, api_key=KEY, provider=PROVIDER)
-        model_client.daily_requests = daily_requests
+        # model_client.daily_requests = daily_requests
 
         # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
@@ -93,8 +93,8 @@ for p in range(9, 11):  # TODO <--- b1
         # log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
         # print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}")
 
-        daily_requests = model_client.daily_requests
-        time.sleep(60)
+        # daily_requests = model_client.daily_requests
+        # time.sleep(60)
 
         log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")
         print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - new_start_time))}")
