@@ -7,25 +7,25 @@ def old_to_new_label(old_label):
     # time
     if old_label == "current_round":
         return "round"
-    if old_label == "action_A" or old_label == "action_B" or old_label == "action_you_at_round" or old_label == "action_opponent_at_round":
+    if old_label == "action_A" or old_label == "action_B" or old_label == "action_you_at_round" or old_label == "action_opponent_at_round" or "own_action" == old_label or "opponent_action" == old_label:
         return "action_i"
-    if old_label == "points_A" or old_label == "points_B" or old_label == "points_you_at_round" or old_label == "points_opponent_at_round":
+    if old_label == "points_A" or old_label == "points_B" or old_label == "points_you_at_round" or old_label == "points_opponent_at_round" or "own_points" == old_label or "opponent_points" == old_label:
         return "points_i"
     # rule
     if old_label == "min_payoff" or old_label == "max_payoff":
         return "min_max"
     if old_label == "allowed_actions":
         return "actions"
-    if old_label == "round_payoff_A" or old_label == "round_payoff_B" or old_label == "payoff_you_given_combo" or old_label == "payoff_opponent_given_combo":
+    if old_label == "round_payoff_A" or old_label == "round_payoff_B" or old_label == "payoff_you_given_combo" or old_label == "payoff_opponent_given_combo" or "round_payoff" == old_label or "opponent_round_payoff" == old_label:
         return "payoff"
     # if old_label == "exists_combo" or old_label == "exists_combo_for_payoff_you":
     #     return "exist_combo"
     # if old_label == "combo_for_payoff_A" or old_label == "which_combo_for_payoff_you":
     #     return "combo"
     # aggreg
-    if old_label == "#actions_A" or old_label == "#actions_B" or old_label == "#actions_you" or old_label == "#actions_opponent":
+    if old_label == "#actions_A" or old_label == "#actions_B" or old_label == "#actions_you" or old_label == "#actions_opponent" or "#actions" == old_label or "#opponent_actions" == old_label:
         return "#actions"
-    if old_label == "total_payoff_A" or old_label == "total_payoff_B" or old_label == "total_payoff_you" or old_label == "total_payoff_opponent":
+    if old_label == "total_payoff_A" or old_label == "total_payoff_B" or old_label == "total_payoff_you" or old_label == "total_payoff_opponent" or "total_payoff" == old_label or "opponent_total_payoff" == old_label:
         return "#points"
     return None
 
