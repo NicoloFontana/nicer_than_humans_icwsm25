@@ -1,0 +1,65 @@
+{
+    "rule_checker": {
+        "checker": "rule_checker",
+        "label": "rule_checker",
+        "sample_mean": 0.8916666666666667,
+        "sample_variance": 0.09469179600798132,
+        "total": 240.0,
+        "positives": 214.0,
+        "squared_diffs_sum": 22.631339245907537
+    },
+    "Which is player B's payoff in a single round if B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "round_payoff",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 40.0,
+        "positives": 40.0,
+        "squared_diffs_sum": 0.0
+    },
+    "Which is player A's payoff in a single round if A plays {} and B plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff",
+        "sample_mean": 0.75,
+        "sample_variance": 0.1732124669532994,
+        "total": 40.0,
+        "positives": 30.0,
+        "squared_diffs_sum": 6.755286211178676
+    },
+    "Which is player A's payoff in a single round if B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "opponent_round_payoff_inverse",
+        "sample_mean": 0.925,
+        "sample_variance": 0.05747833968127974,
+        "total": 40.0,
+        "positives": 37.0,
+        "squared_diffs_sum": 2.2416552475699096
+    },
+    "How many point does player B collect in a single round in B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "B_round_points",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 40.0,
+        "positives": 40.0,
+        "squared_diffs_sum": 0.0
+    },
+    "How many point does player A collect in a single round in A plays {} and B plays {}?": {
+        "checker": "rule_checker",
+        "label": "A_round_points",
+        "sample_mean": 0.75,
+        "sample_variance": 0.1732124669532994,
+        "total": 40.0,
+        "positives": 30.0,
+        "squared_diffs_sum": 6.755286211178676
+    },
+    "How many point does player A collect in a single round in B plays {} and A plays {}?": {
+        "checker": "rule_checker",
+        "label": "A_round_points_inverse",
+        "sample_mean": 0.925,
+        "sample_variance": 0.05960035225823717,
+        "total": 40.0,
+        "positives": 37.0,
+        "squared_diffs_sum": 2.3244137380712497
+    }
+}

@@ -1,0 +1,4 @@
+,type,full_question,label,accuracy,ci_lb,ci_ub
+0,rules,Which is the first player's payoff in a single round if the first player plays {} and the second player plays {}?,first_payoff,0.99,0.9802370910179569,0.9997629089820431
+1,rules,What was the second player's payoff in the round if the second player plays {} and the first player plays {}?,second_payoff_inverse,0.845,0.8094895769108427,0.8805104230891573
+2,rules,What was the second player's payoff in the round if the first player plays {} and the second player plays {}?,second_payoff,0.8875,0.8564956889516853,0.9185043110483146
