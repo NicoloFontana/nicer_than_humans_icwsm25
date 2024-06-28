@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 from matplotlib import pyplot as plt
+import seaborn as sns
 
 from sfem_computation import compute_sfem_from_labels
 from src.analysis.behavioral_profile import behavioral_dimensions
@@ -24,7 +25,7 @@ c_orange1 = '#ECA72C'
 
 checkers_names = ["time", "rule", "aggregation"]  # TODO FIX CHECKERS NAMES
 comprehension_questions_labels = ['min_max', 'actions', 'payoff', 'round', 'action$_i$', 'points$_i$', '#actions', '#points']
-sfem_strategies_labels = ['RND', 'AD', 'TFT', 'STFT', 'WSLS', 'AC', 'GRIM']
+sfem_strategies_labels = ['AD', 'RND', 'AC', 'TFT', 'STFT', 'GRIM', 'WSLS']
 base_out_dir = Path("out") / "analysis"
 comprehension_questions_dir = "comprehension_questions"
 window_size_effect_dir = "window_size_effect"
@@ -95,7 +96,7 @@ def create_csv_comprehension_questions_results(out_dir, n_games, use_light_compl
     df.to_csv(out_dir / f"comprehension_questions_results.csv")
 
 
-def plot_comprehension_questions_results(out_dir, model_name):
+def plot_comprehension_questions_results(out_dir, model_name, out_fig_name=None):
     df_questions = pd.read_csv(out_dir / f"comprehension_questions_results.csv")
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
@@ -107,8 +108,8 @@ def plot_comprehension_questions_results(out_dir, model_name):
                 # yerr=(df_questions['ci_ub'] - df_questions['ci_lb']) / 2,
                 capsize=2, fmt='none', c=c_blue1)
 
-    ax.set_xlabel('Comprehension questions', fontsize=24)
-    ax.set_ylabel(f'{model_name} response accuracy', fontsize=24)
+    # ax.set_xlabel('Comprehension questions', fontsize=24)
+    # ax.set_ylabel(f'{model_name} response accuracy', fontsize=24)
 
     x_labels = comprehension_questions_labels
     ax.set_ylim(-0.05, 1.05)
@@ -133,7 +134,8 @@ def plot_comprehension_questions_results(out_dir, model_name):
     ax.text(0.89, 1.05, 'State', fontsize=20,
             horizontalalignment='center', verticalalignment='center', transform=ax.transAxes)
     plt.tight_layout()
-    file_path = out_dir / f'{model_name}_comprehension_questions'
+    out_fig_name = f'{model_name}_comprehension_questions' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
@@ -187,38 +189,10 @@ def create_csv_window_size_effect_results(out_dir, history_window_size):
     df.to_csv(out_dir / f"steady_state_cooperation.csv")
 
 
-def plot_window_size_effect_comparison(out_dir, model_name, first_dir, first_window_size, second_dir, second_window_size, with_confidence_intervals=True):
-    df_win1 = pd.read_csv(first_dir / "average_cooperation_per_round.csv")
-    df_win2 = pd.read_csv(second_dir / "average_cooperation_per_round.csv")
-
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-
-    ax.plot(df_win1['iteration'], df_win1['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, c=c_blue1, label=f"ws {first_window_size}")
-    ax.fill_between(df_win1['iteration'], df_win1['ci_lb'], df_win1['ci_ub'], color=c_blue1, alpha=0.3, edgecolor="none", zorder=0) if with_confidence_intervals else None
-
-    ax.plot(df_win2['iteration'], df_win2['mean'], marker='.', linestyle='--', markersize=5, zorder=2, alpha=1.0, c=c_green1, label=f"ws {second_window_size}")
-    ax.fill_between(df_win2['iteration'], df_win2['ci_lb'], df_win2['ci_ub'], color=c_green1, alpha=0.3, edgecolor="none", zorder=0) if with_confidence_intervals else None
-
-    ax.spines[['right', 'top']].set_visible(False)
-    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1)
-
-    ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=18)
-    ax.tick_params(axis='both', labelsize=14)
-    ax.set_xlabel('Round', fontsize=18)
-
-    ax.set_ylim(-0.05, 1.05)
-
-    plt.legend()
-    plt.tight_layout()
-    file_path = out_dir / f'{model_name}_{first_window_size}w_vs_{second_window_size}w'
-    plt.savefig(file_path.with_suffix('.pdf'))
-    plt.savefig(file_path.with_suffix('.png'))
-
-
-def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, dirs, window_sizes):
+def create_csv_steady_state_cooperation_per_window_sizes(out_dir, dirs):
     csv_file = []
-    for window_size in window_sizes:
-        wdw_df = pd.read_csv(dirs[window_sizes.index(window_size)] / "steady_state_cooperation.csv")
+    for window_size in dirs.keys():
+        wdw_df = pd.read_csv(dirs[window_size] / "steady_state_cooperation.csv")
         element = {
             "window_size": window_size,
             "mean": wdw_df["mean"][0],
@@ -227,25 +201,61 @@ def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, dirs, wi
         }
         csv_file.append(element)
     df = pd.DataFrame(csv_file)
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    df.to_csv(out_dir / f"steady_state_cooperation_per_window_sizes.csv")
 
-    ax.plot(df['window_size'], df['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, c=c_orange1)
-    ax.fill_between(df['window_size'], df['ci_lb'], df['ci_ub'], color=c_orange1, alpha=0.3, edgecolor="none", zorder=0)
+
+def plot_window_size_effect_comparison(out_dir, model_name, first_dir, first_window_size, second_dir, second_window_size, with_confidence_intervals=True, out_fig_name=None):
+    df_win1 = pd.read_csv(first_dir / "average_cooperation_per_round.csv")
+    df_win2 = pd.read_csv(second_dir / "average_cooperation_per_round.csv")
+
+    fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+    ax.plot(df_win1['iteration'], df_win1['mean'], marker='.', linestyle='--', markersize=5, zorder=2, alpha=0.5, c=c_gray1, label=f"ws {first_window_size}")
+    ax.fill_between(df_win1['iteration'], df_win1['ci_lb'], df_win1['ci_ub'], color=c_gray1, alpha=0.1, edgecolor="none", zorder=0) if with_confidence_intervals else None
+
+    ax.plot(df_win2['iteration'], df_win2['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, c=c_green2, label=f"ws {second_window_size}")
+    ax.fill_between(df_win2['iteration'], df_win2['ci_lb'], df_win2['ci_ub'], color=c_green2, alpha=0.3, edgecolor="none", zorder=0) if with_confidence_intervals else None
+
+    ax.spines[['right', 'top']].set_visible(False)
+    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1)
+
+    # ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=24)
+    ax.tick_params(axis='both', labelsize=20)
+    ax.set_xlabel('Round', fontsize=24)
+
+    ax.set_ylim(-0.05, 1.05)
+
+    plt.legend(loc='upper left', fontsize=14)
+    plt.tight_layout()
+    # out_fig_name = f'{model_name}_{first_window_size}w_vs_{second_window_size}w' if out_fig_name is None else out_fig_name
+    out_fig_name = f'{model_name}_ad_ws100_ws10'
+    file_path = out_dir / out_fig_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+    return fig, ax
+
+def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, out_fig_name=None, fig_ax=None):
+    df = pd.read_csv(out_dir / "steady_state_cooperation_per_window_sizes.csv")
+    window_sizes = df['window_size']
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6)) if fig_ax is None else fig_ax
+
+    ax.plot(df['window_size'], df['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, c=c_green1)
+    ax.fill_between(df['window_size'], df['ci_lb'], df['ci_ub'], color=c_green1, alpha=0.3, edgecolor="none", zorder=0)
 
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
-    ax.set_ylim([-0.05, 1.05])
+    ax.set_ylim([-0.05, 0.65])
     ax.set_xlim([0, 40])
     ax.tick_params(axis='both', labelsize=14)
-    ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=18)
+    # ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=18)
     ax.set_xlabel('Window size', fontsize=18)
     ax.set_yticks([0, 0.2, 0.4, 0.6])
 
-    plt.legend()
-    plt.tight_layout()
+    # plt.tight_layout()
     min_wdw = min(window_sizes)
     max_wdw = max(window_sizes)
-    file_path = out_dir / f'{model_name}_steady_state_cooperation_{min_wdw}w-{max_wdw}w'
+    out_fig_name = f'{model_name}_steady_state_cooperation_inset' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
@@ -309,6 +319,31 @@ def create_csv_cooperation_probability_results(out_dir):
     df.to_csv(out_dir / f"coop_probability_vs_urnd_alpha.csv")
 
 
+def create_csv_cooperation_probability_other_strats_results(out_dir, opponents_names):
+    csv_file = []
+    for strat_name in opponents_names:
+        element = {
+            "opponent": strat_name,
+        }
+        strat_out_dir = out_dir / strat_name
+        game_histories_dir_path = strat_out_dir / "game_histories"
+        if not game_histories_dir_path.exists():
+            continue
+        file_name = f"game_history"
+        game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+
+        main_history_ends = [game_history.get_actions_by_player(player_1_) for game_history in game_histories]
+        mean_main_history_ends = [sum(main_history_end) / len(main_history_end) for main_history_end in main_history_ends]
+        mean = sum(mean_main_history_ends) / len(mean_main_history_ends)
+        ci = st.norm.interval(confidence=confidence, loc=np.mean(mean_main_history_ends), scale=st.sem(mean_main_history_ends))
+        element["model_coop"] = mean
+        element["ci_lb"] = ci[0] if not np.isnan(ci[0]) else mean
+        element["ci_ub"] = ci[1] if not np.isnan(ci[1]) else mean
+        csv_file.append(element)
+    df = pd.DataFrame(csv_file)
+    df.to_csv(out_dir / f"coop_probability_vs_other_strats.csv")
+
+
 def create_csv_sfem_results(out_dir):
     csv_file = []
     for p in range(1, max_p):  # Skip alpha = 0.0 and alpha = 1.0 because SFEM results don't hold
@@ -328,6 +363,27 @@ def create_csv_sfem_results(out_dir):
         csv_file.append(element)
     df = pd.DataFrame(csv_file)
     df.to_csv(out_dir / f"sfem_scores_vs_urnd_alpha.csv")
+
+
+def create_csv_sfem_other_strats_results(out_dir, opponents_names):
+    csv_file = []
+    for strat_name in opponents_names:
+        element = {
+            "opponent": strat_name,
+        }
+        strat_out_dir = out_dir / strat_name
+        game_histories_dir_path = strat_out_dir / "game_histories"
+        if not game_histories_dir_path.exists():
+            continue
+        file_name = f"game_history"
+        game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+        print(f"Computing SFEM for run against {strat_name}")
+        scores = compute_sfem_from_labels(game_histories, sfem_strategies_labels, player_1_)
+        for score, strategy_label in zip(scores, sfem_strategies_labels):
+            element[f"{strategy_label}_score"] = score
+        csv_file.append(element)
+    df = pd.DataFrame(csv_file)
+    df.to_csv(out_dir / f"sfem_scores_vs_other_strats.csv")
 
 
 def create_csv_behavioral_profile_results(out_dir, model_name):
@@ -361,31 +417,90 @@ def create_csv_behavioral_profile_results(out_dir, model_name):
     model_df.to_csv(out_dir / f"behavioral_profile_vs_urnd_alpha.csv")
 
 
-def plot_coop_probability_vs_urnd_alpha(out_dir, model_name):
+def create_csv_behavioral_profile_other_strats_results(out_dir, model_name, opponents_names):
+    model_csv_file = []
+    for strat_name in opponents_names:
+        model_element = {
+            "opponent": strat_name,
+        }
+        strat_out_dir = out_dir / strat_name
+        game_histories_dir_path = strat_out_dir / "game_histories"
+        if not game_histories_dir_path.exists():
+            continue
+        file_name = f"game_history"
+        game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+        history_main_name = player_1_
+        history_opponent_name = player_2_
+        profile = compute_behavioral_profile(game_histories, history_main_name, history_opponent_name)
+        profile.strategy_name = model_name
+        profile.opponent_name = strat_name
+        for dimension_name in behavioral_dimensions.keys():
+            dimension_values = profile.dimensions[dimension_name]
+            mean = np.mean(dimension_values)
+            cis = st.norm.interval(confidence, loc=mean, scale=st.sem(dimension_values))
+            model_element[f"{dimension_name}_mean"] = mean
+            model_element[f"{dimension_name}_ci_lb"] = cis[0] if not np.isnan(cis[0]) else mean
+            model_element[f"{dimension_name}_ci_ub"] = cis[1] if not np.isnan(cis[1]) else mean
+        model_csv_file.append(model_element)
+
+    model_df = pd.DataFrame(model_csv_file)
+    model_df.to_csv(out_dir / f"behavioral_profile_vs_other_strats.csv")
+
+
+def plot_coop_probability_vs_urnd_alpha(out_dir, model_name, out_fig_name=None):
     df_coop = pd.read_csv(out_dir / f"coop_probability_vs_urnd_alpha.csv")
     fig, ax = plt.subplots(1, 1, figsize=(5, 3))
 
     ax.plot(df_coop['URND_alpha'], df_coop[f'model_coop'], markersize=5, marker='o',
-            c=c_blue1, alpha=1.0)
+            c=c_violet1, alpha=1.0, zorder=4)
     ax.fill_between(df_coop['URND_alpha'], df_coop[f'ci_lb'], df_coop[f'ci_ub'],
-                    color=c_blue1, edgecolor="none", alpha=0.5, zorder=3)
+                    color=c_blue1, edgecolor="none", alpha=0.5, zorder=0)
 
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
     ax.set_xticks(df_coop['URND_alpha'])
-    ax.set_ylabel(f'{model_name} $p_{{coop}}$', fontsize=14)
+    # ax.set_ylabel(f'{model_name} $p_{{coop}}$', fontsize=14)
+    ax.set_ylabel(f'$p_{{coop}}$', fontsize=14)
     ax.set_ylim([-0.05, 1.05])
     ax.set_xlim([-0.05, 1.05])
     ax.tick_params(axis='both', labelsize=12)
     ax.set_xlabel('Opponent cooperation probability ($α$)', fontsize=14)
     plt.tight_layout()
 
-    file_path = out_dir / f'{model_name}_coop_vs_alpha'
+    out_fig_name = f'{model_name}_coop_vs_alpha' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def plot_sfem_results_vs_urnd_alpha(out_dir, model_name):
+def plot_coop_probability_vs_other_strats(out_dir, model_name, out_fig_name=None):
+    df_coop = pd.read_csv(out_dir / f"coop_probability_vs_other_strats.csv")
+    fig, ax = plt.subplots(1, 1, figsize=(5, 3))
+
+    ax.scatter(df_coop['opponent'], df_coop['model_coop'], marker='o',
+               s=70, zorder=10, alpha=0.9, c=c_orange1)
+    ax.errorbar(df_coop['opponent'], df_coop['model_coop'],
+                # TODO check yerr
+                yerr=df_coop['ci_ub'] - df_coop['ci_lb'],
+                # yerr=(df_questions['ci_ub'] - df_questions['ci_lb']) / 2,
+                capsize=2, fmt='none', c=c_orange1)
+
+    ax.spines[['right', 'top']].set_visible(False)
+    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
+    ax.set_xticks(df_coop['opponent'])
+    ax.set_ylabel(f'$p_{{coop}}$', fontsize=14)
+    ax.set_ylim([-0.05, 1.05])
+    ax.tick_params(axis='both', labelsize=12)
+    ax.set_xlabel('Opponent', fontsize=14)
+    plt.tight_layout()
+
+    out_fig_name = f'{model_name}_coop_vs_other_strats' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+
+
+def plot_sfem_results_vs_urnd_alpha(out_dir, model_name, out_fig_name=None):
     df_sfem = pd.read_csv(out_dir / f"sfem_scores_vs_urnd_alpha.csv")
     threshold = 0.2
     best_strategies = []
@@ -420,12 +535,39 @@ def plot_sfem_results_vs_urnd_alpha(out_dir, model_name):
     plt.legend()
     plt.tight_layout()
 
-    file_path = out_dir / f'{model_name}_sfem_vs_alpha'
+    out_fig_name = f'{model_name}_sfem_vs_alpha' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir):
+def plot_sfem_matrix(out_dir, sfem_candidates_names, out_fig_name=None):
+    df_sfem = pd.read_csv(out_dir / f"sfem_scores_vs_other_strats.csv")
+    df_sfem = df_sfem.drop(columns=df_sfem.columns[0])
+    opponents_names = df_sfem['opponent']
+    df_sfem = df_sfem.drop(columns=df_sfem.columns[0])
+    matrix = df_sfem.to_numpy()
+    matrix = matrix.T
+    title = 'SFEM scores'
+    xlabel = 'Opponent'
+    ylabel = 'Candidate'
+    vmin = 0
+    xticklabels = opponents_names
+    yticklabels = sfem_candidates_names
+    fig, ax = plt.subplots(1, 1, figsize=(5, 5))
+    sns.heatmap(matrix, annot=True, xticklabels=xticklabels, yticklabels=yticklabels, cmap="YlOrBr", fmt='.0%', vmin=vmin)
+    plt.title(title) if title is not None else None
+    plt.xlabel(xlabel) if xlabel is not None else None
+    plt.ylabel(ylabel) if ylabel is not None else None
+    plt.tight_layout()
+
+    out_fig_name = f'sfem_matrix' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+
+
+def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir, out_fig_name=None):
     df_profile = pd.read_csv(out_dir / 'behavioral_profile_vs_urnd_alpha.csv')
     df_profile.at[10, 'forgiving_mean'] = float("NaN")
     df_profile.at[10, 'forgiving_ci_lb'] = float("NaN")
@@ -452,7 +594,7 @@ def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir):
         #    ax= axs[0]
         ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
         ax.plot(df_profile['URND_alpha'], df_profile[f'{d}_mean'], '-o', markersize=5, color=c_blue1,
-                zorder=4, label=f'{model_name}')
+                zorder=4, label=f'Llama2')
         ax.fill_between(df_profile['URND_alpha'], df_profile[f'{d}_ci_lb'], df_profile[f'{d}_ci_ub'],
                         color=c_blue1, edgecolor="none", alpha=0.5, zorder=3)
 
@@ -475,9 +617,42 @@ def plot_behavioral_profile_vs_urnd_alpha(out_dir, model_name, rnd_out_dir):
 
     ax.set_xticks(df_profile['URND_alpha'])
     ax.set_xlabel('Opponent cooperation probability ($α$)', fontsize=14)
-    # plt.tight_layout()
+    plt.tight_layout()
 
-    file_path = out_dir / f'{model_name}_behavioral_profile_vs_alpha'
+    out_fig_name = f'{model_name}_behavioral_profile_vs_alpha' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+
+
+def plot_behavioral_profile_vs_other_strats(out_dir, model_name, opponents_names, out_fig_name=None):
+    df_profile = pd.read_csv(out_dir / 'behavioral_profile_vs_other_strats.csv')
+    fig, axs = plt.subplots(5, 1, figsize=(5, 7))
+    for i, (d, ax) in enumerate(zip(behavioral_dimensions.keys(), axs)):
+        ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
+        ax.scatter(df_profile['opponent'], df_profile[f'{d}_mean'], marker='o',
+                   s=70, zorder=10, alpha=0.9, c=c_orange1)
+        ax.errorbar(df_profile['opponent'], df_profile[f'{d}_mean'],
+                    # TODO check yerr
+                    yerr=df_profile[f'{d}_ci_ub'] - df_profile[f'{d}_ci_lb'],
+                    # yerr=(df_questions['ci_ub'] - df_questions['ci_lb']) / 2,
+                    capsize=2, fmt='none', c=c_orange1)
+
+        ax.set_ylabel(d.capitalize(), fontsize=12)
+        ax.set_ylim([-0.05, 1.05])
+        ax.set_xlim([-0.5, len(opponents_names) - 0.5])
+        ax.hlines(0, -1.5, len(opponents_names) + 0.5, color='black', linewidth=1, linestyle='--')
+        ax.spines[['right', 'top']].set_visible(False)
+        if i < 4:
+            ax.spines[['bottom']].set_visible(False)
+            ax.set_xticks([])
+
+    ax.set_xticks(df_profile['opponent'])
+    ax.set_xlabel('Opponent', fontsize=14)
+    plt.tight_layout()
+
+    out_fig_name = f'{model_name}_behavioral_profile_vs_other_strats' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
 
