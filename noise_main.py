@@ -20,7 +20,7 @@ n_games = 100
 n_iterations = 100
 checkpoint = 0
 checkers = False
-msg = "Run llama3 vs noisy TFT with sensitivity [0.05, 0.1, 0.15, 0.2, 0.25, 0.3] for 100 games, 100 iterations, window size 10."
+msg = "Run llama3 vs noisy TFT with sensitivity [0.01, 0.02, 0.03, 0.04] for 100 games, 100 iterations, window size 10."
 
 if msg == "":
     log.info("Set a message.")
@@ -41,7 +41,7 @@ log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # daily_requests = 3275
 
-for sensitivity in range(5, 31, 5):  # TODO <--- b1
+for sensitivity in range(1, 5):  # TODO <--- b1
     sensitivity_dec = sensitivity / 100
     urnd_str = f"SENS{sensitivity:03}"
     print(f"Sensitivity {sensitivity_dec:03}")
