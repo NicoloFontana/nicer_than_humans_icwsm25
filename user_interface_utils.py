@@ -154,6 +154,25 @@ def evaluate_window_size_effect(out_dir, model_client, history_window_size, n_ga
                         run_description=run_description, ask_questions=False)
 
 
+def create_csv_average_cooperation_per_round(out_dir):
+    game_histories = extract_histories_from_files(out_dir / "game_histories", f"game_history")
+    main_histories = [game_history.get_actions_by_player(player_1_) for game_history in game_histories]
+    avg_main_history = compute_average_vector(main_histories)
+    avg_ci_lbs, avg_ci_ubs = compute_confidence_interval_vectors(main_histories, confidence=confidence)
+
+    avg_coop_csv_file = []
+    for iteration_idx in range(len(main_histories[0])):
+        iteration = {
+            "iteration": iteration_idx + 1,
+            "mean": avg_main_history[iteration_idx],
+            "ci_lb": avg_ci_lbs[iteration_idx] if not np.isnan(avg_ci_lbs[iteration_idx]) else avg_main_history[iteration_idx],
+            "ci_ub": avg_ci_ubs[iteration_idx] if not np.isnan(avg_ci_ubs[iteration_idx]) else avg_main_history[iteration_idx],
+        }
+        avg_coop_csv_file.append(iteration)
+    df = pd.DataFrame(avg_coop_csv_file)
+    df.to_csv(out_dir / f"average_cooperation_per_round.csv")
+
+
 def create_csv_window_size_effect_results(out_dir, history_window_size):
     game_histories = extract_histories_from_files(out_dir / "game_histories", f"game_history")
     main_histories = [game_history.get_actions_by_player(player_1_) for game_history in game_histories]
@@ -233,6 +252,7 @@ def plot_window_size_effect_comparison(out_dir, model_name, first_dir, first_win
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
     return fig, ax
+
 
 def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, out_fig_name=None, fig_ax=None):
     df = pd.read_csv(out_dir / "steady_state_cooperation_per_window_sizes.csv")
@@ -759,3 +779,106 @@ def plot_comparison_delta_behavioral_profiles(first_out_dir, first_model_name, s
     file_path = first_out_dir / img_file_name
     plt.savefig(file_path.with_suffix('.pdf'))
     plt.savefig(file_path.with_suffix('.png'))
+
+
+def create_csv_statistical_tests(out_dir):
+    first_defe_csv = []
+    avg_defe_csv = []
+    std_defe_csv = []
+    game_histories_dir_path = out_dir / "game_histories"
+    file_name = f"game_history"
+    game_histories = extract_histories_from_files(game_histories_dir_path, file_name)
+    for game_history in game_histories:
+        main_history = game_history.get_actions_by_player(player_1_)
+        n_iterations = len(main_history)
+        first_defe_csv.append({
+            'first_defection': main_history.index(0) / n_iterations if 0 in main_history else float("NaN")
+        })
+        defes = [i / n_iterations for i, x in enumerate(main_history) if x == 0]
+        avg_defe_csv.append({
+            'avg_defection': np.mean(defes) if len(defes) > 0 else float("NaN")
+        })
+        std_defe_csv.append({
+            'std_defection': np.std(defes) if len(defes) > 0 else float("NaN")
+        })
+    first_defe_df = pd.DataFrame(first_defe_csv)
+    avg_defe_df = pd.DataFrame(avg_defe_csv)
+    std_defe_df = pd.DataFrame(std_defe_csv)
+    first_defe_df.to_csv(out_dir / "first_defection.csv")
+    avg_defe_df.to_csv(out_dir / "avg_defection.csv")
+    std_defe_df.to_csv(out_dir / "std_defection.csv")
+
+
+def plot_statistical_tests(out_dir, first_dir, first_label, second_dir, second_label):
+    first_defe_name = "first_defection.csv"
+    avg_defe_name = "avg_defection.csv"
+    std_defe_name = "std_defection.csv"
+    first_dfs = [pd.read_csv(first_dir / first_defe_name), pd.read_csv(first_dir / avg_defe_name), pd.read_csv(first_dir / std_defe_name)]
+    second_dfs = [pd.read_csv(second_dir / first_defe_name), pd.read_csv(second_dir / avg_defe_name), pd.read_csv(second_dir / std_defe_name)]
+    fig, ax = plt.subplots(1, 1, figsize=(5, 2))
+    first_avg_different = False
+    avg_avg_different = False
+    std_avg_different = False
+    p_value_threshold = 0.05
+
+    for i, (first_df, second_df) in enumerate(zip(first_dfs, second_dfs)):
+        plt.figure(fig)
+        plt.sca(ax)
+        first_values = first_df.iloc[:, 1]
+        second_values = second_df.iloc[:, 1]
+        first_mean = np.mean(first_values)
+        second_mean = np.mean(second_values)
+        ax.scatter([i], [first_mean], marker='o', s=70, zorder=10, alpha=1.0, c=c_blue1)
+        first_ci = st.norm.interval(confidence, loc=first_mean, scale=st.sem(first_values))
+        ax.errorbar([i], [first_mean], yerr=[first_ci[1] - first_mean], capsize=2, fmt='none', c=c_blue1)
+        ax.scatter([i], [second_mean], marker='^', s=70, zorder=10, alpha=1.0, c=c_orange1)
+        second_ci = st.norm.interval(confidence, loc=second_mean, scale=st.sem(second_values))
+        ax.errorbar([i], [second_mean], yerr=[second_ci[1] - second_mean], capsize=2, fmt='none', c=c_orange1)
+        if i == 0:
+            first_avg_different = st.ttest_ind(first_values, second_values, nan_policy='omit').pvalue < p_value_threshold
+        if i == 1:
+            avg_avg_different = st.ttest_ind(first_values, second_values, nan_policy='omit').pvalue < p_value_threshold
+        if i == 2:
+            std_avg_different = st.ttest_ind(first_values, second_values, nan_policy='omit').pvalue < p_value_threshold
+
+    plt.figure(fig)
+    plt.sca(ax)
+    ax.scatter([], [], marker='o', s=70, zorder=10, alpha=1.0, c=c_blue1, label=first_label)
+    ax.scatter([], [], marker='^', s=70, zorder=10, alpha=1.0, c=c_orange1, label=second_label)
+    ax.set_xticks([0, 1, 2])
+    ax.set_yticks([0, 0.5, 1])
+    ax.set_xticklabels(["First defection" if first_avg_different else "First defection\nEQUAL", "Average defection" if avg_avg_different else "Average defection\nEQUAL", "Std deviation" if std_avg_different else "Std deviation\nEQUAL"])
+    plt.legend()
+
+    plt.tight_layout()
+    img_file_name = f"{first_label}-{second_label}_statistical_tests"
+    file_path = out_dir / img_file_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+
+
+def plot_cooperation_comparison(out_dir, model_name, dirs, labels, with_confidence_intervals=True, out_fig_name=None):
+    dfs = [pd.read_csv(d / "average_cooperation_per_round.csv") for d in dirs]
+
+    fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+    for df, label in zip(dfs, labels):
+        ax.plot(df['iteration'], df['mean'], marker='.', markersize=5, zorder=2, alpha=1.0, label=label)
+        ax.fill_between(df['iteration'], df['ci_lb'], df['ci_ub'], alpha=0.1, edgecolor="none", zorder=0) if with_confidence_intervals else None
+
+    ax.spines[['right', 'top']].set_visible(False)
+    ax.grid(axis='y', color='gray', linestyle=':', linewidth=1)
+
+    # ax.set_ylabel(f'{model_name} $p_{{coop}}$ vs. Always Defect', fontsize=24)
+    ax.tick_params(axis='both', labelsize=20)
+    ax.set_xlabel('Round', fontsize=24)
+
+    ax.set_ylim(-0.05, 1.05)
+
+    plt.legend(loc='upper left', fontsize=14)
+    plt.tight_layout()
+    out_fig_name = f'{model_name}_coop_comparison' if out_fig_name is None else out_fig_name
+    file_path = out_dir / out_fig_name
+    plt.savefig(file_path.with_suffix('.pdf'))
+    plt.savefig(file_path.with_suffix('.png'))
+    return fig, ax
