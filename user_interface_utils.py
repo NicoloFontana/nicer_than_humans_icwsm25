@@ -476,6 +476,8 @@ def plot_coop_probability_vs_urnd_alpha(out_dir, model_name, out_fig_name=None):
     ax.fill_between(df_coop['URND_alpha'], df_coop[f'ci_lb'], df_coop[f'ci_ub'],
                     color=c_blue1, edgecolor="none", alpha=0.5, zorder=0)
 
+    ax.set_facecolor('white')
+
     ax.spines[['right', 'top']].set_visible(False)
     ax.grid(axis='y', color='gray', linestyle=':', linewidth=1, zorder=0)
     ax.set_xticks(df_coop['URND_alpha'])
