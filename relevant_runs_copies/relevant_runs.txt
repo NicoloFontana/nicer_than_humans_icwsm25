@@ -204,6 +204,15 @@ Llama3:
 >> 20240604181515 (100 games, 100 iterations):
     against URND[06, 10]
 
+
+Fixed prompt Llama3:
+>> 20240624124808:
+    URND[01, 05, 09, 10]
+>> 20240730172623:
+    URND[00, 02, 03, 04, 06]
+>> 20240811005930:
+    URND[07, 08]
+
 >> 20240607175913 (100 games, 100 iterations):
     against TFT
 >> 20240607180150 (100 games, 100 iterations):
