@@ -2,17 +2,17 @@ from pathlib import Path
 
 from src.game.two_players_pd_utils import to_nat_lang, player_1_, player_2_, two_players_pd_axelrod_payoff
 
-# TODO 1/3: [START] check model, max_new_tokens, temperature, history_window_size
-KEY = "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"  # huggingface
-# KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai
-MODEL_NAME = "llama3"
-# MODEL_NAME = "gpt35t"
+# KEY = "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"  # huggingface
+# KEY = "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"  # new huggingface
+KEY = "sk-proj-WUY3EjWIgbwhS3UbY6DTT3BlbkFJohhB3HQl5D3yyxWxRJcH"  # openai
+# MODEL_NAME = "llama3"
+MODEL_NAME = "gpt35t"
 # MODEL_URL = "meta-llama/Llama-2-70b-chat-hf"
-# MODEL_URL = "gpt-3.5-turbo"
-MODEL_URL = "meta-llama/Meta-Llama-3-70B-Instruct"
+MODEL_URL = "gpt-3.5-turbo"
+# MODEL_URL = "meta-llama/Meta-Llama-3-70B-Instruct"
 # MODEL_URL = "CohereForAI/c4ai-command-r-plus"
-PROVIDER = "huggingface"
-# PROVIDER = "openai"
+# PROVIDER = "huggingface"
+PROVIDER = "openai"
 MAX_NEW_TOKENS = 128
 TEMPERATURE = 0.7
 history_window_size = 10

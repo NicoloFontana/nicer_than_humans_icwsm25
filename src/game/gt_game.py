@@ -40,6 +40,10 @@ class GTGame:
     def get_history(self) -> GameHistory:
         return self.history
 
+    def set_history(self, history: GameHistory):
+        self.history = history
+        self.current_round = len(self.history) + 1
+
     def add_player(self, new_player: Player):
         if self.players is None:
             self.players = {}

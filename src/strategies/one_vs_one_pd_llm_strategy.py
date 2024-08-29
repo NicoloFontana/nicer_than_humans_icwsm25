@@ -34,6 +34,9 @@ class OneVsOnePDLlmStrategy(Strategy):
     def get_client(self):
         return self.client
 
+    def set_temperature(self, temperature):
+        self.temperature = temperature
+
     def play(self) -> int:
         is_ended = self.game.is_ended
         action_space = self.game.get_action_space()

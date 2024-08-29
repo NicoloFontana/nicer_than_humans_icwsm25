@@ -24,8 +24,8 @@ class ModelClient:
             self.minute_requests = 0
             self.minute_requests_limit = 500
             self.daily_requests = 0
-            self.daily_requests_limit = 10000
-            self.buffer_size = 100
+            self.daily_requests_limit = 11000
+            self.buffer_size = 0
         else:
             self.api_client = None
 
@@ -43,8 +43,8 @@ class ModelClient:
                     generated = True
                 except Exception as e:
                     if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-                        warnings.warn("Model is overloaded. Waiting 2 seconds and retrying.")
-                        time.sleep(2)
+                        warnings.warn("Model is overloaded. Waiting 60 seconds and retrying.")
+                        time.sleep(60)
                     else:
                         warnings.warn(
                             f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")

@@ -123,6 +123,12 @@ class GameHistory:
         with open(file_path, "r") as history_file:
             self.history = json.load(history_file)
 
+    def load_from_file_with_limit(self, file_path, limit):
+        with open(file_path, "r") as history_file:
+            self.history = json.load(history_file)
+            for player in self.history.keys():
+                self.history[player] = self.history[player][:limit]
+
     def get_players_names(self) -> list:
         """
         Get the names of the players in the history.\n
