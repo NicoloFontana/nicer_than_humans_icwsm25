@@ -1,1 +1,0 @@
-Go back to natural language format, rather than JSON one, but keep the player-agnostic change in perspective (from you-vs-opponent to A-vs-B).

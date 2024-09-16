@@ -1,1 +1,0 @@
-Split history lists into 10-rounds-sized chunks to reduce the level of implicit information.
