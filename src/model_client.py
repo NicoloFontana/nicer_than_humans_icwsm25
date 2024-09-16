@@ -24,7 +24,7 @@ class ModelClient:
             self.minute_requests = 0
             self.minute_requests_limit = 500
             self.daily_requests = 0
-            self.daily_requests_limit = 11000
+            self.daily_requests_limit = 12000
             self.buffer_size = 0
         else:
             self.api_client = None
@@ -43,9 +43,13 @@ class ModelClient:
                     generated = True
                 except Exception as e:
                     if e.__class__.__name__ == "HfHubHTTPError" or e.__class__.__name__ == "OverloadedError":
-                        warnings.warn("Model is overloaded. Waiting 60 seconds and retrying.")
-                        time.sleep(60)
+                        print("Model is overloaded. Waiting 300 seconds and retrying.")
+                        log.error("Model is overloaded. Waiting 300 seconds and retrying.")
+                        warnings.warn("Model is overloaded. Waiting 300 seconds and retrying.")
+                        time.sleep(300)
                     else:
+                        print(f"Error {str(e)} in text generation with prompt: {prompt}.")
+                        log.error(f"Error {str(e)} in text generation with prompt: {prompt}.")
                         warnings.warn(
                             f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
                         generated_text = ""
@@ -74,18 +78,25 @@ class ModelClient:
                 log.info(f"Minute requests limit reached. Sleeping for 60 seconds to avoid minute limit.")
                 time.sleep(60)
                 self.minute_requests = 0
-            response = self.api_client.chat.completions.with_raw_response.create(
-                model=self.model_url,
-                messages=[
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_new_tokens
-            )
+            try:
+                response = self.api_client.chat.completions.with_raw_response.create(
+                    model=self.model_url,
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=max_new_tokens
+                )
+                completion = response.parse()
+                generated_text = completion.choices[0].message.content
+            except Exception as e:
+                print(f"Error {str(e)} in text generation with prompt: {prompt}.")
+                log.error(f"Error {str(e)} in text generation with prompt: {prompt}.")
+                warnings.warn(
+                    f"Error {str(e)} in text generation with prompt: {prompt}. Substituting with empty string.")
+                generated_text = ""
             print(f"Daily requests: {self.daily_requests}, Minute requests: {self.minute_requests}")
             log.info(f"Daily requests: {self.daily_requests}, Minute requests: {self.minute_requests}")
-            completion = response.parse()
-            generated_text = completion.choices[0].message.content
             self.minute_requests += 1
             self.daily_requests += 1
 

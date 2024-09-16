@@ -54,11 +54,11 @@ def new_label_to_full_question(new_label):
 
 
 def old_to_new_checker_name(old_checker_name):
-    if old_checker_name == "aggregation":
+    if old_checker_name == "aggregation" or "aggregation" in old_checker_name:
         return "state"
-    if old_checker_name == "rule":
+    if old_checker_name == "rule" or "rule" in old_checker_name:
         return "rules"
-    if old_checker_name == "time":
+    if old_checker_name == "time" or "time" in old_checker_name:
         return "time"
 
 

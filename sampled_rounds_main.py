@@ -16,6 +16,7 @@ from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import log, OUT_BASE_PATH, timestamp
 
 model = "llama3"
+initial_game = 0
 n_games = 100
 sampled_rounds = [1, 10, 14, 15, 38, 50, 54, 80, 95, 100]
 # sampled_rounds = {1, 50, 100}
@@ -25,7 +26,7 @@ sampled_rounds = [1, 10, 14, 15, 38, 50, 54, 80, 95, 100]
 # sampled_rounds = list(sampled_rounds)
 # sampled_rounds.sort()
 
-msg = f"Test temperature 1.0 for GPT3.5t on sampled rounds {sampled_rounds} for every alpha, for every game."
+msg = f"Test temperature 1.0 for GPT3.5 on sampled rounds {sampled_rounds} for alpha 0.9,1.0, for every game."
 
 if msg == "":
     log.info("Set a message.")
@@ -33,14 +34,14 @@ if msg == "":
 log.info(msg)
 print(msg)
 
-new_dt_start_time = dt.datetime.now()
-log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-
-# Sleeping routine
-log.info("Going to sleep")
-print("Going to sleep")
-time.sleep(21600)
+# new_dt_start_time = dt.datetime.now()
+# log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+# print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+#
+# # Sleeping routine
+# log.info("Going to sleep")
+# print("Going to sleep")
+# time.sleep(21600)
 
 new_dt_start_time = dt.datetime.now()
 new_start_time = time.mktime(new_dt_start_time.timetuple())
@@ -54,14 +55,18 @@ for t in {1.0}:
     temp_dir = f"T{temp}"
     log.info(f"Temperature: {t}")
     print(f"Temperature: {t}")
-    for p in range(11):
+    for p in range(9, 11):
         coop_prob = p / 10
         urnd_dir = f"URND{p:02}"
         print(f"URND{p:02}")
         log.info(f"URND{p:02}")
         csv_dir = OUT_BASE_PATH / str(timestamp) / temp_dir / urnd_dir
         csv_dir.mkdir(parents=True, exist_ok=True)
-        for n_game in range(n_games):
+        if p == 9:
+            initial_game = 57
+        else:
+            initial_game = 0
+        for n_game in range(initial_game, n_games):
             log.info(f"Game {n_game + 1}") if n_games > 1 else None
             print(f"Game {n_game + 1}") if n_games > 1 else None
 

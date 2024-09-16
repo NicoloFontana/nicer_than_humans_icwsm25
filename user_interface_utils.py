@@ -23,7 +23,7 @@ c_violet1 = '#301466'
 c_gray1 = '#444444'
 c_orange1 = '#ECA72C'
 
-checkers_names = ["time", "rule", "aggregation"]  # TODO FIX CHECKERS NAMES
+checkers_names = ["time", "rule", "aggregation"]
 comprehension_questions_labels = ['min_max', 'actions', 'payoff', 'round', 'action$_i$', 'points$_i$', '#actions', '#points']
 sfem_strategies_labels = ['AD', 'RND', 'AC', 'TFT', 'STFT', 'GRIM', 'WSLS']
 base_out_dir = Path("out") / "analysis"
