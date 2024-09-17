@@ -15,7 +15,6 @@ from src.strategies.hard_coded_pd_strategies import TitForTat, Grim, WinStayLose
 from src.strategies.one_vs_one_pd_llm_strategy import OneVsOnePDLlmStrategy
 from src.utils import timestamp, log, start_time, OUT_BASE_PATH
 
-# TODO 1/3: check n_games (30 gpt, 100 llama), n_iterations (50 gpt, 100 llama), msg
 n_games = 50
 n_iterations = 100
 checkpoint = 0
@@ -43,7 +42,7 @@ log.info(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"Starting time: {new_dt_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 # daily_requests = 3275
 
-for p in {10}:  # TODO <--- b1
+for p in {10}:
     coop_prob = p / 10
     urnd_str = f"URND{p:02}"
     print(f"URND{p:02}")
@@ -63,7 +62,6 @@ for p in {10}:  # TODO <--- b1
         # Set up the game
         game = TwoPlayersPD(iterations=n_iterations)
 
-        # TODO 3/3: check the checkers and the opponent's strategy (and coop prob)
         llm_player = Player(player_1_)
         llm_strategy = OneVsOnePDLlmStrategy(game, model_client, history_window_size=history_window_size, checkers=checkers)
         llm_strategy.set_temperature(t)
@@ -71,7 +69,7 @@ for p in {10}:  # TODO <--- b1
         game.add_player(llm_player)
 
         second_player = Player(player_2_)
-        second_player_strategy = UnfairRandom(coop_prob)  # TODO <--- a
+        second_player_strategy = UnfairRandom(coop_prob)
         second_player.set_strategy(second_player_strategy)
         game.add_player(second_player)
 
@@ -82,13 +80,13 @@ for p in {10}:  # TODO <--- b1
             if not game.is_ended:
                 game.play_game_round()
                 out_dir = OUT_BASE_PATH / str(timestamp) / urnd_str if checkpoint != 0 and curr_round % checkpoint == 0 else None
-                infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round  # TODO <--- b2
+                infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round
                 # infix = f"{n_game + 1}_{curr_round}" if n_games > 1 else curr_round
                 llm_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
                 log.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
                 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if out_dir is not None else None
         out_dir = OUT_BASE_PATH / str(timestamp) / urnd_str
-        infix = f"{n_game + 1}" if n_games > 1 else None  # TODO <--- b3 [END]
+        infix = f"{n_game + 1}" if n_games > 1 else None
         # infix = f"{n_game + 1}" if n_games > 1 else None
         llm_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
         game.save_history(out_dir=out_dir, infix=infix)
