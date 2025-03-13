@@ -65,7 +65,7 @@ class TwoPlayersPD(GTGame):
         return None
 
 
-def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_strategy_args=None, second_strategy_args=None, n_games=2, n_iterations=5, history_window_size=5,
+def play_two_players_pd(out_dir, logger, first_strategy_id, second_strategy_id, first_strategy_args=None, second_strategy_args=None, n_games=2, n_iterations=5, history_window_size=5,
                         checkpoint=2, run_description=None, ask_questions=False, verbose=True):
     if checkpoint == 0:
         checkpoint = n_iterations + 1
@@ -86,9 +86,11 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
         run_description = f"Running {first_strategy_name} as '{first_player_name}' against {second_strategy_name} as '{second_player_name}' in {n_games} games of {n_iterations} iterations each with window size {history_window_size}."
         if ask_questions:
             run_description += " Asking comprehension questions."
+    logger.info(run_description)
     print(run_description)
     for n_game in range(n_games):
         current_game = n_game + 1
+        logger.info(f"Game {current_game}") if verbose else None
         print(f"Game {current_game}") if verbose else None
         checkers_names = ["time", "rule", "aggregation"] if ask_questions else []
         checkers = get_checkers_by_names(checkers_names)
@@ -114,6 +116,7 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
 
         for iteration in range(n_iterations):
             current_round = iteration + 1
+            logger.info(f"Round {current_round}") if current_round % checkpoint == 0 else None
             print(f"Round {current_round}") if current_round % checkpoint == 0 else None
             if not game.is_ended:
                 game.play_game_round()
@@ -123,6 +126,7 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
                     first_player_strategy.wrap_up_round(out_dir=checkpoint_dir, infix=infix)
                 if isinstance(second_strategy_id, ModelClient):
                     second_player_strategy.wrap_up_round(out_dir=checkpoint_dir, infix=infix)
+                logger.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if checkpoint_dir is not None else None
                 print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if checkpoint_dir is not None else None
         infix = f"{current_game}"
         if isinstance(first_strategy_id, ModelClient):
@@ -130,4 +134,5 @@ def play_two_players_pd(out_dir, first_strategy_id, second_strategy_id, first_st
         if isinstance(second_strategy_id, ModelClient):
             second_player_strategy.wrap_up_round(out_dir=out_dir, infix=infix)
         game.save_history(out_dir=out_dir, infix=infix)
+        logger.info(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if verbose or n_game == n_games - 1 else None
         print(f"Time elapsed: {dt.timedelta(seconds=int(time.time() - start_time))}") if verbose or n_game == n_games - 1 else None

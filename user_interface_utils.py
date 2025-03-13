@@ -37,12 +37,12 @@ confidence = 0.95
 max_p = 10
 
 
-def get_comprehension_questions_dir(model_name, n_games, n_iterations, history_window_size):
-    return base_out_dir / model_name / comprehension_questions_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+def get_comprehension_questions_dir(model_name, timestamp, n_games, n_iterations, history_window_size):
+    return base_out_dir / model_name / comprehension_questions_dir / f"{timestamp}_g{n_games}_i{n_iterations}_w{history_window_size}"
 
 
-def evaluate_comprehension_questions(out_dir, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None):
-    play_two_players_pd(out_dir, model_client, "RND", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
+def evaluate_comprehension_questions(out_dir, logger, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None):
+    play_two_players_pd(out_dir, logger, model_client, "RND", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=True)
 
 
@@ -103,9 +103,7 @@ def plot_comprehension_questions_results(out_dir, model_name, out_fig_name=None)
     ax.scatter(df_questions['label'], df_questions['accuracy'], marker='o',
                s=70, zorder=10, alpha=0.9, c=c_blue1)
     ax.errorbar(df_questions['label'], df_questions['accuracy'],
-                # TODO check yerr
                 yerr=df_questions['ci_ub'] - df_questions['ci_lb'],
-                # yerr=(df_questions['ci_ub'] - df_questions['ci_lb']) / 2,
                 capsize=2, fmt='none', c=c_blue1)
 
     # ax.set_xlabel('Comprehension questions', fontsize=24)
@@ -140,17 +138,17 @@ def plot_comprehension_questions_results(out_dir, model_name, out_fig_name=None)
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def get_window_size_comparison_dir(model_name):
-    return base_out_dir / model_name / window_size_effect_dir
+def get_window_size_comparison_dir(model_name, timestamp):
+    return base_out_dir / model_name / window_size_effect_dir / f"{timestamp}"
 
 
-def get_window_size_effect_dir(model_name, n_games, n_iterations, history_window_size):
-    model_window_size_effect_dir = get_window_size_comparison_dir(model_name)
+def get_window_size_effect_dir(model_name, timestamp, n_games, n_iterations, history_window_size):
+    model_window_size_effect_dir = get_window_size_comparison_dir(model_name, timestamp)
     return model_window_size_effect_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
 
 
-def evaluate_window_size_effect(out_dir, model_client, history_window_size, n_games=2, n_iterations=5, checkpoint=2, run_description=None):
-    play_two_players_pd(out_dir, model_client, "AD", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
+def evaluate_window_size_effect(out_dir, logger, model_client, history_window_size, n_games=2, n_iterations=5, checkpoint=2, run_description=None):
+    play_two_players_pd(out_dir, logger, model_client, "AD", n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size, checkpoint=checkpoint,
                         run_description=run_description, ask_questions=False)
 
 
@@ -280,11 +278,11 @@ def plot_steady_state_cooperation_per_window_sizes(out_dir, model_name, out_fig_
     plt.savefig(file_path.with_suffix('.png'))
 
 
-def get_behavioral_analysis_dir(model_name, n_games, n_iterations, history_window_size):
-    return base_out_dir / model_name / behavioral_analysis_dir / f"g{n_games}_i{n_iterations}_w{history_window_size}"
+def get_behavioral_analysis_dir(model_name, timestamp, n_games, n_iterations, history_window_size):
+    return base_out_dir / model_name / behavioral_analysis_dir / f"{timestamp}_g{n_games}_i{n_iterations}_w{history_window_size}"
 
 
-def compute_response_to_different_hostilities(out_dir, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None,
+def compute_response_to_different_hostilities(out_dir, logger, model_client, n_games=2, n_iterations=5, history_window_size=5, checkpoint=2, run_description=None,
                                               already_run_against_ad=False):
     if already_run_against_ad:
         initial_p = 1
@@ -295,6 +293,7 @@ def compute_response_to_different_hostilities(out_dir, model_client, n_games=2, 
         initial_p = 0
     for p in range(initial_p, max_p + 1):
         alpha = p / 10
+        logger.info(urnd_str.format(p=p))
         print(urnd_str.format(p=p))
         urnd_out_dir = out_dir / urnd_str.format(p=p)
         play_two_players_pd(urnd_out_dir, model_client, "URND", second_strategy_args=alpha, n_games=n_games, n_iterations=n_iterations, history_window_size=history_window_size,
@@ -849,7 +848,8 @@ def plot_statistical_tests(out_dir, first_dir, first_label, second_dir, second_l
     ax.scatter([], [], marker='^', s=70, zorder=10, alpha=1.0, c=c_orange1, label=second_label)
     ax.set_xticks([0, 1, 2])
     ax.set_yticks([0, 0.5, 1])
-    ax.set_xticklabels(["First defection" if first_avg_different else "First defection\nEQUAL", "Average defection" if avg_avg_different else "Average defection\nEQUAL", "Std deviation" if std_avg_different else "Std deviation\nEQUAL"])
+    ax.set_xticklabels(["First defection" if first_avg_different else "First defection\nEQUAL", "Average defection" if avg_avg_different else "Average defection\nEQUAL",
+                        "Std deviation" if std_avg_different else "Std deviation\nEQUAL"])
     plt.legend()
 
     plt.tight_layout()
