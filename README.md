@@ -3,6 +3,12 @@
 
 This repository contains the code for the paper "Nicer Than Humans: How do Large Language Models Behave in the Prisoner's Dilemma?" accepted for publication at [ICWSM'25](https://www.icwsm.org/2025/index.html).
 
+**Authors**:\
+Nicolò Fontana (Politecnico di Milano)
+[Scholar](https://scholar.google.com/citations?user=fb1sclAAAAAJ&hl=en&oi=ao)\
+Francesco Pierri, (Politecnico di Milano) [Scholar](https://scholar.google.com/citations?user=b17WlbMAAAAJ&hl=en&oi=ao)\
+Luca Maria Aiello (IT University of Copenhagen, Pioneer Centre for AI) [Scholar](https://scholar.google.com/citations?user=FIX-7hcAAAAJ&hl=en&oi=ao)
+
 **Abstract**:\
 The behavior of Large Language Models (LLMs) as artificial social agents is largely unexplored, and we still lack extensive evidence of how these agents react to simple social stimuli. Testing the behavior of AI agents in classic Game Theory experiments provides a promising theoretical framework for evaluating the norms and values of these agents in archetypal social situations. In this work, we investigate the cooperative behavior of three LLMs (Llama2, Llama3, and GPT3.5) when playing the Iterated Prisoner's Dilemma against random adversaries displaying various levels of hostility. We introduce a systematic methodology to evaluate an LLM's comprehension of the game rules and its capability to parse historical gameplay logs for decision-making. We conducted simulations of games lasting for 100 rounds and analyzed the LLMs' decisions in terms of dimensions defined in the behavioral economics literature. We find that all models tend not to initiate defection but act cautiously, favoring cooperation over defection only when the opponent's defection rate is low. Overall, LLMs behave at least as cooperatively as the typical human player, although our results indicate some substantial differences among models. In particular, Llama2 and GPT3.5 are more cooperative than humans, and especially forgiving and non-retaliatory for opponent defection rates below 30%. More similar to humans, Llama3 exhibits consistently uncooperative and exploitative behavior unless the opponent always cooperates. Our systematic approach to the study of LLMs in game theoretical scenarios is a step towards using these simulations to inform practices of LLM auditing and alignment.
 
