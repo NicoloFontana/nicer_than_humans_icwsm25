@@ -70,7 +70,7 @@ for t in {1.0}:
             log.info(f"Game {n_game + 1}") if n_games > 1 else None
             print(f"Game {n_game + 1}") if n_games > 1 else None
 
-            dir_path = Path("relevant_runs_copies") / "main_runs_copies" / f"{model}_URNDx_ws10" / urnd_dir / "game_histories"
+            dir_path = Path("../relevant_runs_copies") / "main_runs_copies" / f"{model}_URNDx_ws10" / urnd_dir / "game_histories"
             file_name = f"game_history_{n_game + 1}"
             game_history = GameHistory()
             file_path = dir_path / f"{file_name}.json"
