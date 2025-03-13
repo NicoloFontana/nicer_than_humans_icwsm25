@@ -1,0 +1,9 @@
+,type,full_question,label,accuracy,ci_lb,ci_ub
+0,time,Which is the current round of the game?,round,1.0,1.0,1.0
+1,time,Which action did player X play in round i?,action_i,0.9342592592592592,0.9194719767305214,0.9490465417879971
+2,time,How many points did player X collect in round i?,points_i,0.825925925925926,0.8033016356114349,0.848550216240417
+3,rules,What is the lowest/highest payoff player A can get in a single round?,min_max,1.0,1.0,1.0
+4,rules,Which actions is player A allowed to play?,actions,1.0,1.0,1.0
+5,rules,Which is player X's payoff in a single round if X plays p and Y plays q?,payoff,0.9591584158415841,0.9455029102606393,0.972813921422529
+6,state,How many times did player X choose p?,#actions,0.9975247524752475,0.9926733564739108,1.0023761484765843
+7,state,What is player X's current total payoff?,#points,0.995049504950495,0.9853467129478215,1.0047522969531686
