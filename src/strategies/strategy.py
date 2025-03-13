@@ -8,5 +8,14 @@ class Strategy:
             strategy_name = str(strategy_name)
         self.strategy_name = strategy_name
 
+    def get_name(self):
+        return self.strategy_name
+
     def play(self):
+        pass
+
+    def wrap_up_round(self):
+        pass
+
+    def generate_alternative_history_for_player(self, game_history, player_name):
         pass

@@ -1,0 +1,47 @@
+{
+    "aggregates_checker": {
+        "checker": "aggregates_checker",
+        "question": "aggregates_checker",
+        "sample_mean": 0.1037037037037037,
+        "sample_variance": 0.09083913073483363,
+        "total": 540.0,
+        "positives": 56.0,
+        "squared_diffs_sum": 48.96229146607533
+    },
+    "#actions_you": {
+        "checker": "aggregates_checker",
+        "question": "How many times did you choose {}?",
+        "sample_mean": 0.1388888888888889,
+        "sample_variance": 0.1143226149199942,
+        "total": 180.0,
+        "positives": 25.0,
+        "squared_diffs_sum": 20.46374807067896
+    },
+    "#actions_opponent": {
+        "checker": "aggregates_checker",
+        "question": "How many times did your opponent choose {}?",
+        "sample_mean": 0.15555555555555556,
+        "sample_variance": 0.12717040747869277,
+        "total": 180.0,
+        "positives": 28.0,
+        "squared_diffs_sum": 22.763502938686003
+    },
+    "total_payoff_you": {
+        "checker": "aggregates_checker",
+        "question": "What is your current total payoff?",
+        "sample_mean": 0.011111111111111112,
+        "sample_variance": 0.010671472493518375,
+        "total": 90.0,
+        "positives": 1.0,
+        "squared_diffs_sum": 0.9497610519231354
+    },
+    "total_payoff_opponent": {
+        "checker": "aggregates_checker",
+        "question": "What is your opponent's current total payoff?",
+        "sample_mean": 0.022222222222222223,
+        "sample_variance": 0.01771551610152516,
+        "total": 90.0,
+        "positives": 2.0,
+        "squared_diffs_sum": 1.5766809330357392
+    }
+}

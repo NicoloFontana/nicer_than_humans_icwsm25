@@ -69,3 +69,166 @@ Test variation of prompt to check robustness
 >> 20240320130437:
     Use "neutral" identifiers for the actions
     Gives low accuracy for some questions, in particular for action of B at round X (and it also changes the format of the answer giving also a reason, while for player A that wasn't the case)
+
+Run without questions to analyze emergent behavior
+>> 20240328173931:
+    More cooperate than defect (~75-25)
+    "streaks" of coop/defect are more common than alternating (see transitions)
+    In the first iterations defect is preferred, while later on, it goes full cooperate
+>> 20240328194009:
+    same as before
+>> 20240328214059:
+    same
+>> 20240328234126:
+    same
+>> 20240329014202:
+    much more leaned towards coop (95-5)
+    But still visible that the defect are concentrated in the first iterations
+
+
+Run against hard-coded strategies with no sliding window for history
+>> 20240328173931-20240329014202:
+    Against RND
+>> 20240409113845:
+    Against AlwaysCooperate
+>> 20240409114154:
+    Against AlwaysDefect
+
+Run with history sliding window against AlwaysDefect for 50 games:
+>> 20240412100726:
+    window size 10
+>> 20240412103555:
+    window size 15
+>> 20240412104155:
+    window size 20
+>> 20240412104455:
+    window size 5
+>> 20240417174800:
+    window size 2
+>> 20240417175008:
+    window size 3
+>> 20240417175215:
+    window size 4
+>> 20240417174456:
+    window size 1
+>> 20240415144013:
+    window size 25
+>> 20240503171507:
+    window size 11
+>> 20240503171247:
+    window size 12
+>> 20240506100825:
+    window size 13
+>> 20240506101103:
+    window size 14
+>> 20240510104016:
+    window size 16
+>> 20240510104201:
+    window size 19
+>> 20240510104526:
+    window size 17
+>> 20240510105136:
+    window size 18
+>> 20240510105405:
+    window size 50
+>> 20240510105526:
+    window size 75
+
+
+
+
+Behavioral profiles runs:
+>> 20240422133439 (1000 games):
+    RND, AC, AD, TFT, STFT, Pavlov, Grim, WSLS
+    against RND and themselves
+>> 20240502163839 (1000 games):
+    TFT, STFT, Grim, WSLS
+    against URND[0,1]
+>> 20240429102205 (1000 games):
+    URND06, URND07, URND08, URND09
+    against RND and themselves
+>> 20240429102442 (1000 games):
+    URND01, URND02, URND03, URND04
+    against RND and themselves
+>> 20240503170539 (100 games):
+    Llama2 against AC
+>> 20240501182949 (100 games):
+    Llama2 against URND09
+>> 20240501182820 (100 games):
+    Llama2 against URND08
+>> 20240424102614 (100 games):
+    Llama2 against URND07
+>> 20240424102314 (100 games):
+    Llama2 against URND06
+>> 20240422164401 (100 games):
+    Llama2 (only against RND)
+>> 20240426104728 (100 games):
+    Llama2 against URND04
+>> 20240426105448 (100 games):
+    Llama2 against URND03
+>> 20240429101310 (100 games):
+    Llama2 against URND02
+>> 20240429101810 (100 games):
+    Llama2 against URND01
+>> 20240503171043 (50 games):
+    Llama2 against AD
+
+GPT-3.5 runs:
+>> 20240523095415 (1 game, 100 iterations):
+    v1.0 with questions
+>> 20240523140851 (30 games, 100 iterations):
+    against AD (no window)
+>> 20240523181505 (30 games, 100 iterations):
+    against AD (window = 10)
+>> 20240524133431 (30 games, 100 iterations):
+    against AD (IIPD, wdw = 10)
+>> 20240528150831 (30 games, 100 iterations):
+    against URND[01, 10]
+>> 20240607183210 (70 games, 100 iterations):
+    against URND[00, 03]
+>> 20240610101530 (70 games, 100 iterations):
+    against URND[04, 08]
+>> 20240613110014 (70 games, 100 iterations):
+    against URND[09, 10]
+
+
+Llama3:
+>> 20240528145105 (1 game, 100 iterations):
+    v1.0 with questions
+>> 20240529102526 (100 games, 100 iterations):
+    against AD (no window)
+>> 20240529151748 (100 games, 100 iterations):
+    against AD (window = 10)
+>> 20240530103900 (100 games, 100 iterations):
+    against URND[01, 05]
+>> 20240604181515 (100 games, 100 iterations):
+    against URND[06, 10]
+
+
+Fixed prompt Llama3:
+>> 20240624124808:
+    URND[01, 05, 09, 10]
+>> 20240730172623:
+    URND[00, 02, 03, 04, 06]
+>> 20240811005930:
+    URND[07, 08]
+
+>> 20240607175913 (100 games, 100 iterations):
+    against TFT
+>> 20240607180150 (100 games, 100 iterations):
+    against Grim
+>> 20240607180311 (100 games, 100 iterations):
+    against WSLS
+>> 20240607180531 (100 games, 100 iterations):
+    against STFT
+
+
+Prompts re-runs
+>> 20240403094750:
+    v0.0
+>> 20240403095508:
+    v0.1
+>> 20240404161538:
+    v0.2
+>> 20240404183141:
+    v0.2.1

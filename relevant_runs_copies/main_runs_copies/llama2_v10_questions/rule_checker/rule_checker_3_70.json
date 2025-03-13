@@ -1,0 +1,92 @@
+{
+    "rule_checker": {
+        "checker": "rule_checker",
+        "question": "rule_checker",
+        "sample_mean": 0.8069124423963133,
+        "sample_variance": 0.15547813704959673,
+        "total": 2170.0,
+        "positives": 1751.0,
+        "squared_diffs_sum": 337.2320792605753
+    },
+    "max_payoff": {
+        "checker": "rule_checker",
+        "question": "What is the highest payoff player A can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "min_payoff": {
+        "checker": "rule_checker",
+        "question": "What is the lowest payoff player A can get in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "allowed_actions": {
+        "checker": "rule_checker",
+        "question": "Which actions is player A allowed to play?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 70.0,
+        "positives": 70.0,
+        "squared_diffs_sum": 0.0
+    },
+    "round_payoff_A": {
+        "checker": "rule_checker",
+        "question": "Which is player A's payoff in a single round if A plays {} and B plays {}?",
+        "sample_mean": 0.9857142857142858,
+        "sample_variance": 0.01352362940863728,
+        "total": 280.0,
+        "positives": 276.0,
+        "squared_diffs_sum": 3.7730926050098015
+    },
+    "round_payoff_B": {
+        "checker": "rule_checker",
+        "question": "Which is player B's payoff in a single round if A plays {} and B plays {}?",
+        "sample_mean": 0.9142857142857143,
+        "sample_variance": 0.07811464631456354,
+        "total": 280.0,
+        "positives": 256.0,
+        "squared_diffs_sum": 21.793986321763228
+    },
+    "exists_combo_only_true": {
+        "checker": "rule_checker",
+        "question": "Does exists a combination of actions that gives a player a payoff of {} in a single round?",
+        "sample_mean": 1.0,
+        "sample_variance": 0.0,
+        "total": 280.0,
+        "positives": 280.0,
+        "squared_diffs_sum": 0.0
+    },
+    "combo_for_payoff_A_only_true": {
+        "checker": "rule_checker",
+        "question": "Which combination of actions gives a payoff of {} to A in a single round?",
+        "sample_mean": 0.6321428571428571,
+        "sample_variance": 0.22902293713578145,
+        "total": 280.0,
+        "positives": 177.0,
+        "squared_diffs_sum": 63.89739946088302
+    },
+    "exists_combo": {
+        "checker": "rule_checker",
+        "question": "Does exists a combination of actions that gives a player a payoff of {} in a single round?",
+        "sample_mean": 0.8214285714285714,
+        "sample_variance": 0.14557601613346985,
+        "total": 420.0,
+        "positives": 345.0,
+        "squared_diffs_sum": 60.996350759923864
+    },
+    "combo_for_payoff_A": {
+        "checker": "rule_checker",
+        "question": "Which combination of actions gives a payoff of {} to A in a single round?",
+        "sample_mean": 0.4928571428571429,
+        "sample_variance": 0.2469542640680885,
+        "total": 420.0,
+        "positives": 207.0,
+        "squared_diffs_sum": 103.47383664452909
+    }
+}
