@@ -5,6 +5,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import scipy.stats as st
+
+# From http://phyletica.org/matplotlib-fonts/
+# to avoid Type3 fonts in the plots
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 from matplotlib import pyplot as plt
 import seaborn as sns
 
