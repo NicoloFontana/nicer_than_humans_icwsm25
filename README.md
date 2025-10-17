@@ -1,5 +1,5 @@
 
-# Nicer Than Humans: How do Large Language Models Behave in the Prisoner's Dilemma? <span style="font-size: 0.7em;">([Conference proceedings](https://ojs.aaai.org/index.php/ICWSM/article/view/35829))</span>
+# Nicer Than Humans: How do Large Language Models Behave in the Prisoner's Dilemma? <span style="font-size: 0.7em;">([ref](https://ojs.aaai.org/index.php/ICWSM/article/view/35829))</span>
 
 This repository contains the code for the paper "Nicer Than Humans: How do Large Language Models Behave in the Prisoner's Dilemma?" published at [ICWSM'25](https://www.icwsm.org/2025/index.html).
 
